@@ -22,7 +22,10 @@ help with the documentation, new features, tests).
 ```php
 $data = new \Wrkflow\GetValue\GetValue(new \Wrkflow\GetValue\DataHolders\ArrayData([
     'page' => 1, 
-    'items' => [['name' => 'test', 'tags' => null, 'label' => 'yes'], ['name' => 'test 2', 'tags' => ['test']]]
+    'items' => [
+        ['name' => 'test', 'tags' => null, 'label' => 'yes'],
+        ['name' => 'test 2', 'tags' => ['test']],
+    ],
 ]));
 $page = $data->getRequiredInt('page'); // Will throw MissingValueForKeyException
 $items = $data->getRequiredArray('items');
@@ -43,4 +46,3 @@ foreach ($items as $item) {
 ## Documentation
 
 Documentation is hosted on [GitHub Pages](https://php-get-typed-value.wrk-flow.com).
-
