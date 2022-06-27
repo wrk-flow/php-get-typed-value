@@ -1,0 +1,7 @@
+/vendor
+.phpunit.result.cache
+composer.lock
+/docs/.nuxt
+/docs/dist
+/docs/node_modules
+/docs/static/sw.js

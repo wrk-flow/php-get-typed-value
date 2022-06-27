@@ -1,0 +1,60 @@
+{
+    "name": "wrkflow/php-get-typed-value",
+    "description": "Get typed (strict mode) values from an Array / XML with basic validation.",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Martin Kluska",
+            "email": "martin@kluska.cz"
+        }
+    ],
+    "require-dev": {
+        "phpstan/phpstan": "^1.6.3",
+        "phpstan/phpstan-deprecation-rules": "^1.0.0",
+        "phpstan/phpstan-phpunit": "^1.1.1",
+        "phpunit/phpunit": "^9.5.20",
+        "rector/rector": "^0.12.22",
+        "symplify/easy-coding-standard": "^10.2.2"
+    },
+    "scripts": {
+        "check": "composer lint && composer test",
+        "lint:check": "./vendor/bin/ecs",
+        "lint:fix": "./vendor/bin/ecs --fix",
+        "lint:stan": "./vendor/bin/phpstan",
+        "lint:upgrade:check": "vendor/bin/rector process --dry-run",
+        "lint:upgrade": "vendor/bin/rector process",
+        "lint": "composer lint:fix && composer lint:upgrade && composer lint:stan",
+        "test": "./vendor/bin/phpunit"
+    },
+    "suggest": {
+        "wrkflow/larastrict": "Improve your Laravel code base with DDD and strict conventions."
+    },
+    "autoload": {
+        "psr-4": {
+            "Wrkflow\\GetValue\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Wrkflow\\GetValueTests\\": "tests/"
+        }
+    },
+    "config": {
+        "preferred-install": "dist",
+        "sort-packages": true,
+        "optimize-autoloader": true,
+        "allow-plugins": {
+            "symfony/thanks": false
+        }
+    },
+    "archive": {
+        "exclude": ["/docs"]
+    },
+    "funding": [
+        {
+            "type": "github",
+            "url": "https://github.com/sponsors/pionl"
+        }
+    ]
+}
