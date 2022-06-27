@@ -28,6 +28,14 @@ class CustomExceptionBuilder extends
     {
         return new NotAnArrayException($key, $this->customLogContext);
     }
+
+    /**
+     * @param class-string<RuleContract> $ruleClassName
+     */
+    public function validationFailed(string $key, string $ruleClassName): Exception;
+    {
+        return new ValidationFailedException($key, $this->customLogContext);
+    }
 }
 ```
 

@@ -7,6 +7,8 @@ namespace Wrkflow\GetValueTests;
 use PHPUnit\Framework\TestCase;
 use Wrkflow\GetValue\DataHolders\ArrayData;
 use Wrkflow\GetValue\GetValue;
+use Wrkflow\GetValue\Rules\EmailRule;
+use Wrkflow\GetValueTests\Builders\CustomExceptionBuilder;
 
 class GetValueArrayDataCustomExceptionBuilderTest extends TestCase
 {
@@ -73,5 +75,11 @@ class GetValueArrayDataCustomExceptionBuilderTest extends TestCase
     {
         $this->expectExceptionMessage('notAnArray: test');
         $this->data->getRequiredArray('test');
+    }
+
+    public function testRuleFailed(): void
+    {
+        $this->expectExceptionMessage('validationFailed: test Wrkflow\GetValue\Rules\EmailRule');
+        $this->data->getString('test', [new EmailRule()]);
     }
 }

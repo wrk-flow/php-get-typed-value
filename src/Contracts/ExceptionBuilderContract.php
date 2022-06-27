@@ -13,4 +13,9 @@ interface ExceptionBuilderContract
     public function arrayIsEmpty(string $key): Exception;
 
     public function notAnArray(string $key): Exception;
+
+    /**
+     * @param class-string<RuleContract> $ruleClassName
+     */
+    public function validationFailed(string $key, string $ruleClassName): Exception;
 }

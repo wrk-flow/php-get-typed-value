@@ -16,6 +16,7 @@ class XMLData extends AbstractData
     {
         $value = $this->data->{$key};
 
+        // TODO figure out how to properly detect "child" exists instead of getting empty string...
         return (string) $value;
     }
 

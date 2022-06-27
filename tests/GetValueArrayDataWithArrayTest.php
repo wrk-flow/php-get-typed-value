@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace Wrkflow\GetValueTests;
 
+use Wrkflow\GetValue\Exceptions\AbstractGetValueException;
 use Wrkflow\GetValue\Exceptions\ArrayIsEmptyException;
+use Wrkflow\GetValue\Exceptions\NotAnArrayException;
 use Wrkflow\GetValue\GetValue;
 
-class GetValueArrayDataWithArrayTest extends AbstractArrayTestCase
+class GetValueArrayDataWithArrayTest extends AbstractArrayTestsTestCase
 {
     public function requiredData(): array
     {
@@ -15,22 +17,20 @@ class GetValueArrayDataWithArrayTest extends AbstractArrayTestCase
             self::KeyNull . ' throws exception' => [self::KeyNull, null, ArrayIsEmptyException::class],
             self::KeyEmpty . ' throws exception' => [self::KeyEmpty, null, ArrayIsEmptyException::class],
             self::KeyValid . ' returns value' => [self::KeyValid, ['test']],
+            self::KeyInvalid . ' returns value' => [self::KeyInvalid, null, NotAnArrayException::class],
             self::KeyMissingValue . ' throws exception' => [self::KeyMissingValue, null, ArrayIsEmptyException::class],
         ];
     }
 
-    /**
-     * @dataProvider requiredData
-     */
-    public function testRequired(string $key, mixed $expectedValue = null, ?string $expectedException = null): void
+    public function optionalData(): array
     {
-        $data = $this->getBaseData($expectedException, $key);
-
-        $value = $data->getRequiredArray(self::KeyTags);
-
-        if ($expectedException === null) {
-            $this->assertEquals($expectedValue, $value);
-        }
+        return [
+            self::KeyNull . ' is converted to array' => [self::KeyNull, []],
+            self::KeyEmpty . ' returns value' => [self::KeyEmpty, []],
+            self::KeyInvalid . ' returns value' => [self::KeyInvalid, null, NotAnArrayException::class],
+            self::KeyValid . ' returns value' => [self::KeyValid, ['test']],
+            self::KeyMissingValue . ' is converted to array' => [self::KeyMissingValue, []],
+        ];
     }
 
     public function nullableArrayData(): array
@@ -38,6 +38,7 @@ class GetValueArrayDataWithArrayTest extends AbstractArrayTestCase
         return [
             self::KeyNull . ' returns value' => [self::KeyNull, null],
             self::KeyEmpty . ' returns value' => [self::KeyEmpty, []],
+            self::KeyInvalid . ' returns value' => [self::KeyInvalid, null, NotAnArrayException::class],
             self::KeyValid . ' returns value' => [self::KeyValid, ['test']],
             self::KeyMissingValue . ' is converted to null' => [self::KeyMissingValue, null],
         ];
@@ -45,6 +46,7 @@ class GetValueArrayDataWithArrayTest extends AbstractArrayTestCase
 
     /**
      * @dataProvider nullableArrayData
+     * @param class-string<AbstractGetValueException>|null $expectedException
      */
     public function testNullableArray(string $key, mixed $expectedValue = null, ?string $expectedException = null): void
     {
@@ -57,36 +59,13 @@ class GetValueArrayDataWithArrayTest extends AbstractArrayTestCase
         }
     }
 
-    public function arrayData(): array
+    protected function getRequiredValue(GetValue $data, array $rules): mixed
     {
-        return [
-            self::KeyNull . ' is converted to array' => [self::KeyNull, []],
-            self::KeyEmpty . ' returns value' => [self::KeyEmpty, []],
-            self::KeyValid . ' returns value' => [self::KeyValid, ['test']],
-            self::KeyMissingValue . ' is converted to array' => [self::KeyMissingValue, []],
-        ];
+        return $data->getRequiredArray(self::KeyTags);
     }
 
-    /**
-     * @dataProvider arrayData
-     */
-    public function testArray(string $key, mixed $expectedValue = null, ?string $expectedException = null): void
+    protected function getOptionalValue(GetValue $data, array $rules): mixed
     {
-        $data = $this->getBaseData($expectedException, $key);
-
-        $value = $data->getArray(self::KeyTags);
-
-        if ($expectedException === null) {
-            $this->assertEquals($expectedValue, $value);
-        }
-    }
-
-    protected function getBaseData(?string $expectedException, string $key): GetValue
-    {
-        if ($expectedException !== null) {
-            $this->expectException(ArrayIsEmptyException::class);
-        }
-
-        return $this->data->getRequiredArrayGetter($key);
+        return $data->getArray(self::KeyTags);
     }
 }

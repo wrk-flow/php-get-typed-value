@@ -7,22 +7,36 @@ namespace Wrkflow\GetValue;
 use DateTime;
 use DateTimeImmutable;
 use DateTimeInterface;
+use Wrkflow\GetValue\Actions\GetValidatedValueAction;
 use Wrkflow\GetValue\Builders\ExceptionBuilder;
 use Wrkflow\GetValue\Contracts\ExceptionBuilderContract;
+use Wrkflow\GetValue\Contracts\RuleContract;
 use Wrkflow\GetValue\DataHolders\AbstractData;
 use Wrkflow\GetValue\DataHolders\ArrayData;
+use Wrkflow\GetValue\Rules\BooleanRule;
+use Wrkflow\GetValue\Rules\NumericRule;
+use Wrkflow\GetValue\Rules\StringRule;
 
 class GetValue
 {
+    public readonly GetValidatedValueAction $getValidatedValueAction;
+
     public function __construct(
         public readonly AbstractData $data,
-        public readonly ExceptionBuilderContract $exceptionBuilder = new ExceptionBuilder()
+        public readonly ExceptionBuilderContract $exceptionBuilder = new ExceptionBuilder(),
+        GetValidatedValueAction $getValidatedValueAction = null
     ) {
+        $this->getValidatedValueAction = $getValidatedValueAction ?? new GetValidatedValueAction(
+            $this->exceptionBuilder
+        );
     }
 
-    public function getInt(string $key): ?int
+    /**
+     * @param array<RuleContract> $rules
+     */
+    public function getInt(string $key, array $rules = []): ?int
     {
-        $value = $this->data->getValue($key);
+        $value = $this->getValidatedValue($key, $rules, new NumericRule());
 
         if ($value === null || $value === '') {
             return null;
@@ -31,9 +45,12 @@ class GetValue
         return (int) $value;
     }
 
-    public function getRequiredInt(string $key): int
+    /**
+     * @param array<RuleContract> $rules
+     */
+    public function getRequiredInt(string $key, array $rules = []): int
     {
-        $value = $this->getInt($key);
+        $value = $this->getInt($key, $rules);
 
         if ($value === null) {
             throw $this->exceptionBuilder->missingValue($key);
@@ -42,9 +59,12 @@ class GetValue
         return $value;
     }
 
-    public function getFloat(string $key): ?float
+    /**
+     * @param array<RuleContract> $rules
+     */
+    public function getFloat(string $key, array $rules = []): ?float
     {
-        $value = $this->data->getValue($key);
+        $value = $this->getValidatedValue($key, $rules, new NumericRule());
 
         if ($value === null || $value === '') {
             return null;
@@ -53,9 +73,12 @@ class GetValue
         return floatval($value);
     }
 
-    public function getRequiredFloat(string $key): float
+    /**
+     * @param array<RuleContract> $rules
+     */
+    public function getRequiredFloat(string $key, array $rules = []): float
     {
-        $value = $this->getFloat($key);
+        $value = $this->getFloat($key, $rules);
 
         if ($value === null) {
             throw $this->exceptionBuilder->missingValue($key);
@@ -64,9 +87,12 @@ class GetValue
         return $value;
     }
 
-    public function getBool(string $key): ?bool
+    /**
+     * @param array<RuleContract> $rules
+     */
+    public function getBool(string $key, array $rules = []): ?bool
     {
-        $value = $this->data->getValue($key);
+        $value = $this->getValidatedValue($key, $rules, new BooleanRule());
 
         if ($value === null || $value === '') {
             return null;
@@ -75,9 +101,12 @@ class GetValue
         return boolval($value);
     }
 
-    public function getRequiredBool(string $key): bool
+    /**
+     * @param array<RuleContract> $rules
+     */
+    public function getRequiredBool(string $key, array $rules = []): bool
     {
-        $value = $this->getBool($key);
+        $value = $this->getBool($key, $rules);
 
         if ($value === null) {
             throw $this->exceptionBuilder->missingValue($key);
@@ -86,9 +115,12 @@ class GetValue
         return $value;
     }
 
-    public function getString(string $key): ?string
+    /**
+     * @param array<RuleContract> $rules
+     */
+    public function getString(string $key, array $rules = []): ?string
     {
-        $value = $this->data->getValue($key);
+        $value = $this->getValidatedValue($key, $rules, new StringRule());
 
         if ($value === null) {
             return null;
@@ -97,9 +129,12 @@ class GetValue
         return (string) $value;
     }
 
-    public function getRequiredString(string $key): string
+    /**
+     * @param array<RuleContract> $rules
+     */
+    public function getRequiredString(string $key, array $rules = []): string
     {
-        $value = $this->getString($key);
+        $value = $this->getString($key, $rules);
 
         if ($value === null) {
             throw  $this->exceptionBuilder->missingValue($key);
@@ -109,26 +144,29 @@ class GetValue
     }
 
     /**
+     * @param array<RuleContract> $rules
+     *
      * @return DateTime|DateTimeImmutable|null
      */
-    public function getDateTime(string $key): ?DateTimeInterface
+    public function getDateTime(string $key, array $rules = []): ?DateTimeInterface
     {
-        $value = $this->data->getValue($key);
+        $value = $this->getValidatedValue($key, $rules, new StringRule());
 
         if ($value === null || $value === '') {
             return null;
         }
 
-        // TODO validate?
         return new DateTime($value);
     }
 
     /**
+     * @param array<RuleContract> $rules
+     *
      * @return DateTime|DateTimeImmutable
      */
-    public function getRequiredDateTime(string $key): DateTimeInterface
+    public function getRequiredDateTime(string $key, array $rules = []): DateTimeInterface
     {
-        $value = $this->getDateTime($key);
+        $value = $this->getDateTime($key, $rules);
 
         if ($value instanceof DateTime === false) {
             throw $this->exceptionBuilder->missingValue($key);
@@ -142,7 +180,7 @@ class GetValue
      */
     public function getArray(string $key): array
     {
-        $value = $this->data->getValue($key);
+        $value = $this->getValidatedValue($key, []);
 
         if ($value === null) {
             return [];
@@ -160,7 +198,7 @@ class GetValue
      */
     public function getNullableArray(string $key): ?array
     {
-        $value = $this->data->getValue($key);
+        $value = $this->getValidatedValue($key, []);
 
         if ($value === null) {
             return null;
@@ -180,9 +218,9 @@ class GetValue
      */
     public function getRequiredArray(string $key): array
     {
-        $value = $this->getArray($key);
+        $value = $this->getNullableArray($key);
 
-        if ($value === []) {
+        if ($value === [] || $value === null) {
             throw $this->exceptionBuilder->arrayIsEmpty($key);
         }
 
@@ -196,7 +234,7 @@ class GetValue
     {
         $value = $this->getNullableArray($key);
 
-        if ($value === null) {
+        if ($value === null || $value === []) {
             return null;
         }
 
@@ -208,12 +246,20 @@ class GetValue
      */
     public function getRequiredArrayGetter(string $key): self
     {
-        $value = $this->getArrayGetter($key);
+        $value = $this->getRequiredArray($key);
 
-        if ($value instanceof self === false) {
-            throw $this->exceptionBuilder->arrayIsEmpty($key);
+        return new self(new ArrayData($value), $this->exceptionBuilder);
+    }
+
+    /**
+     * @param RuleContract|null $mainRule Adds given rule before all given rules.
+     */
+    protected function getValidatedValue(string $key, array $rules, ?RuleContract $mainRule = null): mixed
+    {
+        if ($mainRule !== null) {
+            $rules = array_merge([$mainRule], $rules);
         }
 
-        return $value;
+        return $this->getValidatedValueAction->execute($key, $this->data, $rules);
     }
 }

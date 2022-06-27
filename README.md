@@ -17,7 +17,7 @@ help with the documentation, new features, tests).
 
 - 🚀 Retrieve values from Array (JSON) / XML with correct return type
 - 🏆 Makes PHPStan / IDE happy due the return types
-- 🤹‍ Basic type without additional looping.
+- 🤹‍ Ensures that desired value is in correct type (without additional loop validation. Validates always on get).
 
 ```php
 $data = new \Wrkflow\GetValue\GetValue(new \Wrkflow\GetValue\DataHolders\ArrayData([
@@ -27,7 +27,7 @@ $data = new \Wrkflow\GetValue\GetValue(new \Wrkflow\GetValue\DataHolders\ArrayDa
         ['name' => 'test 2', 'tags' => ['test']],
     ],
 ]));
-$page = $data->getRequiredInt('page'); // Will throw MissingValueForKeyException
+$page = $data->getRequiredInt('page'); // Will throw MissingValueForKeyException if the `page` is not present
 $items = $data->getRequiredArray('items');
 
 foreach ($items as $item) {

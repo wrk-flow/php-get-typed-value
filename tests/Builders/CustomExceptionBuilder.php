@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Wrkflow\GetValueTests;
+namespace Wrkflow\GetValueTests\Builders;
 
 use Exception;
 use Wrkflow\GetValue\Contracts\ExceptionBuilderContract;
@@ -22,5 +22,10 @@ class CustomExceptionBuilder implements ExceptionBuilderContract
     public function notAnArray(string $key): Exception
     {
         return new Exception('notAnArray: ' . $key);
+    }
+
+    public function validationFailed(string $key, string $message): Exception
+    {
+        return new Exception('validationFailed: ' . $key . ' ' . $message);
     }
 }

@@ -11,7 +11,7 @@ position: 1
 
 - 🚀 Retrieve values from Array (JSON) / XML with correct return type
 - 🏆 Makes PHPStan / IDE happy due the return types
-- 🤹‍ Basic type without additional looping.
+- 🤹‍ Ensures that desired value is in correct type (without additional loop validation. Validates always on get).
 
 ## Installation
 
@@ -33,7 +33,10 @@ Simple build **GetValue** class with **ArrayData** class that will expose the da
 ```php
 $data = new \Wrkflow\GetValue\GetValue(new \Wrkflow\GetValue\DataHolders\ArrayData([
     'page' => 1, 
-    'items' => [['name' => 'test', 'tags' => null, 'label' => 'yes'], ['name' => 'test 2', 'tags' => ['test']]]
+    'items' => [
+        ['name' => 'test', 'tags' => null, 'label' => 'yes'], 
+        ['name' => 'test 2', 'tags' => ['test'],]
+    ],
 ]));
 ```
 
@@ -42,22 +45,28 @@ $data = new \Wrkflow\GetValue\GetValue(new \Wrkflow\GetValue\DataHolders\ArrayDa
 Simple build **GetValue** class with **XMLData** class that will expose the data.
 
 ```php
-$data = new \Wrkflow\GetValue\GetValue(new \Wrkflow\GetValue\DataHolders\XMLData(new SimpleXMLElement('<root><title>test</title><test attribute="test"/></root>')));
+$simpleXMLElement = new SimpleXMLElement('<root><title>test</title><test attribute="test"/></root>');
+$data = new \Wrkflow\GetValue\GetValue(new \Wrkflow\GetValue\DataHolders\XMLData($simpleXMLElement));
 ```
 
 ## Values
+
+> All values are validated within its type definition (int will be checked by IntegerRule, string by StringRule, etc).
 
 For getting values there are always 2 methods:
 
 - get nullable value
 - get required value
 
+You can additionally add validation rules (as second parameter) to ensure you will get correct value.
+Check [Validation documentation](/validation) for more.
+
 ### Int
 
 Get nullable int.
 
 ```php
-$value = $data->getInt('key');
+$value = $data->getInt('key', rules: [new \Wrkflow\GetValue\Rules\MinRule(0)]);
 ```
 
 Get required int value. Throws `MissingValueForKeyException` exception if missing.
