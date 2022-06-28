@@ -81,6 +81,25 @@ class GetValueArrayDataWithBoolTest extends AbstractArrayTestsTestCase
         ];
     }
 
+    public function noStrategyData(): array
+    {
+        return $this->optionalData();
+    }
+
+    public function testDisableTransformers(): void
+    {
+        $this->expectException(ValidationFailedException::class);
+
+        $this->data->getBool(self::KeyBoolInString, transformers: []);
+    }
+
+    public function testTransformBoolWithRule(): void
+    {
+        $result = $this->data->getBool(self::KeyBoolInString);
+
+        $this->assertTrue($result);
+    }
+
     protected function getRequiredValue(GetValue $data, array $rules): mixed
     {
         return $data->getRequiredBool(self::KeyIsActive, $rules);

@@ -78,6 +78,11 @@ class GetValueArrayDataWithIntTest extends AbstractArrayTestsTestCase
         ];
     }
 
+    public function noStrategyData(): array
+    {
+        return $this->optionalData();
+    }
+
     public function testStringInt(): void
     {
         $this->assertEquals(1, $this->data->getInt(self::KeyPageString));

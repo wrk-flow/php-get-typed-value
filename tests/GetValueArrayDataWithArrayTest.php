@@ -33,6 +33,11 @@ class GetValueArrayDataWithArrayTest extends AbstractArrayTestsTestCase
         ];
     }
 
+    public function noStrategyData(): array
+    {
+        return $this->optionalData();
+    }
+
     public function nullableArrayData(): array
     {
         return [

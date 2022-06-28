@@ -4,12 +4,22 @@ declare(strict_types=1);
 
 namespace Wrkflow\GetValueTests;
 
+use Wrkflow\GetValue\Actions\GetValidatedValueAction;
+use Wrkflow\GetValue\Builders\ExceptionBuilder;
 use Wrkflow\GetValue\Exceptions\ArrayIsEmptyException;
 use Wrkflow\GetValue\Exceptions\NotAnArrayException;
 use Wrkflow\GetValue\GetValue;
+use Wrkflow\GetValue\Strategies\DefaultTransformerStrategy;
 
 class GetValueArrayDataTest extends AbstractArrayTestCase
 {
+    public function testOpinionatedConstructor(): void
+    {
+        $this->assertInstanceOf(DefaultTransformerStrategy::class, $this->data->transformerStrategy);
+        $this->assertInstanceOf(ExceptionBuilder::class, $this->data->exceptionBuilder);
+        $this->assertInstanceOf(GetValidatedValueAction::class, $this->data->getValidatedValueAction);
+    }
+
     public function testGetRequiredArrayGetter(): void
     {
         $items = $this->data->getRequiredArrayGetter(self::KeyItems);
@@ -66,6 +76,17 @@ class GetValueArrayDataTest extends AbstractArrayTestCase
         $result = $this->data->getArrayGetter(self::KeyItemsEmpty);
         $this->assertInstanceOf(GetValue::class, $result);
         $this->assertEmpty($result->data->get());
+
+        $this->assertSame($this->data->transformerStrategy, $result->transformerStrategy);
+        $this->assertSame($this->data->exceptionBuilder, $result->exceptionBuilder);
+        $this->assertSame($this->data->getValidatedValueAction, $result->getValidatedValueAction);
+    }
+
+    public function testGetNullableArrayGetter(): void
+    {
+        $result = $this->data->getNullableArrayGetter(self::KeyItems);
+        $this->assertInstanceOf(GetValue::class, $result);
+        $this->assertCount(2, $result->data->get());
     }
 
     public function testGetNullableArrayGetterOnNonExistingItem(): void

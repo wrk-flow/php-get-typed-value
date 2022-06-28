@@ -78,6 +78,11 @@ class GetValueArrayDataWithFloatTest extends AbstractArrayTestsTestCase
         ];
     }
 
+    public function noStrategyData(): array
+    {
+        return $this->optionalData();
+    }
+
     public function testStringInt(): void
     {
         $this->assertEquals(1.0, $this->data->getInt(self::KeyPageString));

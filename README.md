@@ -17,7 +17,10 @@ help with the documentation, new features, tests).
 
 - 🚀 Retrieve values from Array (JSON) / XML with correct return type
 - 🏆 Makes PHPStan / IDE happy due the return types
-- 🤹‍ Ensures that desired value is in correct type (without additional loop validation. Validates always on get).
+- 🤹‍ Validation: Ensures that desired value is in correct type (without additional loop validation. Validation is always on
+  while calling get* method).
+- 🛠 Transformers: Ensures that values are in expected type (ensures that string is trimmed and empty string converted to
+  null, accepts bool as string, can be changed.)
 
 ```php
 $data = new \Wrkflow\GetValue\GetValue(new \Wrkflow\GetValue\DataHolders\ArrayData([

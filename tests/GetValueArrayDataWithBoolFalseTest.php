@@ -81,6 +81,11 @@ class GetValueArrayDataWithBoolFalseTest extends AbstractArrayTestsTestCase
         ];
     }
 
+    public function noStrategyData(): array
+    {
+        return $this->optionalData();
+    }
+
     protected function getRequiredValue(GetValue $data, array $rules): mixed
     {
         return $data->getRequiredBool(self::KeyIsActiveInFalse, $rules);

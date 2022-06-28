@@ -22,6 +22,8 @@ abstract class AbstractArrayTestCase extends TestCase
 
     final public const KeyPageString = 'page_string';
 
+    final public const KeyBoolInString = 'bool_in_string';
+
     final protected const KeyTags = 'tags';
 
     final protected const KeyItemName = 'name';
@@ -46,13 +48,16 @@ abstract class AbstractArrayTestCase extends TestCase
 
     protected GetValue $data;
 
+    protected ArrayData $arrayData;
+
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->data = new GetValue(new ArrayData([
+        $this->arrayData = new ArrayData([
             self::KeyPage => 1,
             self::KeyPageString => '1',
+            self::KeyBoolInString => '1',
             self::KeyEmail => 'martin@kluska.cz',
             self::KeyItemsEmpty => [],
             self::KeyItems => [
@@ -103,6 +108,7 @@ abstract class AbstractArrayTestCase extends TestCase
                 self::KeyUpdatedAt => 'not_date_time',
             ],
             self::KeyMissingValue => ['force-non-empty'],
-        ]));
+        ]);
+        $this->data = new GetValue($this->arrayData);
     }
 }

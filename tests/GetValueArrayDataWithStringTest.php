@@ -16,7 +16,7 @@ class GetValueArrayDataWithStringTest extends AbstractArrayTestsTestCase
     {
         return [
             self::KeyNull . ' throws exception' => [self::KeyNull, null, MissingValueForKeyException::class],
-            self::KeyEmpty . ' returns value' => [self::KeyEmpty, ''],
+            self::KeyEmpty . ' throws exception' => [self::KeyEmpty, null, MissingValueForKeyException::class],
             self::KeyInvalid . ' throws exception because array is not string' => [
                 self::KeyInvalid,
                 null,
@@ -40,7 +40,7 @@ class GetValueArrayDataWithStringTest extends AbstractArrayTestsTestCase
     {
         return [
             self::KeyNull . ' is converted to array' => [self::KeyNull, null],
-            self::KeyEmpty . ' returns value' => [self::KeyEmpty, ''],
+            self::KeyEmpty . ' throws exception' => [self::KeyEmpty, null],
             self::KeyInvalid . ' throws exception because array is not string' => [
                 self::KeyInvalid,
                 null,
@@ -54,6 +54,34 @@ class GetValueArrayDataWithStringTest extends AbstractArrayTestsTestCase
                 [new IntegerRule()], ],
             self::KeyMissingValue . ' is converted to array' => [self::KeyMissingValue, null],
         ];
+    }
+
+    public function noStrategyData(): array
+    {
+        return [
+            self::KeyNull . ' is converted to array' => [self::KeyNull, null],
+            self::KeyEmpty . ' does not transform empty string' => [self::KeyEmpty, ''],
+            self::KeyInvalid . ' throws exception because array is not string' => [
+                self::KeyInvalid,
+                null,
+                ValidationFailedException::class,
+            ],
+            self::KeyValid . ' returns value' => [self::KeyValid, 'martin@kluska.cz'],
+            self::KeyValid . ' but fails validation' => [
+                self::KeyValid,
+                null,
+                ValidationFailedException::class,
+                [new IntegerRule()], ],
+            self::KeyMissingValue . ' is converted to array' => [self::KeyMissingValue, null],
+        ];
+    }
+
+    public function testDisableTransformers(): void
+    {
+        $result = $this->data->getRequiredArrayGetter(self::KeyEmpty)
+            ->getString(self::KeyEmail, transformers: []);
+
+        $this->assertSame('', $result);
     }
 
     protected function getRequiredValue(GetValue $data, array $rules): mixed

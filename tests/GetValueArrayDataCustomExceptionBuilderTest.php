@@ -18,11 +18,14 @@ class GetValueArrayDataCustomExceptionBuilderTest extends TestCase
     {
         parent::setUp();
 
-        $this->data = new GetValue(new ArrayData([
-            'test' => 'Ok',
-            'array' => ['test'],
-            'empty' => [],
-        ]), new CustomExceptionBuilder());
+        $this->data = new GetValue(
+            data: new ArrayData([
+                'test' => 'Ok',
+                'array' => ['test'],
+                'empty' => [],
+            ]),
+            exceptionBuilder: new CustomExceptionBuilder()
+        );
     }
 
     public function testExistingString(): void

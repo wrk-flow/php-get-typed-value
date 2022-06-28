@@ -7,7 +7,7 @@ position: 2
 ## Rules
 
 - All rules can be combined (all must be successful).
-- `get` methods has `rules` parameter. Check IDE autocomplete.
+- Except array* `get` methods has `rules` argument.
 - You can create your own rules by extending `Wrkflow\GetValue\Contracts\RuleContract`
 - You are free to add more rules to this package.
 

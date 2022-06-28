@@ -75,6 +75,11 @@ class GetValueArrayDataWithDateTimeTest extends AbstractArrayTestsTestCase
         ];
     }
 
+    public function noStrategyData(): array
+    {
+        return $this->optionalData();
+    }
+
     public function testDateTimeWithArrayFails(): void
     {
         $this->expectException(ValidationFailedException::class);
