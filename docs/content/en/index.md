@@ -146,7 +146,7 @@ $value = $data->getRequiredDateTime('key');
 
 > Throws always `NotAnArrayException` exception if value exists but is not an array.
 
-Get always an array event if provided data is missing or if null.
+Get always an array even if provided data is missing or if null.
 
 ```php
 $value = $data->getArray('key');
@@ -155,7 +155,7 @@ $value = $data->getArray('key');
 Get nullable array.
 
 ```php
-$value = $data->getRequiredArray('key');
+$value = $data->getNullableArray('key');
 ```
 
 Get required array that is not empty. Throws `ArrayIsEmptyException` exception if missing.
@@ -168,10 +168,16 @@ $value = $data->getRequiredArray('key');
 
 > Throws always `NotAnArrayException` exception if value exists but is not an array.
 
-Try to get nullable array from data and wrap it in `GetValue` instance.
+Get always `GetValue` instance even if provided data is missing or if null.
 
 ```php
 $value = $data->getArrayGetter('key');
+```
+
+Try to get nullable array from data and wrap it in `GetValue` instance.
+
+```php
+$value = $data->getNullableArrayGetter('key');
 ```
 
 Try to get non-empty array from data and wrap it in `GetValue` instance. Throws `ArrayIsEmptyException` exception if

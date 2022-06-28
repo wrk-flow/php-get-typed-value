@@ -228,9 +228,17 @@ class GetValue
     }
 
     /**
-     * Ensures that always an array getter will be returned (if missing in $data or if null).
+     * Get always `GetValue` instance even if provided data is missing or if null.
      */
-    public function getArrayGetter(string $key): ?self
+    public function getArrayGetter(string $key): self
+    {
+        return new self(new ArrayData($this->getArray($key)), $this->exceptionBuilder, $this->getValidatedValueAction);
+    }
+
+    /**
+     * Try to get nullable array from data and wrap it in `GetValue` instance.
+     */
+    public function getNullableArrayGetter(string $key): ?self
     {
         $value = $this->getNullableArray($key);
 
@@ -238,7 +246,7 @@ class GetValue
             return null;
         }
 
-        return new self(new ArrayData($value), $this->exceptionBuilder);
+        return new self(new ArrayData($value), $this->exceptionBuilder, $this->getValidatedValueAction);
     }
 
     /**
@@ -248,7 +256,7 @@ class GetValue
     {
         $value = $this->getRequiredArray($key);
 
-        return new self(new ArrayData($value), $this->exceptionBuilder);
+        return new self(new ArrayData($value), $this->exceptionBuilder, $this->getValidatedValueAction);
     }
 
     /**

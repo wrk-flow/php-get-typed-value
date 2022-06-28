@@ -56,12 +56,26 @@ class GetValueArrayDataTest extends AbstractArrayTestCase
 
     public function testGetArrayGetterOnNonExistingItem(): void
     {
-        $this->assertNull($this->data->getArrayGetter(''));
+        $result = $this->data->getArrayGetter('');
+        $this->assertInstanceOf(GetValue::class, $result);
+        $this->assertEmpty($result->data->get());
     }
 
     public function testGetArrayGetterOnEmptyArray(): void
     {
-        $this->assertNull($this->data->getArrayGetter(self::KeyItemsEmpty));
+        $result = $this->data->getArrayGetter(self::KeyItemsEmpty);
+        $this->assertInstanceOf(GetValue::class, $result);
+        $this->assertEmpty($result->data->get());
+    }
+
+    public function testGetNullableArrayGetterOnNonExistingItem(): void
+    {
+        $this->assertNull($this->data->getNullableArrayGetter(''));
+    }
+
+    public function testGetNullableArrayGetterOnEmptyArray(): void
+    {
+        $this->assertNull($this->data->getNullableArrayGetter(self::KeyItemsEmpty));
     }
 
     protected function assertItem(
