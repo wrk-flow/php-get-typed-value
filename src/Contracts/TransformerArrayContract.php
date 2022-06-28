@@ -6,5 +6,5 @@ namespace Wrkflow\GetValue\Contracts;
 
 interface TransformerArrayContract extends TransformerContract
 {
-    public function transform(mixed $value, string $key): array;
+    public function transform(mixed $value, string $key): ?array;
 }

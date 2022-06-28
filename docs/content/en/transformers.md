@@ -22,28 +22,12 @@ $data = new GetValue(data: $array, transformerStrategy: new NoTransformerStrateg
 
 ## Transformers
 
-> Transformers parameter in get methods overrides transformers from strategy. 
+> Transformers argument in get* methods overrides transformers from strategy. 
 
 To disable default transformers set `transformers` argument to empty array.
 
 ```php
-$transformer = new ClosureTransformer(function (mixed $value, string $key): ?string {
-        if ($value === null) {
-            return null;
-        }
-
-        return md5($value);
-    });
-$md5 = $getValue->getString('key', [$transformer]);
-```
-
-### ClosureTransformer
-
-Transforms the value using closure after validation has been done (can be changed with `$beforeValidation` argument).
-
-
-```php
-$getValue->getBool('key', [new \Wrkflow\GetValue\Transformers\TransformToBool()]);
+$value = $getValue->getString('key', []);
 ```
 
 ### TransformToBool
@@ -72,6 +56,52 @@ Ensures that string is trimmed **before** validation starts.
 ```php
 // Get trimmed string (no '' to null transformation)
 $getValue->getString('key', [new \Wrkflow\GetValue\Transformers\TrimString()]);
+```
+
+### ClosureTransformer
+
+> Can't be used with get\*Array\* methods.
+
+Transforms the value using closure. Ensure you are returning correct type based on the `get` method you have choosed.
+
+```php
+$transformer = new ClosureTransformer(function (mixed $value, string $key): ?string {
+        if ($value === null) {
+            return null;
+        }
+
+        return md5($value);
+    });
+$md5 = $getValue->getString('key', [$transformer]);
+```
+
+### ClosureArrayTransformer
+
+> Cant be used only with get\*Array\* methods.
+
+Transforms valid array using closure. Always return an array.
+
+```php
+$transformer = new ClosureArrayTransformer(function (array $value, string $key): array {
+    return array_map(fn (string $value) => md5($value), $value);
+});
+
+$values = $getValue->getArray('key', [$transformer]);
+```
+
+### ClosureArrayItemsTransformer
+
+> Cant be used only with get\*Array\* methods.
+
+Transforms **each value in an array** using closure.
+
+```php
+$transformer = new ClosureArrayTransformer(function (mixed $value, string $key): array {
+    // TODO validate your data
+    return md5($value);
+});
+
+$values = $getValue->getArray('key', [$transformer]);
 ```
 
 ## Customization
