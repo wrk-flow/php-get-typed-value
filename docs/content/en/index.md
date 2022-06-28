@@ -63,6 +63,8 @@ Check [Validation documentation](/validation) for more.
 
 ### Int
 
+> Throws `ValidationFailedException` if value is not numeric (only on non-null values).
+
 Get nullable int.
 
 ```php
@@ -76,6 +78,8 @@ $value = $data->getRequiredInt('key');
 ```
 
 ### Float
+
+> Throws `ValidationFailedException` if value is not numeric (only on non-null values).
 
 Get nullable float value.
 
@@ -91,6 +95,8 @@ $value = $data->getRequiredFloat('key');
 
 ### Bool
 
+> Throws `ValidationFailedException` if value is not bool (only on non-null values).
+
 Get nullable bool value.
 
 ```php
@@ -104,6 +110,8 @@ $value = $data->getRequiredBool('key');
 ```
 
 ### String
+
+> Throws `ValidationFailedException` if value is not string (only on non-null values).
 
 Get nullable string value.
 
@@ -119,6 +127,9 @@ $value = $data->getRequiredString('key');
 
 ### Date time
 
+> Throws `ValidationFailedException` if value is not string (only on non-null values).
+
+
 Get nullable `\DateTime` object (return null if empty string).
 
 ```php
@@ -133,7 +144,7 @@ $value = $data->getRequiredDateTime('key');
 
 ### Array
 
-> Throws always NotAnArrayException exception if value exists but is not an array.
+> Throws always `NotAnArrayException` exception if value exists but is not an array.
 
 Get always an array event if provided data is missing or if null.
 
@@ -144,20 +155,18 @@ $value = $data->getArray('key');
 Get nullable array.
 
 ```php
-$value = $data->    public function getRequiredArray(string $key): array
-('key');
+$value = $data->getRequiredArray('key');
 ```
 
 Get required array that is not empty. Throws `ArrayIsEmptyException` exception if missing.
 
 ```php
-$value = $data->    public function getRequiredArray(string $key): array
-('key');
+$value = $data->getRequiredArray('key');
 ```
 
 ### GetValue with ArrayData
 
-> Throws always NotAnArrayException exception if value exists but is not an array.
+> Throws always `NotAnArrayException` exception if value exists but is not an array.
 
 Try to get nullable array from data and wrap it in `GetValue` instance.
 
