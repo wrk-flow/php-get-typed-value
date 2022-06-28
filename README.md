@@ -1,7 +1,9 @@
-> Get typed (strict mode) values from an Array / XML with basic validation.
+# php-get-typed-value
 
 ![img](https://img.shields.io/badge/PHPStan-8-blue)
 ![php](https://img.shields.io/badge/PHP-8.1-B0B3D6)
+
+Get typed (strict mode) values from an Array / XML with basic validation.
 
 ```bash
 composer require wrkflow/php-get-typed-value
