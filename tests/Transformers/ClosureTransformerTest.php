@@ -4,37 +4,21 @@ declare(strict_types=1);
 
 namespace Wrkflow\GetValueTests\Transformers;
 
+use Closure;
 use Wrkflow\GetValue\Transformers\ClosureTransformer;
 
 class ClosureTransformerTest extends AbstractTransformerTestCase
 {
     public function dataToTest(): array
     {
-        $transformer = new ClosureTransformer(function (mixed $value, string $key): ?string {
-            if ($value === null) {
-                return null;
-            }
-
-            $this->assertEquals('test', $key, 'Key does not match up');
-            return md5($value);
-        });
+        $transformer = new ClosureTransformer($this->getClosure());
 
         return $this->dataAfterValidationForTransformer($transformer);
     }
 
-    public function dataToTestBeforeValidation(): array
+    public function dataToBeforeValidationForce(): array
     {
-        $transformer = new ClosureTransformer(
-            closure: function (mixed $value, string $key): ?string {
-                if ($value === null) {
-                    return null;
-                }
-
-                $this->assertEquals('test', $key, 'Key does not match up');
-                return md5($value);
-            },
-            beforeValidation: true
-        );
+        $transformer = new ClosureTransformer(closure: $this->getClosure(), beforeValidation: true);
 
         return [
             [
@@ -77,32 +61,22 @@ class ClosureTransformerTest extends AbstractTransformerTestCase
     }
 
     /**
-     * @dataProvider dataToTestBeforeValidation
+     * @dataProvider dataToBeforeValidationForce
      */
-    public function testBeforeValidation(TransformerExpectationEntity $entity): void
+    public function testAfterValidation(TransformerExpectationEntity $entity): void
     {
         $this->assertValue($entity);
     }
 
-    public function dataToTestBeforeValidationForce(): array
+    public function dataToTestAfterValidationForce(): array
     {
-        $transformer = new ClosureTransformer(
-            closure: function (mixed $value, string $key): ?string {
-                if ($value === null) {
-                    return null;
-                }
-
-                $this->assertEquals('test', $key, 'Key does not match up');
-                return md5($value);
-            },
-            beforeValidation: false
-        );
+        $transformer = new ClosureTransformer(closure: $this->getClosure(), beforeValidation: false);
 
         return $this->dataAfterValidationForTransformer($transformer);
     }
 
     /**
-     * @dataProvider dataToTestBeforeValidationForce
+     * @dataProvider dataToTestAfterValidationForce
      */
     public function testAfterValidationForce(TransformerExpectationEntity $entity): void
     {
@@ -154,5 +128,17 @@ class ClosureTransformerTest extends AbstractTransformerTestCase
             ],
             [new TransformerExpectationEntity(value: null, transformer: $transformer, expectedValue: null)],
         ];
+    }
+
+    protected function getClosure(): Closure
+    {
+        return function (mixed $value, string $key): ?string {
+            if ($value === null) {
+                return null;
+            }
+
+            $this->assertEquals('test', $key, 'Key does not match up');
+            return md5($value);
+        };
     }
 }

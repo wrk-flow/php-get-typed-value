@@ -37,7 +37,12 @@ abstract class AbstractTransformerTestCase extends TestCase
             $this->assertNotEmpty($expectation);
 
             $entity = $expectation[0];
-            $data[$entity->value . ' #' . $index] = $expectation;
+
+            if (is_string($entity->value)) {
+                $data[$entity->value . ' #' . $index] = $expectation;
+            } else {
+                $data[] = $expectation;
+            }
         }
 
         return $data;
