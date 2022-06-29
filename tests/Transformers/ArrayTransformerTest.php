@@ -6,9 +6,9 @@ namespace Wrkflow\GetValueTests\Transformers;
 
 use Closure;
 use Wrkflow\GetValue\Contracts\TransformerArrayContract;
-use Wrkflow\GetValue\Transformers\ClosureArrayTransformer;
+use Wrkflow\GetValue\Transformers\ArrayTransformer;
 
-class ClosureArrayTransformerTest extends AbstractTransformerTestCase
+class ArrayTransformerTest extends AbstractTransformerTestCase
 {
     public function dataToTest(): array
     {
@@ -143,16 +143,16 @@ class ClosureArrayTransformerTest extends AbstractTransformerTestCase
 
     protected function getDefaultTransformer(): TransformerArrayContract
     {
-        return new ClosureArrayTransformer($this->getClosure());
+        return new ArrayTransformer($this->getClosure());
     }
 
     protected function getBeforeValidationTransformer(): TransformerArrayContract
     {
-        return new ClosureArrayTransformer(closure: $this->getClosure(), beforeValidation: true);
+        return new ArrayTransformer(closure: $this->getClosure(), beforeValidation: true);
     }
 
     protected function getForceAfterValidation(): TransformerArrayContract
     {
-        return new ClosureArrayTransformer(closure: $this->getClosure(), beforeValidation: false);
+        return new ArrayTransformer(closure: $this->getClosure(), beforeValidation: false);
     }
 }

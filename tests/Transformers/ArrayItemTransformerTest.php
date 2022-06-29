@@ -7,9 +7,9 @@ namespace Wrkflow\GetValueTests\Transformers;
 use Closure;
 use Wrkflow\GetValue\Contracts\TransformerArrayContract;
 use Wrkflow\GetValue\Exceptions\ValidationFailedException;
-use Wrkflow\GetValue\Transformers\ClosureArrayItemsTransformer;
+use Wrkflow\GetValue\Transformers\ArrayItemTransformer;
 
-class ClosureArrayItemsTransformerTest extends ClosureArrayTransformerTest
+class ArrayItemTransformerTest extends ArrayTransformerTest
 {
     protected function getClosure(): Closure
     {
@@ -26,16 +26,16 @@ class ClosureArrayItemsTransformerTest extends ClosureArrayTransformerTest
 
     protected function getDefaultTransformer(): TransformerArrayContract
     {
-        return new ClosureArrayItemsTransformer(onItem: $this->getClosure());
+        return new ArrayItemTransformer(onItem: $this->getClosure());
     }
 
     protected function getBeforeValidationTransformer(): TransformerArrayContract
     {
-        return new ClosureArrayItemsTransformer(onItem: $this->getClosure(), beforeValidation: true);
+        return new ArrayItemTransformer(onItem: $this->getClosure(), beforeValidation: true);
     }
 
     protected function getForceAfterValidation(): TransformerArrayContract
     {
-        return new ClosureArrayItemsTransformer(onItem: $this->getClosure(), beforeValidation: false);
+        return new ArrayItemTransformer(onItem: $this->getClosure(), beforeValidation: false);
     }
 }

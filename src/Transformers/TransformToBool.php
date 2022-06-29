@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Wrkflow\GetValue\Transformers;
 
 use Wrkflow\GetValue\Contracts\TransformerContract;
+use Wrkflow\GetValue\GetValue;
 
 /**
  * Transforms most used representations of boolean in string or number ('yes','no',1,0,'1','0','true','false') and
@@ -17,7 +18,7 @@ class TransformToBool implements TransformerContract
         return true;
     }
 
-    public function transform(mixed $value, string $key): mixed
+    public function transform(mixed $value, string $key, GetValue $getValue): mixed
     {
         // Ensure that value is boolean
         if ($value === 'true' || $value === true || $value === '1' || $value === 1 || $value === 'yes') {

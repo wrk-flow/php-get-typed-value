@@ -320,6 +320,16 @@ class GetValue
         return $this->makeInstance(new ArrayData($value));
     }
 
+    public function makeInstance(AbstractData $data): self
+    {
+        return new self(
+            data: $data,
+            transformerStrategy: $this->transformerStrategy,
+            exceptionBuilder: $this->exceptionBuilder,
+            getValidatedValueAction: $this->getValidatedValueAction
+        );
+    }
+
     /**
      * @param array<RuleContract>        $rules
      * @param RuleContract|null          $mainRule Adds given rule before all given rules.
@@ -335,16 +345,6 @@ class GetValue
             $rules = array_merge([$mainRule], $rules);
         }
 
-        return $this->getValidatedValueAction->execute($this->data, $key, $rules, $transformers);
-    }
-
-    protected function makeInstance(AbstractData $data): self
-    {
-        return new self(
-            data: $data,
-            transformerStrategy: $this->transformerStrategy,
-            exceptionBuilder: $this->exceptionBuilder,
-            getValidatedValueAction: $this->getValidatedValueAction
-        );
+        return $this->getValidatedValueAction->execute($this, $key, $rules, $transformers);
     }
 }

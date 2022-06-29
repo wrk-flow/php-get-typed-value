@@ -6,11 +6,12 @@ namespace Wrkflow\GetValue\Transformers;
 
 use Closure;
 use Wrkflow\GetValue\Contracts\TransformerArrayContract;
+use Wrkflow\GetValue\GetValue;
 
 /**
  * Re-build the array with a closure for each item
  */
-class ClosureArrayItemsTransformer implements TransformerArrayContract
+class ArrayItemTransformer implements TransformerArrayContract
 {
     /**
      * @param Closure(mixed,string):(array|null) $onItem
@@ -27,7 +28,7 @@ class ClosureArrayItemsTransformer implements TransformerArrayContract
         return $this->beforeValidation;
     }
 
-    public function transform(mixed $value, string $key): ?array
+    public function transform(mixed $value, string $key, GetValue $getValue): ?array
     {
         if (is_array($value) === false) {
             return null;

@@ -9,6 +9,7 @@ use Wrkflow\GetValue\Actions\GetValidatedValueAction;
 use Wrkflow\GetValue\Actions\ValidateAction;
 use Wrkflow\GetValue\Builders\ExceptionBuilder;
 use Wrkflow\GetValue\DataHolders\ArrayData;
+use Wrkflow\GetValue\GetValue;
 
 abstract class AbstractTransformerTestCase extends TestCase
 {
@@ -58,13 +59,21 @@ abstract class AbstractTransformerTestCase extends TestCase
 
     public function assertValue(TransformerExpectationEntity $entity): void
     {
-        $data = new ArrayData([
+        $data = new GetValue(new ArrayData([
             'test' => $entity->value,
-        ]);
+        ]));
 
         $transforms = [$entity->transformer];
 
+        if ($entity->expectException !== null) {
+            $this->expectException($entity->expectException);
+        }
+
         $result = $this->action->execute($data, 'test', [$this->wasCalledRule], $transforms);
+
+        if ($entity->expectException !== null) {
+            return;
+        }
 
         $this->assertEquals($entity->expectedValue, $result, 'Result value does not match');
 

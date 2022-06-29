@@ -75,35 +75,49 @@ $transformer = new ClosureTransformer(function (mixed $value, string $key): ?str
 $md5 = $getValue->getString('key', [$transformer]);
 ```
 
-### ClosureArrayTransformer
+### ArrayTransformer
 
-> Cant be used only with get\*Array\* methods.
+> Can be used only with get\*Array\* methods.
 
 Transforms valid array using closure. Always return an array.
 
 ```php
-$transformer = new ClosureArrayTransformer(function (array $value, string $key): array {
+$transformer = new ArrayTransformer(function (array $value, string $key): array {
     return array_map(fn (string $value) => md5($value), $value);
 });
 
 $values = $getValue->getArray('key', [$transformer]);
 ```
 
-### ClosureArrayItemsTransformer
+### ArrayItemTransformer
 
-> Cant be used only with get\*Array\* methods.
+> Can be used only with get\*Array\* methods.
 
 Transforms **each value in an array** using closure.
 
 ```php
-$transformer = new ClosureArrayItemsTransformer( function (mixed $value, string $key): string {
-    $this->assertEquals('test', $key, 'Key does not match up');
-
+$transformer = new ArrayItemTransformer( function (mixed $value, string $key): string {
     if (is_string($value) !== null) {
         throw new ValidationFailedException($key, 'array value not a string');
     }
 
     return md5($value);
+});
+
+$values = $getValue->getArray('key', [$transformer]);
+```
+
+### ArrayItemGetterTransformer
+
+> Can be used only with get\*Array\* methods. Throws NotAnArrayException if array value is not an array.
+
+Transforms an **array that contains array values** in a closure that receives wrapped array in GetValue.
+
+```php
+$transformer = new ArrayItemGetterTransformer( function (\Wrkflow\GetValue\GetValue $value, string $key): string {
+    return [
+        self::KeyValue => $value->getRequiredString(self::KeyValue),
+    ];
 });
 
 $values = $getValue->getArray('key', [$transformer]);
