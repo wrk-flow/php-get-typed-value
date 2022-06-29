@@ -17,6 +17,10 @@ class RegexRule implements RuleContract
 
     public function passes(mixed $value): bool
     {
+        if (is_string($value) === false && is_numeric($value) === false) {
+            return false;
+        }
+
         $result = preg_match($this->pattern, (string) $value);
 
         return $result !== false && $result !== 0;
