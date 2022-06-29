@@ -61,7 +61,7 @@ jobs:
       - name: "Install PHP"
         uses: "shivammathur/setup-php@v2"
         with:
-          coverage: "none"
+          coverage: "xdebug"
           php-version: "${{ matrix.php-version }}"
 
       - name: "Install lowest dependencies"
@@ -73,7 +73,25 @@ jobs:
         run: "composer update --no-interaction --no-progress"
 
       - name: "Tests"
-        run: "composer test"
+        id: tests
+        continue-on-error: false
+        run: |
+          vendor/bin/phpunit --coverage-text --coverage-text=coverage.txt
+          echo "::set-output name=coverage::$(cat coverage.txt | grep -Po '^\s*Lines:\s*\d+.\d+\%' | grep -Po '\d+.\d+')"
+
+      # TODO on pull request add comment?
+
+      - name: "Create badge"
+        if: ${{ github.ref == 'refs/heads/main' && matrix.dependencies == 'highest' && steps.tests.outputs.coverage != '' }}
+        uses: schneegans/dynamic-badges-action@v1.4.0
+        with:
+          auth: ${{ secrets.GIST_SECRET }}
+          gistID: 11b884c06da0bf9116ae763d23438ecb
+          filename: coverage.json
+          label: Coverage
+          # TODO colors?
+          message: ${{ steps.tests.outputs.coverage }}
+          color: success
 
   static-analysis:
     name: "PHPStan"
