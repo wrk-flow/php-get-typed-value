@@ -74,6 +74,14 @@ Using [FILTER_VALIDATE_EMAIL](https://www.php.net/manual/en/filter.filters.flags
 $getValue->getString('test', rules: [new \Wrkflow\GetValue\Rules\EmailRule()]);
 ```
 
+### EnumRule
+
+Checks if given value is in enum. With default strategy empty string is treated as null (not set).
+
+```php
+$getValue->getString('test', rules: [new \Wrkflow\GetValue\Rules\EnumRule(MyEnum::class)]);
+```
+
 ### FloatRule
 
 > Not needed if using `getFloat*` methods.

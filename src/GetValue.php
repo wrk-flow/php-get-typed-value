@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 namespace Wrkflow\GetValue;
 
+use BackedEnum;
 use DateTime;
 use DateTimeImmutable;
 use DateTimeInterface;
+use TypeError;
+use UnitEnum;
 use Wrkflow\GetValue\Actions\GetValidatedValueAction;
 use Wrkflow\GetValue\Actions\ValidateAction;
 use Wrkflow\GetValue\Builders\ExceptionBuilder;
@@ -18,6 +21,7 @@ use Wrkflow\GetValue\Contracts\TransformerStrategy;
 use Wrkflow\GetValue\DataHolders\AbstractData;
 use Wrkflow\GetValue\DataHolders\ArrayData;
 use Wrkflow\GetValue\Rules\BooleanRule;
+use Wrkflow\GetValue\Rules\EnumRule;
 use Wrkflow\GetValue\Rules\NumericRule;
 use Wrkflow\GetValue\Rules\StringRule;
 use Wrkflow\GetValue\Strategies\DefaultTransformerStrategy;
@@ -128,7 +132,7 @@ class GetValue
     }
 
     /**
-     * @param array<RuleContract>        $rules
+     * @param array<RuleContract>             $rules
      * @param array<TransformerContract>|null $transformers
      */
     public function getRequiredBool(string $key, array $rules = [], ?array $transformers = null): bool
@@ -143,7 +147,7 @@ class GetValue
     }
 
     /**
-     * @param array<RuleContract>        $rules
+     * @param array<RuleContract>             $rules
      * @param array<TransformerContract>|null $transformers
      */
     public function getString(string $key, array $rules = [], ?array $transformers = null): ?string
@@ -163,7 +167,7 @@ class GetValue
     }
 
     /**
-     * @param array<RuleContract>        $rules
+     * @param array<RuleContract>             $rules
      * @param array<TransformerContract>|null $transformers
      */
     public function getRequiredString(string $key, array $rules = [], ?array $transformers = null): string
@@ -178,7 +182,48 @@ class GetValue
     }
 
     /**
-     * @param array<RuleContract>        $rules
+     * @template TEnum of BackedEnum
+     * @param class-string<TEnum> $enum
+     * @param array<RuleContract>             $rules
+     * @param array<TransformerContract>|null $transformers
+     * @return TEnum|null
+     */
+    public function getEnum(string $key, string $enum, array $rules = [], ?array $transformers = null): ?UnitEnum
+    {
+        $value = $this->getString(key: $key, rules: $rules + [new EnumRule($enum)], transformers: $transformers);
+
+        if ($value === null) {
+            return null;
+        }
+
+        //At this moment I've not found a way to detect int/string enum
+        try {
+            return $enum::from($value);
+        } catch (TypeError) {
+            return $enum::from((int) $value);
+        }
+    }
+
+    /**
+     * @template TEnum of BackedEnum
+     * @param class-string<TEnum> $enum
+     * @param array<RuleContract>             $rules
+     * @param array<TransformerContract>|null $transformers
+     * @return TEnum
+     */
+    public function getRequiredEnum(string $key, string $enum, array $rules = [], ?array $transformers = null): UnitEnum
+    {
+        $value = $this->getEnum(key: $key, enum: $enum, rules: $rules, transformers: $transformers);
+
+        if ($value instanceof BackedEnum === false) {
+            throw  $this->exceptionBuilder->missingValue($key);
+        }
+
+        return $value;
+    }
+
+    /**
+     * @param array<RuleContract>             $rules
      * @param array<TransformerContract>|null $transformers
      *
      * @return DateTime|DateTimeImmutable|null
@@ -200,7 +245,7 @@ class GetValue
     }
 
     /**
-     * @param array<RuleContract>        $rules
+     * @param array<RuleContract>             $rules
      * @param array<TransformerContract>|null $transformers
      *
      * @return DateTime|DateTimeImmutable

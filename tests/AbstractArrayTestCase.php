@@ -7,6 +7,8 @@ namespace Wrkflow\GetValueTests;
 use PHPUnit\Framework\TestCase;
 use Wrkflow\GetValue\DataHolders\ArrayData;
 use Wrkflow\GetValue\GetValue;
+use Wrkflow\GetValueTests\Enums\EnumInt;
+use Wrkflow\GetValueTests\Enums\EnumString;
 
 abstract class AbstractArrayTestCase extends TestCase
 {
@@ -46,6 +48,10 @@ abstract class AbstractArrayTestCase extends TestCase
 
     final protected const KeyIsActiveInFalse = 'is_active_false';
 
+    final protected const KeyEnum = 'enum';
+
+    final protected const KeyEnumInt = 'enum_int';
+
     protected GetValue $data;
 
     protected ArrayData $arrayData;
@@ -79,6 +85,8 @@ abstract class AbstractArrayTestCase extends TestCase
                 self::KeyIsActiveInFalse => null,
                 self::KeyAmount => null,
                 self::KeyUpdatedAt => null,
+                self::KeyEnum => null,
+                self::KeyEnumInt => null,
             ],
             self::KeyEmpty => [
                 self::KeyTags => [],
@@ -88,6 +96,8 @@ abstract class AbstractArrayTestCase extends TestCase
                 self::KeyIsActiveInFalse => '',
                 self::KeyAmount => '',
                 self::KeyUpdatedAt => '',
+                self::KeyEnum => '',
+                self::KeyEnumInt => '',
             ],
             self::KeyValid => [
                 self::KeyTags => ['test'],
@@ -97,6 +107,8 @@ abstract class AbstractArrayTestCase extends TestCase
                 self::KeyIsActiveInFalse => false,
                 self::KeyAmount => 10.2,
                 self::KeyUpdatedAt => '2022-02-02 23:22:21',
+                self::KeyEnum => EnumString::Test->value,
+                self::KeyEnumInt => EnumInt::Test->value,
             ],
             self::KeyInvalid => [
                 self::KeyTags => 'test',
@@ -106,6 +118,8 @@ abstract class AbstractArrayTestCase extends TestCase
                 self::KeyIsActiveInFalse => 'not_bool',
                 self::KeyAmount => 'not_float',
                 self::KeyUpdatedAt => 'not_date_time',
+                self::KeyEnum => 0,
+                self::KeyEnumInt => 's',
             ],
             self::KeyMissingValue => ['force-non-empty'],
         ]);

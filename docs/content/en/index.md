@@ -12,7 +12,8 @@ position: 1
 
 - 🚀 Retrieve values from Array (JSON) / XML with correct return type
 - 🏆 Makes PHPStan / IDE happy due the return types
-- 🤹‍ Validation: Ensures that desired value is in correct type (without additional loop validation. Validation is always on
+- 🤹‍ Validation: Ensures that desired value is in correct type (without additional loop validation. Validation is always
+  on
   while calling get* method).
 - 🛠 Transformers: Ensures that values are in expected type (ensures that string is trimmed and empty string converted to
   null, accepts bool as string, can be changed.)
@@ -115,7 +116,8 @@ $value = $data->getRequiredBool('key');
 
 ### String
 
-> Throws `ValidationFailedException` if value is not string (only on non-null values).
+> Throws `ValidationFailedException` if value is not string (only on non-null values). In default strategy empty string
+> is treated as null.
 
 Get nullable string value.
 
@@ -127,6 +129,23 @@ Get required string value. Throws `MissingValueForKeyException` exception if mis
 
 ```php
 $value = $data->getRequiredString('key');
+```
+
+### Enum
+
+> Throws `ValidationFailedException` if value is not in the enum. In default strategy empty string
+> is treated as null. Works only on string/int enums.
+
+Get nullable enum value from a string/int.
+
+```php
+$value = $data->getEnum('key', MyEnum::class);
+```
+
+Get required enum value. Throws `MissingValueForKeyException` exception if missing.
+
+```php
+$value = $data->getRequiredEnum('key', MyEnum::class);
 ```
 
 ### Date time
