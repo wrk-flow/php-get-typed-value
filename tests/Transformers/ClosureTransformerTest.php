@@ -5,74 +5,46 @@ declare(strict_types=1);
 namespace Wrkflow\GetValueTests\Transformers;
 
 use Closure;
+use Wrkflow\GetValue\Contracts\TransformerContract;
 use Wrkflow\GetValue\Transformers\ClosureTransformer;
 
 class ClosureTransformerTest extends AbstractTransformerTestCase
 {
     public function dataToTest(): array
     {
-        $transformer = new ClosureTransformer($this->getClosure());
-
-        return $this->dataAfterValidationForTransformer($transformer);
+        return $this->dataAfterValidationForTransformer();
     }
 
     public function dataToBeforeValidationForce(): array
     {
-        $transformer = new ClosureTransformer(closure: $this->getClosure(), beforeValidation: true);
-
         return [
-            [
-                new TransformerExpectationEntity(
-                    value: '',
-                    transformer: $transformer,
-                    expectedValue: 'd41d8cd98f00b204e9800998ecf8427e'
-                ),
-            ],
-            [
-                new TransformerExpectationEntity(
-                    value: ' ',
-                    transformer: $transformer,
-                    expectedValue: '7215ee9c7d9dc229d2921a40e899ec5f'
-                ),
-            ],
-            [
-                new TransformerExpectationEntity(
-                    value: ' asd ',
-                    transformer: $transformer,
-                    expectedValue: '81c24eeebdef51c832407fa3e4509ab8'
-                ),
-            ],
-            [
-                new TransformerExpectationEntity(
-                    value: 'asd ',
-                    transformer: $transformer,
-                    expectedValue: '4fe2077508f28d88bfa1473149415224'
-                ),
-            ],
+            [new TransformerExpectationEntity(value: '', expectedValue: 'd41d8cd98f00b204e9800998ecf8427e')],
+            [new TransformerExpectationEntity(value: ' ', expectedValue: '7215ee9c7d9dc229d2921a40e899ec5f')],
+            [new TransformerExpectationEntity(value: ' asd ', expectedValue: '81c24eeebdef51c832407fa3e4509ab8')],
+            [new TransformerExpectationEntity(value: 'asd ', expectedValue: '4fe2077508f28d88bfa1473149415224')],
             [
                 new TransformerExpectationEntity(
                     value: 'asd mix',
-                    transformer: $transformer,
                     expectedValue: 'bf40744fb5eeca1029aed8d8c5d30f82'
                 ),
             ],
-            [new TransformerExpectationEntity(value: null, transformer: $transformer, expectedValue: null)],
+            [new TransformerExpectationEntity(value: null, expectedValue: null)],
         ];
     }
 
     /**
      * @dataProvider dataToBeforeValidationForce
      */
-    public function testAfterValidation(TransformerExpectationEntity $entity): void
+    public function testBeforeValidation(TransformerExpectationEntity $entity): void
     {
-        $this->assertValue($entity);
+        $transformer = new ClosureTransformer(closure: $this->getClosure(), beforeValidation: true);
+
+        $this->assertValue($transformer, $entity);
     }
 
     public function dataToTestAfterValidationForce(): array
     {
-        $transformer = new ClosureTransformer(closure: $this->getClosure(), beforeValidation: false);
-
-        return $this->dataAfterValidationForTransformer($transformer);
+        return $this->dataAfterValidationForTransformer();
     }
 
     /**
@@ -80,16 +52,22 @@ class ClosureTransformerTest extends AbstractTransformerTestCase
      */
     public function testAfterValidationForce(TransformerExpectationEntity $entity): void
     {
-        $this->assertValue($entity);
+        $transformer = new ClosureTransformer(closure: $this->getClosure(), beforeValidation: false);
+
+        $this->assertValue($transformer, $entity);
     }
 
-    protected function dataAfterValidationForTransformer(ClosureTransformer $transformer): array
+    protected function getTransformer(): TransformerContract
+    {
+        return new ClosureTransformer(closure: $this->getClosure());
+    }
+
+    protected function dataAfterValidationForTransformer(): array
     {
         return [
             [
                 new TransformerExpectationEntity(
                     value: '',
-                    transformer: $transformer,
                     expectedValue: 'd41d8cd98f00b204e9800998ecf8427e',
                     expectedValueBeforeValidation: ''
                 ),
@@ -97,7 +75,6 @@ class ClosureTransformerTest extends AbstractTransformerTestCase
             [
                 new TransformerExpectationEntity(
                     value: ' ',
-                    transformer: $transformer,
                     expectedValue: '7215ee9c7d9dc229d2921a40e899ec5f',
                     expectedValueBeforeValidation: ' '
                 ),
@@ -105,7 +82,6 @@ class ClosureTransformerTest extends AbstractTransformerTestCase
             [
                 new TransformerExpectationEntity(
                     value: ' asd ',
-                    transformer: $transformer,
                     expectedValue: '81c24eeebdef51c832407fa3e4509ab8',
                     expectedValueBeforeValidation: ' asd '
                 ),
@@ -113,7 +89,6 @@ class ClosureTransformerTest extends AbstractTransformerTestCase
             [
                 new TransformerExpectationEntity(
                     value: 'asd ',
-                    transformer: $transformer,
                     expectedValue: '4fe2077508f28d88bfa1473149415224',
                     expectedValueBeforeValidation: 'asd '
                 ),
@@ -121,12 +96,11 @@ class ClosureTransformerTest extends AbstractTransformerTestCase
             [
                 new TransformerExpectationEntity(
                     value: 'asd mix',
-                    transformer: $transformer,
                     expectedValue: 'bf40744fb5eeca1029aed8d8c5d30f82',
                     expectedValueBeforeValidation: 'asd mix'
                 ),
             ],
-            [new TransformerExpectationEntity(value: null, transformer: $transformer, expectedValue: null)],
+            [new TransformerExpectationEntity(value: null, expectedValue: null)],
         ];
     }
 

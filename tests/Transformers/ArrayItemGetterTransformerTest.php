@@ -16,16 +16,12 @@ class ArrayItemGetterTransformerTest extends AbstractTransformerTestCase
 
     public function dataToTest(): array
     {
-        $transformer = $this->getDefaultTransformer();
-
-        return $this->dataAfterValidationForTransformer($transformer);
+        return $this->dataAfterValidationForTransformer();
     }
 
     public function dataToTestBeforeValidation(): array
     {
-        $transformer = $this->getBeforeValidationTransformer();
-
-        return $this->createData($transformer, false);
+        return $this->createData(false);
     }
 
     /**
@@ -33,14 +29,12 @@ class ArrayItemGetterTransformerTest extends AbstractTransformerTestCase
      */
     public function testBeforeValidation(TransformerExpectationEntity $entity): void
     {
-        $this->assertValue($entity);
+        $this->assertValue($this->getBeforeValidationTransformer(), $entity);
     }
 
     public function dataToAfterValidationForce(): array
     {
-        $transformer = $this->getForceAfterValidation();
-
-        return $this->dataAfterValidationForTransformer($transformer);
+        return $this->dataAfterValidationForTransformer();
     }
 
     /**
@@ -48,7 +42,7 @@ class ArrayItemGetterTransformerTest extends AbstractTransformerTestCase
      */
     public function testAfterValidationForce(TransformerExpectationEntity $entity): void
     {
-        $this->assertValue($entity);
+        $this->assertValue($this->getForceAfterValidation(), $entity);
     }
 
     public function testSupportsEmptyArray(): void
@@ -65,9 +59,8 @@ class ArrayItemGetterTransformerTest extends AbstractTransformerTestCase
             'test' => 'value',
         ];
         $value = [[], $testValue];
-        $this->assertValue(new TransformerExpectationEntity(
+        $this->assertValue($transformer, new TransformerExpectationEntity(
             value: $value,
-            transformer: $transformer,
             expectedValue: [[
                 'original' => [],
             ], [
@@ -77,9 +70,9 @@ class ArrayItemGetterTransformerTest extends AbstractTransformerTestCase
         ));
     }
 
-    protected function dataAfterValidationForTransformer(TransformerArrayContract $transformer): array
+    protected function dataAfterValidationForTransformer(): array
     {
-        return $this->createData($transformer, true);
+        return $this->createData(true);
     }
 
     protected function getClosure(): Closure
@@ -94,7 +87,7 @@ class ArrayItemGetterTransformerTest extends AbstractTransformerTestCase
         };
     }
 
-    protected function getDefaultTransformer(): TransformerArrayContract
+    protected function getTransformer(): TransformerArrayContract
     {
         return new ArrayItemGetterTransformer(onItem: $this->getClosure());
     }
@@ -109,7 +102,7 @@ class ArrayItemGetterTransformerTest extends AbstractTransformerTestCase
         return new ArrayItemGetterTransformer(onItem: $this->getClosure(), beforeValidation: false);
     }
 
-    protected function createData(TransformerArrayContract $transformer, bool $beforeValueIsSameAsValue): array
+    protected function createData(bool $beforeValueIsSameAsValue): array
     {
         return [
             [
@@ -117,7 +110,6 @@ class ArrayItemGetterTransformerTest extends AbstractTransformerTestCase
                     value: [[
                         self::KeyValue => '',
                     ]],
-                    transformer: $transformer,
                     expectedValue: [[
                         self::KeyValue => 'd41d8cd98f00b204e9800998ecf8427e',
                     ]],
@@ -131,7 +123,6 @@ class ArrayItemGetterTransformerTest extends AbstractTransformerTestCase
                     value: [[
                         self::KeyValue => ' ',
                     ]],
-                    transformer: $transformer,
                     expectedValue: [[
                         self::KeyValue => '7215ee9c7d9dc229d2921a40e899ec5f',
                     ]],
@@ -145,7 +136,6 @@ class ArrayItemGetterTransformerTest extends AbstractTransformerTestCase
                     value: [[
                         self::KeyValue => ' asd ',
                     ]],
-                    transformer: $transformer,
                     expectedValue: [[
                         self::KeyValue => '81c24eeebdef51c832407fa3e4509ab8',
                     ]],
@@ -159,7 +149,6 @@ class ArrayItemGetterTransformerTest extends AbstractTransformerTestCase
                     value: [[
                         self::KeyValue => 'asd ',
                     ]],
-                    transformer: $transformer,
                     expectedValue: [[
                         self::KeyValue => '4fe2077508f28d88bfa1473149415224',
                     ]],
@@ -173,7 +162,6 @@ class ArrayItemGetterTransformerTest extends AbstractTransformerTestCase
                     value: [[
                         self::KeyValue => 'asd mix',
                     ]],
-                    transformer: $transformer,
                     expectedValue: [[
                         self::KeyValue => 'bf40744fb5eeca1029aed8d8c5d30f82',
                     ]],
@@ -182,11 +170,11 @@ class ArrayItemGetterTransformerTest extends AbstractTransformerTestCase
                     ]] : null
                 ),
             ],
-            [new TransformerExpectationEntity(value: null, transformer: $transformer, expectedValue: null)],
+            [new TransformerExpectationEntity(value: null, expectedValue: null)],
             [
                 new TransformerExpectationEntity(value: [
                     'test',
-                ], transformer: $transformer, expectedValue: null, expectException: NotAnArrayException::class),
+                ], expectedValue: null, expectException: NotAnArrayException::class),
             ],
         ];
     }

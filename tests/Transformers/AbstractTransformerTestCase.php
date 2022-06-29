@@ -8,6 +8,7 @@ use PHPUnit\Framework\TestCase;
 use Wrkflow\GetValue\Actions\GetValidatedValueAction;
 use Wrkflow\GetValue\Actions\ValidateAction;
 use Wrkflow\GetValue\Builders\ExceptionBuilder;
+use Wrkflow\GetValue\Contracts\TransformerContract;
 use Wrkflow\GetValue\DataHolders\ArrayData;
 use Wrkflow\GetValue\GetValue;
 
@@ -54,16 +55,16 @@ abstract class AbstractTransformerTestCase extends TestCase
      */
     public function testTransform(TransformerExpectationEntity $entity): void
     {
-        $this->assertValue($entity);
+        $this->assertValue($this->getTransformer(), $entity);
     }
 
-    public function assertValue(TransformerExpectationEntity $entity): void
+    public function assertValue(TransformerContract $transformer, TransformerExpectationEntity $entity): void
     {
         $data = new GetValue(new ArrayData([
             'test' => $entity->value,
         ]));
 
-        $transforms = [$entity->transformer];
+        $transforms = [$transformer];
 
         if ($entity->expectException !== null) {
             $this->expectException($entity->expectException);
@@ -96,4 +97,6 @@ abstract class AbstractTransformerTestCase extends TestCase
             );
         }
     }
+
+    abstract protected function getTransformer(): TransformerContract;
 }

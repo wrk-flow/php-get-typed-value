@@ -24,7 +24,7 @@ class ArrayItemTransformerTest extends ArrayTransformerTest
         };
     }
 
-    protected function getDefaultTransformer(): TransformerArrayContract
+    protected function getTransformer(): TransformerArrayContract
     {
         return new ArrayItemTransformer(onItem: $this->getClosure());
     }

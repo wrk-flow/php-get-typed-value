@@ -4,20 +4,24 @@ declare(strict_types=1);
 
 namespace Wrkflow\GetValueTests\Transformers;
 
+use Wrkflow\GetValue\Contracts\TransformerContract;
 use Wrkflow\GetValue\Transformers\TrimAndEmptyStringToNull;
 
 class TrimAndEmptyStringToNullTest extends AbstractTransformerTestCase
 {
     public function dataToTest(): array
     {
-        $transformer = new TrimAndEmptyStringToNull();
-
         return [
-            [new TransformerExpectationEntity(value: '', transformer: $transformer, expectedValue: null)],
-            [new TransformerExpectationEntity(value: ' ', transformer: $transformer, expectedValue: null)],
-            [new TransformerExpectationEntity(value: ' asd ', transformer: $transformer, expectedValue: 'asd')],
-            [new TransformerExpectationEntity(value: 'asd ', transformer: $transformer, expectedValue: 'asd')],
-            [new TransformerExpectationEntity(value: 'asd mix', transformer: $transformer, expectedValue: 'asd mix')],
+            [new TransformerExpectationEntity(value: '', expectedValue: null)],
+            [new TransformerExpectationEntity(value: ' ', expectedValue: null)],
+            [new TransformerExpectationEntity(value: ' asd ', expectedValue: 'asd')],
+            [new TransformerExpectationEntity(value: 'asd ', expectedValue: 'asd')],
+            [new TransformerExpectationEntity(value: 'asd mix', expectedValue: 'asd mix')],
         ];
+    }
+
+    protected function getTransformer(): TransformerContract
+    {
+        return new TrimAndEmptyStringToNull();
     }
 }
