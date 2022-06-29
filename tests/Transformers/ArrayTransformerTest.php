@@ -17,29 +17,7 @@ class ArrayTransformerTest extends AbstractTransformerTestCase
 
     public function dataToTestBeforeValidation(): array
     {
-        return [
-            [new TransformerExpectationEntity(value: [''], expectedValue: ['d41d8cd98f00b204e9800998ecf8427e'])],
-            [new TransformerExpectationEntity(value: [' '], expectedValue: ['7215ee9c7d9dc229d2921a40e899ec5f'])],
-            [
-                new TransformerExpectationEntity(
-                    value: [' asd '],
-                    expectedValue: ['81c24eeebdef51c832407fa3e4509ab8']
-                ),
-            ],
-            [
-                new TransformerExpectationEntity(
-                    value: ['asd '],
-                    expectedValue: ['4fe2077508f28d88bfa1473149415224']
-                ),
-            ],
-            [
-                new TransformerExpectationEntity(
-                    value: ['asd mix'],
-                    expectedValue: ['bf40744fb5eeca1029aed8d8c5d30f82']
-                ),
-            ],
-            [new TransformerExpectationEntity(value: null, expectedValue: null)],
-        ];
+        return $this->createData(false);
     }
 
     /**
@@ -65,45 +43,7 @@ class ArrayTransformerTest extends AbstractTransformerTestCase
 
     protected function dataAfterValidationForTransformer(): array
     {
-        return [
-            [
-                new TransformerExpectationEntity(
-                    value: [''],
-                    expectedValue: ['d41d8cd98f00b204e9800998ecf8427e'],
-                    expectedValueBeforeValidation: ['']
-                ),
-            ],
-            [
-                new TransformerExpectationEntity(
-                    value: [' '],
-                    expectedValue: ['7215ee9c7d9dc229d2921a40e899ec5f'],
-                    expectedValueBeforeValidation: [' ']
-                ),
-            ],
-            [
-                new TransformerExpectationEntity(
-                    value: [' asd '],
-                    expectedValue: ['81c24eeebdef51c832407fa3e4509ab8'],
-                    expectedValueBeforeValidation: [' asd ']
-                ),
-            ],
-            [
-                new TransformerExpectationEntity(
-                    value: ['asd '],
-                    expectedValue: ['4fe2077508f28d88bfa1473149415224'],
-                    expectedValueBeforeValidation: ['asd ']
-                ),
-            ],
-            [
-                new TransformerExpectationEntity(
-                    value: ['asd mix'],
-                    expectedValue: ['bf40744fb5eeca1029aed8d8c5d30f82'],
-                    expectedValueBeforeValidation: ['asd mix']
-                ),
-            ],
-            // Closure not called
-            [new TransformerExpectationEntity(value: null, expectedValue: null)],
-        ];
+        return $this->createData(true);
     }
 
     protected function getClosure(): Closure
@@ -128,5 +68,48 @@ class ArrayTransformerTest extends AbstractTransformerTestCase
     protected function getForceAfterValidation(): TransformerArrayContract
     {
         return new ArrayTransformer(closure: $this->getClosure(), beforeValidation: false);
+    }
+
+    protected function createData(bool $beforeValueIsSameAsValue): array
+    {
+        return [
+            [
+                new TransformerExpectationEntity(
+                    value: [''],
+                    expectedValue: ['d41d8cd98f00b204e9800998ecf8427e'],
+                    expectedValueBeforeValidation: $beforeValueIsSameAsValue ? [''] : null
+                ),
+            ],
+            [
+                new TransformerExpectationEntity(
+                    value: [' '],
+                    expectedValue: ['7215ee9c7d9dc229d2921a40e899ec5f'],
+                    expectedValueBeforeValidation: $beforeValueIsSameAsValue ? [' '] : null
+                ),
+            ],
+            [
+                new TransformerExpectationEntity(
+                    value: [' asd '],
+                    expectedValue: ['81c24eeebdef51c832407fa3e4509ab8'],
+                    expectedValueBeforeValidation: $beforeValueIsSameAsValue ? [' asd '] : null
+                ),
+            ],
+            [
+                new TransformerExpectationEntity(
+                    value: ['asd '],
+                    expectedValue: ['4fe2077508f28d88bfa1473149415224'],
+                    expectedValueBeforeValidation: $beforeValueIsSameAsValue ? ['asd '] : null
+                ),
+            ],
+            [
+                new TransformerExpectationEntity(
+                    value: ['asd mix'],
+                    expectedValue: ['bf40744fb5eeca1029aed8d8c5d30f82'],
+                    expectedValueBeforeValidation: $beforeValueIsSameAsValue ? ['asd mix'] : null
+                ),
+            ],
+            // Closure not called
+            [new TransformerExpectationEntity(value: null, expectedValue: null)],
+        ];
     }
 }
