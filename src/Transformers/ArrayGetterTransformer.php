@@ -15,7 +15,7 @@ use Wrkflow\GetValue\GetValue;
 class ArrayGetterTransformer implements TransformerArrayContract
 {
     /**
-     * @param Closure(array,string):array $closure
+     * @param Closure(GetValue,string):array $closure
      * @param bool    $beforeValidation
      */
     public function __construct(
