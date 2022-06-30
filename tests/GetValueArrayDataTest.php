@@ -99,6 +99,20 @@ class GetValueArrayDataTest extends AbstractArrayTestCase
         $this->assertNull($this->data->getNullableArrayGetter(self::KeyItemsEmpty));
     }
 
+    public function testDotNotation(): void
+    {
+        $path = [self::KeyItems, '1', self::KeyTags];
+        $this->assertEquals(['test'], $this->data->getRequiredArrayGetter($path)->data->get());
+        $this->assertEquals(['test'], $this->data->getRequiredArrayGetter(implode('.', $path))->data->get());
+    }
+
+    public function testDotNotationNotAnArrayWithinParent(): void
+    {
+        $path = [self::KeyItems, '1', self::KeyPage];
+        $this->expectExceptionMessage('Given value is not array for key <items.1.page>');
+        $this->data->getRequiredArrayGetter($path);
+    }
+
     protected function assertItem(
         GetValue $item,
         string $expectedName,

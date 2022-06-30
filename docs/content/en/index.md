@@ -10,13 +10,10 @@ position: 1
 
 ## Main features
 
-- 🚀 Retrieve values from Array (JSON) / XML with correct return type
-- 🏆 Makes PHPStan / IDE happy due the return types
-- 🤹‍ Validation: Ensures that desired value is in correct type (without additional loop validation. Validation is always
-  on
-  while calling get* method).
-- 🛠 Transformers: Ensures that values are in expected type (ensures that string is trimmed and empty string converted to
-  null, accepts bool as string, can be changed.)
+- 🚀 Retrieve values from Array (JSON) / XML with correct return type with **safe dot notation** support.
+- 🏆 **Makes PHPStan / IDE** happy due the type strict return types.
+- 🤹‍ **Validation:** Ensures that desired value is in correct type (without additional loop validation).
+- 🛠 **Transformers:** Ensures that values are in expected type
 
 ## Installation
 
@@ -54,6 +51,42 @@ $simpleXMLElement = new SimpleXMLElement('<root><title>test</title><test attribu
 $data = new \Wrkflow\GetValue\GetValue(new \Wrkflow\GetValue\DataHolders\XMLData($simpleXMLElement));
 ```
 
+## Dot notation
+
+Dot notation is implemented in safe manner (may differ from Laravel and other implementations when edge cases occurs).
+
+String that is separated by '.' will always be converted to path of exact path keys. If you '.' in your array key / XML
+node name
+then you need to use array as a key. Examples below:
+
+```php
+$getValue = new \Wrkflow\GetValue\GetValue(new \Wrkflow\GetValue\DataHolders\ArrayData([
+    'get.key' => 'test',
+    'get' => [
+        'key' => 'child'
+    ],
+    'co.uk' => 'domain',
+]));
+$getValue->getString('get.key') // Returns: child
+$getValue->getString('co.uk') // Returns: null
+$getValue->getString(['get.key']) // Returns: test
+$getValue->getString(['co.uk']) // Returns: domain
+```
+
+This implementation ensures.
+
+You can instead of dot notation use array path:
+
+```php
+$getValue = new \Wrkflow\GetValue\GetValue(new \Wrkflow\GetValue\DataHolders\ArrayData([
+    'get' => [
+        'key' => 'child'
+    ],
+]));
+$getValue->getString(['get', 'key']) // Returns: test
+$getValue->getString(['get', 'no_value']) // Returns: null
+```
+
 ## Values
 
 > All values are validated within its type definition (int will be checked by IntegerRule, string by StringRule, etc).
@@ -73,7 +106,7 @@ Check [Validation documentation](/validation) for more.
 Get nullable int.
 
 ```php
-$value = $data->getInt('key', rules: [new \Wrkflow\GetValue\Rules\MinRule(0)]);
+$value = $data->getInt('key');
 ```
 
 Get required int value. Throws `MissingValueForKeyException` exception if missing.
@@ -100,7 +133,8 @@ $value = $data->getRequiredFloat('key');
 
 ### Bool
 
-> Throws `ValidationFailedException` if value is not bool (only on non-null values).
+> **In default strategy string [bool variants](https://php-get-typed-value.wrk-flow.com/transformers/#transformtobool)
+are converted to bool**. Throws `ValidationFailedException` if value is not bool (only on non-null values).
 
 Get nullable bool value.
 
@@ -116,8 +150,8 @@ $value = $data->getRequiredBool('key');
 
 ### String
 
-> Throws `ValidationFailedException` if value is not string (only on non-null values). In default strategy empty string
-> is treated as null.
+> **In default strategy string is trimmed and empty string is transformed to null**. Throws `ValidationFailedException`
+> if value is not string (only on non-null values).
 
 Get nullable string value.
 
@@ -209,3 +243,20 @@ missing.
 ```php
 $value = $data->getRequiredArrayGetter('key');
 ```
+
+## Exceptions
+
+> All exceptions receive full key that was used for getting data. You can receive it by using `$exception->getKey()`
+
+- ArrayIsEmptyException
+- MissingValueForKeyException
+- NotAnArrayException
+- ValidationFailedException
+
+## Notes
+
+- **Full key format**:
+    - Parent full key is prepended to the key with '.' separator (if the GetValue instance was constructed from parent
+      data).
+    - Array notation is converted to dot notation string.
+  

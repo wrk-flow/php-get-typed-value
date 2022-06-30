@@ -100,6 +100,20 @@ class GetValueArrayDataWithBoolTest extends AbstractArrayTestsTestCase
         $this->assertTrue($result);
     }
 
+    public function testDotNotation(): void
+    {
+        $path = [self::KeyItems, '0', self::KeyIsActive];
+        $this->assertEquals(true, $this->data->getBool($path));
+        $this->assertEquals(true, $this->data->getBool(implode('.', $path)));
+    }
+
+    public function testDotNotationNotAnArray(): void
+    {
+        $path = [self::KeyItems, '0'];
+        $this->expectExceptionMessage('Validation failed for <items.0> key. Reason: BooleanRule failed');
+        $this->data->getRequiredBool($path);
+    }
+
     protected function getRequiredValue(GetValue $data, array $rules): mixed
     {
         return $data->getRequiredBool(self::KeyIsActive, $rules);

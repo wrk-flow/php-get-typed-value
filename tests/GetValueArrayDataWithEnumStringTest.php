@@ -89,6 +89,20 @@ class GetValueArrayDataWithEnumStringTest extends AbstractArrayTestsTestCase
         $this->assertNull($result);
     }
 
+    public function testDotNotation(): void
+    {
+        $path = [self::KeyItems, '0', self::KeyEnum];
+        $this->assertEquals(EnumString::Test, $this->data->getEnum($path, EnumString::class));
+        $this->assertEquals(EnumString::Test, $this->data->getEnum(implode('.', $path), EnumString::class));
+    }
+
+    public function testDotNotationNotAnArray(): void
+    {
+        $path = [self::KeyItems, '0'];
+        $this->expectExceptionMessage('Validation failed for <items.0> key. Reason: StringRule failed');
+        $this->data->getEnum($path, EnumString::class);
+    }
+
     protected function getRequiredValue(GetValue $data, array $rules): mixed
     {
         return $data->getRequiredEnum(self::KeyEnum, enum: EnumString::class, rules: $rules);

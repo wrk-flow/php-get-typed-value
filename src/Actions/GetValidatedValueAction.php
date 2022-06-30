@@ -19,15 +19,16 @@ class GetValidatedValueAction
      * @param array<RuleContract>        $rules
      * @param array<TransformerContract> $transforms
      */
-    public function execute(GetValue $getValue, string $key, array $rules, array $transforms): mixed
+    public function execute(GetValue $getValue, string|array $key, array $rules, array $transforms): mixed
     {
         $value = $getValue->data->getValue($key);
+        $fullKey = $getValue->data->getKey($key);
 
         $afterValidationTransforms = [];
 
         foreach ($transforms as $transform) {
-            if ($rules === [] || $transform->beforeValidation(value: $value, key: $key)) {
-                $value = $transform->transform(value: $value, key: $key, getValue: $getValue);
+            if ($rules === [] || $transform->beforeValidation(value: $value, key: $fullKey)) {
+                $value = $transform->transform(value: $value, key: $fullKey, getValue: $getValue);
             } else {
                 $afterValidationTransforms[] = $transform;
             }
@@ -42,10 +43,10 @@ class GetValidatedValueAction
             return null;
         }
 
-        $this->validateAction->execute(rules: $rules, value: $value, key: $key);
+        $this->validateAction->execute(rules: $rules, value: $value, key: $fullKey);
 
         foreach ($afterValidationTransforms as $transform) {
-            $value = $transform->transform(value: $value, key: $key, getValue: $getValue);
+            $value = $transform->transform(value: $value, key: $fullKey, getValue: $getValue);
         }
 
         return $value;

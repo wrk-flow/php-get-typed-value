@@ -53,8 +53,11 @@ class GetValueArrayDataWithArrayTest extends AbstractArrayTestsTestCase
      * @dataProvider nullableArrayData
      * @param class-string<AbstractGetValueException>|null $expectedException
      */
-    public function testNullableArray(string $key, mixed $expectedValue = null, ?string $expectedException = null): void
-    {
+    public function testNullableArray(
+        string|array $key,
+        mixed $expectedValue = null,
+        ?string $expectedException = null
+    ): void {
         $data = $this->getBaseData($expectedException, $key);
 
         $value = $data->getNullableArray(self::KeyTags);
@@ -62,6 +65,20 @@ class GetValueArrayDataWithArrayTest extends AbstractArrayTestsTestCase
         if ($expectedException === null) {
             $this->assertEquals($expectedValue, $value);
         }
+    }
+
+    public function testDotNotation(): void
+    {
+        $path = [self::KeyItems, '1', self::KeyTags];
+        $this->assertEquals(['test'], $this->data->getArray($path));
+        $this->assertEquals(['test'], $this->data->getArray(implode('.', $path)));
+    }
+
+    public function testDotNotationNotAnArray(): void
+    {
+        $path = [self::KeyPageString];
+        $this->expectExceptionMessage('Given value is not array for key <page_string>');
+        $this->data->getArray($path);
     }
 
     protected function getRequiredValue(GetValue $data, array $rules): mixed

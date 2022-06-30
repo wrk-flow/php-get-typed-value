@@ -45,7 +45,7 @@ class GetValue
      * @param array<RuleContract>        $rules
      * @param array<TransformerContract> $transformers
      */
-    public function getInt(string $key, array $rules = [], ?array $transformers = null): ?int
+    public function getInt(string|array $key, array $rules = [], ?array $transformers = null): ?int
     {
         $value = $this->getValidatedValue(
             key: $key,
@@ -65,12 +65,12 @@ class GetValue
      * @param array<RuleContract>        $rules
      * @param array<TransformerContract> $transformers
      */
-    public function getRequiredInt(string $key, array $rules = [], ?array $transformers = null): int
+    public function getRequiredInt(string|array $key, array $rules = [], ?array $transformers = null): int
     {
         $value = $this->getInt(key: $key, rules: $rules, transformers: $transformers);
 
         if ($value === null) {
-            throw $this->exceptionBuilder->missingValue($key);
+            throw $this->exceptionBuilder->missingValue($this->data->getKey($key));
         }
 
         return $value;
@@ -80,7 +80,7 @@ class GetValue
      * @param array<RuleContract>        $rules
      * @param array<TransformerContract> $transformers
      */
-    public function getFloat(string $key, array $rules = [], ?array $transformers = null): ?float
+    public function getFloat(string|array $key, array $rules = [], ?array $transformers = null): ?float
     {
         $value = $this->getValidatedValue(
             key: $key,
@@ -100,12 +100,12 @@ class GetValue
      * @param array<RuleContract>        $rules
      * @param array<TransformerContract> $transformers
      */
-    public function getRequiredFloat(string $key, array $rules = [], ?array $transformers = null): float
+    public function getRequiredFloat(string|array $key, array $rules = [], ?array $transformers = null): float
     {
         $value = $this->getFloat(key: $key, rules: $rules, transformers: $transformers);
 
         if ($value === null) {
-            throw $this->exceptionBuilder->missingValue($key);
+            throw $this->exceptionBuilder->missingValue($this->data->getKey($key));
         }
 
         return $value;
@@ -115,7 +115,7 @@ class GetValue
      * @param array<RuleContract>        $rules
      * @param array<TransformerContract> $transformers
      */
-    public function getBool(string $key, array $rules = [], ?array $transformers = null): ?bool
+    public function getBool(string|array $key, array $rules = [], ?array $transformers = null): ?bool
     {
         $value = $this->getValidatedValue(
             key: $key,
@@ -135,12 +135,12 @@ class GetValue
      * @param array<RuleContract>             $rules
      * @param array<TransformerContract>|null $transformers
      */
-    public function getRequiredBool(string $key, array $rules = [], ?array $transformers = null): bool
+    public function getRequiredBool(string|array $key, array $rules = [], ?array $transformers = null): bool
     {
         $value = $this->getBool(key: $key, rules: $rules, transformers: $transformers);
 
         if ($value === null) {
-            throw $this->exceptionBuilder->missingValue($key);
+            throw $this->exceptionBuilder->missingValue($this->data->getKey($key));
         }
 
         return $value;
@@ -150,7 +150,7 @@ class GetValue
      * @param array<RuleContract>             $rules
      * @param array<TransformerContract>|null $transformers
      */
-    public function getString(string $key, array $rules = [], ?array $transformers = null): ?string
+    public function getString(string|array $key, array $rules = [], ?array $transformers = null): ?string
     {
         $value = $this->getValidatedValue(
             key: $key,
@@ -170,12 +170,12 @@ class GetValue
      * @param array<RuleContract>             $rules
      * @param array<TransformerContract>|null $transformers
      */
-    public function getRequiredString(string $key, array $rules = [], ?array $transformers = null): string
+    public function getRequiredString(string|array $key, array $rules = [], ?array $transformers = null): string
     {
         $value = $this->getString(key: $key, rules: $rules, transformers: $transformers);
 
         if ($value === null) {
-            throw  $this->exceptionBuilder->missingValue($key);
+            throw  $this->exceptionBuilder->missingValue($this->data->getKey($key));
         }
 
         return $value;
@@ -188,7 +188,7 @@ class GetValue
      * @param array<TransformerContract>|null $transformers
      * @return TEnum|null
      */
-    public function getEnum(string $key, string $enum, array $rules = [], ?array $transformers = null): ?UnitEnum
+    public function getEnum(string|array $key, string $enum, array $rules = [], ?array $transformers = null): ?UnitEnum
     {
         $value = $this->getString(key: $key, rules: $rules + [new EnumRule($enum)], transformers: $transformers);
 
@@ -211,12 +211,16 @@ class GetValue
      * @param array<TransformerContract>|null $transformers
      * @return TEnum
      */
-    public function getRequiredEnum(string $key, string $enum, array $rules = [], ?array $transformers = null): UnitEnum
-    {
+    public function getRequiredEnum(
+        string|array $key,
+        string $enum,
+        array $rules = [],
+        ?array $transformers = null
+    ): UnitEnum {
         $value = $this->getEnum(key: $key, enum: $enum, rules: $rules, transformers: $transformers);
 
         if ($value instanceof BackedEnum === false) {
-            throw  $this->exceptionBuilder->missingValue($key);
+            throw  $this->exceptionBuilder->missingValue($this->data->getKey($key));
         }
 
         return $value;
@@ -228,7 +232,7 @@ class GetValue
      *
      * @return DateTime|DateTimeImmutable|null
      */
-    public function getDateTime(string $key, array $rules = [], ?array $transformers = null): ?DateTimeInterface
+    public function getDateTime(string|array $key, array $rules = [], ?array $transformers = null): ?DateTimeInterface
     {
         $value = $this->getValidatedValue(
             key: $key,
@@ -250,12 +254,15 @@ class GetValue
      *
      * @return DateTime|DateTimeImmutable
      */
-    public function getRequiredDateTime(string $key, array $rules = [], ?array $transformers = null): DateTimeInterface
-    {
+    public function getRequiredDateTime(
+        string|array $key,
+        array $rules = [],
+        ?array $transformers = null
+    ): DateTimeInterface {
         $value = $this->getDateTime(key: $key, rules: $rules, transformers: $transformers);
 
         if ($value instanceof DateTime === false) {
-            throw $this->exceptionBuilder->missingValue($key);
+            throw $this->exceptionBuilder->missingValue($this->data->getKey($key));
         }
 
         return $value;
@@ -266,7 +273,7 @@ class GetValue
      *
      * @param array<TransformerArrayContract>|null $transformers
      */
-    public function getArray(string $key, ?array $transformers = null): array
+    public function getArray(string|array $key, ?array $transformers = null): array
     {
         $value = $this->getValidatedValue(
             key: $key,
@@ -278,7 +285,7 @@ class GetValue
         }
 
         if (is_array($value) === false) {
-            throw $this->exceptionBuilder->notAnArray($key);
+            throw $this->exceptionBuilder->notAnArray($this->data->getKey($key));
         }
 
         return $value;
@@ -289,7 +296,7 @@ class GetValue
      *
      * @param array<TransformerArrayContract>|null $transformers
      */
-    public function getNullableArray(string $key, ?array $transformers = null): ?array
+    public function getNullableArray(string|array $key, ?array $transformers = null): ?array
     {
         $value = $this->getValidatedValue(
             key: $key,
@@ -301,7 +308,7 @@ class GetValue
         }
 
         if (is_array($value) === false) {
-            throw $this->exceptionBuilder->notAnArray($key);
+            throw $this->exceptionBuilder->notAnArray($this->data->getKey($key));
         }
 
         return $value;
@@ -314,12 +321,12 @@ class GetValue
      *
      * @phpstan-return non-empty-array
      */
-    public function getRequiredArray(string $key, ?array $transformers = null): array
+    public function getRequiredArray(string|array $key, ?array $transformers = null): array
     {
         $value = $this->getNullableArray(key: $key, transformers: $transformers);
 
         if ($value === [] || $value === null) {
-            throw $this->exceptionBuilder->arrayIsEmpty($key);
+            throw $this->exceptionBuilder->arrayIsEmpty($this->data->getKey($key));
         }
 
         return $value;
@@ -330,9 +337,9 @@ class GetValue
      *
      * @param array<TransformerArrayContract>|null $transformers
      */
-    public function getArrayGetter(string $key, ?array $transformers = null): self
+    public function getArrayGetter(string|array $key, ?array $transformers = null): self
     {
-        $data = new ArrayData($this->getArray($key, $transformers));
+        $data = new ArrayData($this->getArray($key, $transformers), $this->data->getKey($key));
 
         return $this->makeInstance($data);
     }
@@ -342,7 +349,7 @@ class GetValue
      *
      * @param array<TransformerArrayContract>|null $transformers
      */
-    public function getNullableArrayGetter(string $key, ?array $transformers = null): ?self
+    public function getNullableArrayGetter(string|array $key, ?array $transformers = null): ?self
     {
         $value = $this->getNullableArray(key: $key, transformers: $transformers);
 
@@ -350,7 +357,7 @@ class GetValue
             return null;
         }
 
-        return $this->makeInstance(new ArrayData($value));
+        return $this->makeInstance(new ArrayData($value, $this->data->getKey($key)));
     }
 
     /**
@@ -358,11 +365,11 @@ class GetValue
      *
      * @param array<TransformerArrayContract>|null $transformers
      */
-    public function getRequiredArrayGetter(string $key, ?array $transformers = null): self
+    public function getRequiredArrayGetter(string|array $key, ?array $transformers = null): self
     {
         $value = $this->getRequiredArray(key: $key, transformers: $transformers);
 
-        return $this->makeInstance(new ArrayData($value));
+        return $this->makeInstance(new ArrayData($value, $this->data->getKey($key)));
     }
 
     public function makeInstance(AbstractData $data): self
@@ -381,7 +388,7 @@ class GetValue
      * @param array<TransformerContract> $transformers
      */
     protected function getValidatedValue(
-        string $key,
+        string|array $key,
         array $rules = [],
         ?RuleContract $mainRule = null,
         array $transformers = [],

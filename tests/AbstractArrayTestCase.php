@@ -71,10 +71,17 @@ abstract class AbstractArrayTestCase extends TestCase
                     self::KeyItemName => 'test',
                     self::KeyTags => null,
                     self::KeyItemLabel => 'yes',
+                    self::KeyPage => 1,
+                    self::KeyEnum => EnumString::Test->value,
+                    self::KeyEnumInt => EnumInt::Test->value,
+                    self::KeyUpdatedAt => '2022-02-02 23:22:21',
+                    self::KeyIsActive => true,
+                    self::KeyIsActiveInFalse => false,
                 ],
                 [
                     self::KeyItemName => 'test 2',
                     self::KeyTags => ['test'],
+                    self::KeyPage => 1,
                 ],
             ],
             self::KeyNull => [

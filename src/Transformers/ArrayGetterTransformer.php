@@ -35,7 +35,7 @@ class ArrayGetterTransformer implements TransformerArrayContract
             return null;
         }
 
-        $getItemValue = $getValue->makeInstance(new ArrayData($value));
+        $getItemValue = $getValue->makeInstance(new ArrayData($value, $getValue->data->getKey($key)));
 
         return call_user_func_array($this->closure, [$getItemValue, $key]);
     }

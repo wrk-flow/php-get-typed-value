@@ -8,6 +8,6 @@ class NotAnArrayException extends AbstractGetValueException
 {
     public function __construct(string $key)
     {
-        parent::__construct(sprintf('Given value is not array for key <%s>', $key));
+        parent::__construct($key, sprintf('Given value is not array for key <%s>', $key));
     }
 }

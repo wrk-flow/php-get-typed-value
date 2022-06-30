@@ -26,7 +26,7 @@ class GetValueArrayDataWithDateTimeTest extends AbstractArrayTestsTestCase
                 null,
                 Exception::class,
             ],
-            self::KeyValid . ' returns value' => [self::KeyValid, new DateTime('2022-02-02 23:22:21')],
+            self::KeyValid . ' returns value' => [self::KeyValid, $this->getDateTime()],
             self::KeyValid . ' throws with min max rules that does not support date time' => [
                 self::KeyValid,
                 null,
@@ -55,7 +55,7 @@ class GetValueArrayDataWithDateTimeTest extends AbstractArrayTestsTestCase
                 null,
                 Exception::class,
             ],
-            self::KeyValid . ' returns value' => [self::KeyValid, new DateTime('2022-02-02 23:22:21')],
+            self::KeyValid . ' returns value' => [self::KeyValid, $this->getDateTime()],
             self::KeyValid . ' throws with min max rules that does not support date time' => [
                 self::KeyValid,
                 null,
@@ -86,6 +86,20 @@ class GetValueArrayDataWithDateTimeTest extends AbstractArrayTestsTestCase
         $this->data->getDateTime(self::KeyItems);
     }
 
+    public function testDotNotation(): void
+    {
+        $path = [self::KeyItems, '0', self::KeyUpdatedAt];
+        $this->assertEquals($this->getDateTime(), $this->data->getDateTime($path));
+        $this->assertEquals($this->getDateTime(), $this->data->getDateTime(implode('.', $path)));
+    }
+
+    public function testDotNotationNotAnArray(): void
+    {
+        $path = [self::KeyItems, '0'];
+        $this->expectExceptionMessage('Validation failed for <items.0> key. Reason: StringRule failed');
+        $this->data->getDateTime($path);
+    }
+
     protected function getRequiredValue(GetValue $data, array $rules): mixed
     {
         return $data->getRequiredDateTime(self::KeyUpdatedAt, $rules);
@@ -94,5 +108,10 @@ class GetValueArrayDataWithDateTimeTest extends AbstractArrayTestsTestCase
     protected function getOptionalValue(GetValue $data, array $rules): mixed
     {
         return $data->getDateTime(self::KeyUpdatedAt, $rules);
+    }
+
+    protected function getDateTime(): DateTime
+    {
+        return new DateTime('2022-02-02 23:22:21');
     }
 }

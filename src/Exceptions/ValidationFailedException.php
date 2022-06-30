@@ -10,6 +10,9 @@ class ValidationFailedException extends AbstractGetValueException
 {
     public function __construct(string $key, string $message, int $code = 400, ?Throwable $previous = null)
     {
-        parent::__construct(sprintf('Validation failed for <%s> key. Reason: ', $key) . $message, $code, $previous);
+        parent::__construct($key, sprintf(
+            'Validation failed for <%s> key. Reason: ',
+            $key
+        ) . $message, $code, $previous);
     }
 }

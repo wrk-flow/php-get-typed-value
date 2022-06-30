@@ -84,6 +84,20 @@ class GetValueArrayDataWithStringTest extends AbstractArrayTestsTestCase
         $this->assertSame('', $result);
     }
 
+    public function testDotNotation(): void
+    {
+        $path = [self::KeyItems, '0', self::KeyItemName];
+        $this->assertEquals('test', $this->data->getString($path));
+        $this->assertEquals('test', $this->data->getString(implode('.', $path)));
+    }
+
+    public function testDotNotationNotAnArray(): void
+    {
+        $path = [self::KeyItems, '0'];
+        $this->expectExceptionMessage('Validation failed for <items.0> key. Reason: StringRule failed');
+        $this->data->getString($path);
+    }
+
     protected function getRequiredValue(GetValue $data, array $rules): mixed
     {
         return $data->getRequiredString(self::KeyEmail, $rules);

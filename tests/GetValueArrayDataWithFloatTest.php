@@ -88,6 +88,20 @@ class GetValueArrayDataWithFloatTest extends AbstractArrayTestsTestCase
         $this->assertEquals(1.0, $this->data->getInt(self::KeyPageString));
     }
 
+    public function testDotNotation(): void
+    {
+        $path = [self::KeyItems, '0', self::KeyPage];
+        $this->assertEquals(1.0, $this->data->getFloat($path));
+        $this->assertEquals(1.0, $this->data->getFloat(implode('.', $path)));
+    }
+
+    public function testDotNotationNotAnArray(): void
+    {
+        $path = [self::KeyItems, '0'];
+        $this->expectExceptionMessage('Validation failed for <items.0> key. Reason: NumericRule failed');
+        $this->data->getFloat($path);
+    }
+
     protected function getRequiredValue(GetValue $data, array $rules): mixed
     {
         return $data->getRequiredFloat(self::KeyAmount, $rules);

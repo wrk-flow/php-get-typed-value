@@ -24,8 +24,8 @@ class CustomExceptionBuilder implements ExceptionBuilderContract
         return new Exception('notAnArray: ' . $key);
     }
 
-    public function validationFailed(string $key, string $message): Exception
+    public function validationFailed(string $key, string $ruleClassName): Exception
     {
-        return new Exception('validationFailed: ' . $key . ' ' . $message);
+        return new Exception('validationFailed: ' . $key . ' ' . $ruleClassName);
     }
 }

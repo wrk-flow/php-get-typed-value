@@ -14,17 +14,17 @@ class CustomExceptionBuilder extends
 {
     public function __construct(private readonly array $customLogContext) {}
     
-    public function missingValue(string $key): Exception
+    public function missingValue(string|array $key): Exception
     {
         return new MissingValueForKeyException($key, $this->customLogContext);
     }
 
-    public function arrayIsEmpty(string $key): Exception
+    public function arrayIsEmpty(string|array $key): Exception
     {
         return new ArrayIsEmptyException($key, $this->customLogContext);
     }
 
-    public function notAnArray(string $key): Exception
+    public function notAnArray(string|array $key): Exception
     {
         return new NotAnArrayException($key, $this->customLogContext);
     }
@@ -32,7 +32,7 @@ class CustomExceptionBuilder extends
     /**
      * @param class-string<RuleContract> $ruleClassName
      */
-    public function validationFailed(string $key, string $ruleClassName): Exception;
+    public function validationFailed(string|array $key, string $ruleClassName): Exception;
     {
         return new ValidationFailedException($key, $this->customLogContext);
     }

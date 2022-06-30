@@ -8,6 +8,6 @@ class MissingValueForKeyException extends AbstractGetValueException
 {
     public function __construct(string $key)
     {
-        parent::__construct(sprintf('Data is missing a value for a key <%s>', $key));
+        parent::__construct($key, sprintf('Data is missing a value for a key <%s>', $key));
     }
 }

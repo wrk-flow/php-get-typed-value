@@ -20,7 +20,7 @@ abstract class AbstractArrayTestsTestCase extends AbstractArrayTestCase
      * @param array<RuleContract>                          $rules
      */
     public function testRequired(
-        string $key,
+        string|array $key,
         mixed $expectedValue = null,
         ?string $expectedException = null,
         array $rules = []
@@ -43,7 +43,7 @@ abstract class AbstractArrayTestsTestCase extends AbstractArrayTestCase
      * @param array<RuleContract>                          $rules
      */
     public function testOptional(
-        string $key,
+        string|array $key,
         mixed $expectedValue = null,
         ?string $expectedException = null,
         array $rules = []
@@ -66,7 +66,7 @@ abstract class AbstractArrayTestsTestCase extends AbstractArrayTestCase
      * @param array<RuleContract>                          $rules
      */
     public function testOptionalNoStrategy(
-        string $key,
+        string|array $key,
         mixed $expectedValue = null,
         ?string $expectedException = null,
         array $rules = []
@@ -91,7 +91,7 @@ abstract class AbstractArrayTestsTestCase extends AbstractArrayTestCase
     /**
      * @param class-string<AbstractGetValueException>|null $expectedException
      */
-    protected function getBaseData(?string $expectedException, string $key): GetValue
+    protected function getBaseData(?string $expectedException, string|array $key): GetValue
     {
         if ($expectedException !== null) {
             $this->expectException($expectedException);

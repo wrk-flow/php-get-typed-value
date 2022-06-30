@@ -176,6 +176,7 @@ You can create your own transformer by extending:
 
 - For array `Wrkflow\GetValue\Contracts\TransformerArrayContract`
 - Reset of values `Wrkflow\GetValue\Contracts\TransformerContract`
+- `$key` contains full path key from the root data. Array notation is converted to dot notation.
 
 Then implement `public function transform(mixed $value, string $key): mixed;`. Expect invalid value and make do not
 transform the value if it is invalid. Just return it.

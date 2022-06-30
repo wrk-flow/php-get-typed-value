@@ -31,7 +31,7 @@ class ArrayItemGetterTransformer implements TransformerArrayContract
     }
 
     /**
-     * @param mixed|array<array>    $value
+     * @param mixed|array<array> $value
      */
     public function transform(mixed $value, string $key, GetValue $getValue): ?array
     {
@@ -45,7 +45,7 @@ class ArrayItemGetterTransformer implements TransformerArrayContract
                 throw new NotAnArrayException($key . ' at ' . $index);
             }
 
-            $getItemValue = $getValue->makeInstance(new ArrayData($item));
+            $getItemValue = $getValue->makeInstance(new ArrayData($item, $getValue->data->getKey($key)));
 
             $items[$index] = call_user_func_array($this->onItem, [$getItemValue, $key]);
         }

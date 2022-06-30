@@ -88,6 +88,20 @@ class GetValueArrayDataWithIntTest extends AbstractArrayTestsTestCase
         $this->assertEquals(1, $this->data->getInt(self::KeyPageString));
     }
 
+    public function testDotNotation(): void
+    {
+        $path = [self::KeyItems, '0', self::KeyPage];
+        $this->assertEquals(1, $this->data->getInt($path));
+        $this->assertEquals(1, $this->data->getInt(implode('.', $path)));
+    }
+
+    public function testDotNotationNotAnArray(): void
+    {
+        $path = [self::KeyItems, '0'];
+        $this->expectExceptionMessage('Validation failed for <items.0> key. Reason: NumericRule failed');
+        $this->data->getInt($path);
+    }
+
     protected function getRequiredValue(GetValue $data, array $rules): mixed
     {
         return $data->getRequiredInt(self::KeyPage, $rules);

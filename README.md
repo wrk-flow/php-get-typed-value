@@ -10,20 +10,12 @@ Get typed (strict mode) values from an Array / XML with basic validation.
 composer require wrkflow/php-get-typed-value
 ```
 
-I've created this project as part of my mission to create `work flow` tools / libraries to make my (and yours) **dev
-life easier and more enjoyable**.
-
-Want more tools or want to help? Check [wrk-flow.com](https://wrk-flow.com) or [CONTRIBUTE](CONTRIBUTION.md) (I need
-help with the documentation, new features, tests).
-
 ## Main features
 
-- 🚀 Retrieve values from Array (JSON) / XML with correct return type
-- 🏆 Makes PHPStan / IDE happy due the return types
-- 🤹‍ Validation: Ensures that desired value is in correct type (without additional loop validation. Validation is always on
-  while calling get* method).
-- 🛠 Transformers: Ensures that values are in expected type (ensures that string is trimmed and empty string converted to
-  null, accepts bool as string, can be changed.)
+- 🚀 Retrieve values from Array (JSON) / XML with correct return type with **dot notation** support.
+- 🏆 **Makes PHPStan / IDE** happy due the type strict return types.
+- 🤹‍ **Validation:** Ensures that desired value is in correct type (without additional loop validation).
+- 🛠 **Transformers:** Ensures that values are in expected type
 
 ```php
 $data = new \Wrkflow\GetValue\GetValue(new \Wrkflow\GetValue\DataHolders\ArrayData([
@@ -52,3 +44,12 @@ foreach ($items as $item) {
 ## Documentation
 
 Documentation is hosted on [GitHub Pages](https://php-get-typed-value.wrk-flow.com).
+
+## Comment
+
+I've created this project as part of my mission to create `work flow` tools / libraries to make my (and yours) **dev
+life easier and more enjoyable**.
+
+Want more tools or want to help? Check [wrk-flow.com](https://wrk-flow.com) or [CONTRIBUTE](CONTRIBUTION.md). You can
+help me improve the documentation, add new tests and features. Are you junior developer? Don't be scared, get in touch
+and I will guide you in your first contribution.
