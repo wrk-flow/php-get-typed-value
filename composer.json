@@ -9,6 +9,9 @@
             "email": "martin@kluska.cz"
         }
     ],
+    "require": {
+        "php": ">=8.1"
+    },
     "require-dev": {
         "phpstan/phpstan": "1.8.0",
         "phpstan/phpstan-deprecation-rules": "1.0.0",
