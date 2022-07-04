@@ -12,33 +12,26 @@ composer require wrkflow/php-get-typed-value
 
 ## Main features
 
-- 🚀 Retrieve values from Array (JSON) / XML with correct return type with **dot notation** support.
+- 🚀 Retrieve values from Array (JSON) / XML with correct return type with **safe dot notation** support.
 - 🏆 **Makes PHPStan / IDE** happy due the type strict return types.
 - 🤹‍ **Validation:** Ensures that desired value is in correct type (without additional loop validation).
-- 🛠 **Transformers:** Ensures that values are in expected type
+- 🛠 **Transformers:** Ensures that values are in expected type.
 
 ```php
-$data = new \Wrkflow\GetValue\GetValue(new \Wrkflow\GetValue\DataHolders\ArrayData([
-    'page' => 1, 
-    'items' => [
-        ['name' => 'test', 'tags' => null, 'label' => 'yes'],
-        ['name' => 'test 2', 'tags' => ['test']],
-    ],
-]));
-$page = $data->getRequiredInt('page'); // Will throw MissingValueForKeyException if the `page` is not present
-$items = $data->getRequiredArray('items');
+use Wrkflow\GetValue\GetValue;
+use Wrkflow\GetValue\DataHolders\ArrayData;
 
-foreach ($items as $item) {
-    $itemData = new \Wrkflow\GetValue\GetValue(new \Wrkflow\GetValue\DataHolders\ArrayData($item));
-    
-    $name = $itemData->getRequiredString('name');
-    // getArray will ensure convert null (not present) values to empty array
-    foreach ($itemData->getArray('tags') as $tag) {
-        // $tag should be string, validate it
-    }
-    // Get label will return nullable string
-    $label = $itemData->getString('label');
-}
+$data = new GetValue(new ArrayData([
+    'address' => [
+        'street' => [
+            'number' => '13',
+        ],
+        'name' => '',
+    ]   
+]));
+$data->getInt('address.street.number') // Returns: 13 (int)
+$data->getString('address.street.name') // Returns: null because value does not exists
+$data->getRequiredString('address.street.name') // Returns: throws MissingValueForKeyException exception
 ```
 
 ## Documentation

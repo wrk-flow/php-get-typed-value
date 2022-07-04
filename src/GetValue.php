@@ -245,6 +245,11 @@ class GetValue
             return null;
         }
 
+        // Transformer built the date time
+        if ($value instanceof DateTime) {
+            return $value;
+        }
+
         return new DateTime($value);
     }
 

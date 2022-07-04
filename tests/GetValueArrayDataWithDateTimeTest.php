@@ -13,6 +13,8 @@ use Wrkflow\GetValue\Rules\EmailRule;
 use Wrkflow\GetValue\Rules\IpRule;
 use Wrkflow\GetValue\Rules\MaxRule;
 use Wrkflow\GetValue\Rules\MinRule;
+use Wrkflow\GetValue\Transformers\ClosureTransformer;
+use Wrkflow\GetValue\Transformers\TrimAndEmptyStringToNull;
 
 class GetValueArrayDataWithDateTimeTest extends AbstractArrayTestsTestCase
 {
@@ -91,6 +93,19 @@ class GetValueArrayDataWithDateTimeTest extends AbstractArrayTestsTestCase
         $path = [self::KeyItems, '0', self::KeyUpdatedAt];
         $this->assertEquals($this->getDateTime(), $this->data->getDateTime($path));
         $this->assertEquals($this->getDateTime(), $this->data->getDateTime(implode('.', $path)));
+    }
+
+    public function testDateTimeFromTransformer(): void
+    {
+        $path = [self::KeyItems, '0', self::KeyUpdatedAt];
+        $dateTime = new DateTime('2022-02-01 23:22:21');
+        $result = $this->data
+            ->getDateTime(
+                $path,
+                transformers: [new TrimAndEmptyStringToNull(), new ClosureTransformer(fn () => $dateTime)]
+            );
+
+        $this->assertSame($dateTime, $result);
     }
 
     public function testDotNotationNotAnArray(): void

@@ -13,7 +13,24 @@ position: 1
 - 🚀 Retrieve values from Array (JSON) / XML with correct return type with **safe dot notation** support.
 - 🏆 **Makes PHPStan / IDE** happy due the type strict return types.
 - 🤹‍ **Validation:** Ensures that desired value is in correct type (without additional loop validation).
-- 🛠 **Transformers:** Ensures that values are in expected type
+- 🛠 **Transformers:** Ensures that values are in expected type.
+
+```php
+use Wrkflow\GetValue\GetValue;
+use Wrkflow\GetValue\DataHolders\ArrayData;
+
+$data = new GetValue(new ArrayData([
+    'address' => [
+        'street' => [
+            'number' => '13',
+        ],
+        'name' => '',
+    ]   
+]));
+$data->getInt('address.street.number') // Returns: 13 (int)
+$data->getString('address.street.name') // Returns: null because value does not exists
+$data->getRequiredString('address.street.name') // Returns: throws MissingValueForKeyException exception
+```
 
 ## Installation
 
@@ -33,7 +50,10 @@ Then you are going to use same methods for any format you choose.
 Simple build **GetValue** class with **ArrayData** class that will expose the data.
 
 ```php
-$data = new \Wrkflow\GetValue\GetValue(new \Wrkflow\GetValue\DataHolders\ArrayData([
+use Wrkflow\GetValue\GetValue;
+use Wrkflow\GetValue\DataHolders\ArrayData;
+
+$data = GetValue(new ArrayData([
     'page' => 1, 
     'items' => [
         ['name' => 'test', 'tags' => null, 'label' => 'yes'], 
@@ -47,61 +67,99 @@ $data = new \Wrkflow\GetValue\GetValue(new \Wrkflow\GetValue\DataHolders\ArrayDa
 Simple build **GetValue** class with **XMLData** class that will expose the data.
 
 ```php
+use Wrkflow\GetValue\GetValue;
+use Wrkflow\GetValue\DataHolders\XMLData;
+use \SimpleXMLElement;
+
 $simpleXMLElement = new SimpleXMLElement('<root><title>test</title><test attribute="test"/></root>');
-$data = new \Wrkflow\GetValue\GetValue(new \Wrkflow\GetValue\DataHolders\XMLData($simpleXMLElement));
+$data = new GetValue(new XMLData($simpleXMLElement));
 ```
 
-## Dot notation
+## Accessing values
 
-Dot notation is implemented in safe manner (may differ from Laravel and other implementations when edge cases occurs).
+- To get value you are required to pass a key path (for array it is index keys, for XML it is node names).
+- There are 2 methods for each data type:
 
-String that is separated by '.' will always be converted to path of exact path keys. If you '.' in your array key / XML
-node name
-then you need to use array as a key. Examples below:
+### For values that are optional
+
+Will return null value if the data does not contain value for given key.
 
 ```php
-$getValue = new \Wrkflow\GetValue\GetValue(new \Wrkflow\GetValue\DataHolders\ArrayData([
-    'get.key' => 'test',
-    'get' => [
-        'key' => 'child'
-    ],
-    'co.uk' => 'domain',
-]));
-$getValue->getString('get.key') // Returns: child
-$getValue->getString('co.uk') // Returns: null
-$getValue->getString(['get.key']) // Returns: test
-$getValue->getString(['co.uk']) // Returns: domain
+// Returns for example 13 or null 
+$data->getInt('address.street.number') 
 ```
 
-This implementation ensures.
+### For value that must exists
 
-You can instead of dot notation use array path:
+Ensures that value is present and not null.
 
 ```php
-$getValue = new \Wrkflow\GetValue\GetValue(new \Wrkflow\GetValue\DataHolders\ArrayData([
-    'get' => [
-        'key' => 'child'
-    ],
-]));
-$getValue->getString(['get', 'key']) // Returns: test
-$getValue->getString(['get', 'no_value']) // Returns: null
+// Returns for example 13. For null MissingValueForKeyException is thrown
+$data->getInt('address.street.number') 
 ```
 
-## Values
+### Dot notation
 
-> All values are validated within its type definition (int will be checked by IntegerRule, string by StringRule, etc).
+```php
+use Wrkflow\GetValue\GetValue;
+use Wrkflow\GetValue\DataHolders\ArrayData;
 
-For getting values there are always 2 methods:
+$data = new GetValue(new ArrayData([
+    'street' => ['number' => 13],
+]));
+// Use dot notation
+$data->getInt('street.number') // Returns: 13
+// or array key path
+$data->getInt(['street', 'number']) // Returns: 13
+```
 
-- get nullable value
-- get required value
+If any key in the path contains a dot character, you need to specify the path as an array of path parts.
 
-You can additionally add validation rules (as second parameter) to ensure you will get correct value.
-Check [Validation documentation](/validation) for more.
+```php
+use Wrkflow\GetValue\GetValue;
+use Wrkflow\GetValue\DataHolders\ArrayData;
+
+$data = new GetValue(new ArrayData([
+    'address' => [
+        'street.number' => 14,
+        'street' => [
+            'number' => 13,
+        ],
+    ]   
+]));
+$data->getInt('address.street.number') // Returns: 13
+$data->getInt(['address', 'street.number']) // Returns: 14
+```
+
+You can also access array elements using their ordered numeric index.
+
+```php
+use Wrkflow\GetValue\GetValue;
+use Wrkflow\GetValue\DataHolders\ArrayData;
+
+$data = new GetValue(new ArrayData([
+    'tags' => ['narrow', 'roundabout'] 
+]));
+// Use dot notation
+$data->getString('tags.0') // Returns: narrow
+$data->getString('tags.1') // Returns: narrow
+// or array key path
+$data->getString(['tags', '0']) // Returns: narrow
+$data->getString(['tags',  '1']) // Returns: roundabout
+```
+
+### Validation
+
+- All values are validated within its type definition (int will be checked by IntegerRule, string by StringRule, etc).
+- **Validation occurs only on non-null values.**
+- You can additionally add validation rules (as second parameter) to ensure you will get correct value.
+  Check [Validation documentation](/validation) for more.
+
+## Supported value types
 
 ### Int
 
-> Throws `ValidationFailedException` if value is not numeric (only on non-null values).
+> Throws `ValidationFailedException` if value is not numeric. Float is truncated.
 
 Get nullable int.
 
@@ -109,7 +167,7 @@ Get nullable int.
 $value = $data->getInt('key');
 ```
 
-Get required int value. Throws `MissingValueForKeyException` exception if missing.
+Get existing non-nullable int value. Throws `MissingValueForKeyException` exception if null.
 
 ```php
 $value = $data->getRequiredInt('key');
@@ -117,7 +175,7 @@ $value = $data->getRequiredInt('key');
 
 ### Float
 
-> Throws `ValidationFailedException` if value is not numeric (only on non-null values).
+> Throws `ValidationFailedException` if value is not numeric.
 
 Get nullable float value.
 
@@ -125,7 +183,7 @@ Get nullable float value.
 $value = $data->getFloat('key');
 ```
 
-Get required float value. Throws `MissingValueForKeyException` exception if missing.
+Get existing non-nullable float value. Throws `MissingValueForKeyException` exception if null.
 
 ```php
 $value = $data->getRequiredFloat('key');
@@ -133,8 +191,11 @@ $value = $data->getRequiredFloat('key');
 
 ### Bool
 
-> **In default strategy string [bool variants](https://php-get-typed-value.wrk-flow.com/transformers/#transformtobool)
-are converted to bool**. Throws `ValidationFailedException` if value is not bool (only on non-null values).
+> **Values
+as ['yes','no',1,0,'1','0','true','false'](https://php-get-typed-value.wrk-flow.com/transformers/#transformtobool)
+> are converted to bool**. This can be globally changed
+> via [strategy](https://php-get-typed-value.wrk-flow.com/transformers#strategy).
+> Throws `ValidationFailedException` if value is not bool.
 
 Get nullable bool value.
 
@@ -142,7 +203,7 @@ Get nullable bool value.
 $value = $data->getBool('key');
 ```
 
-Get required bool value. Throws `MissingValueForKeyException` exception if missing.
+Get existing non-nullable bool value. Throws `MissingValueForKeyException` exception if null.
 
 ```php
 $value = $data->getRequiredBool('key');
@@ -150,8 +211,12 @@ $value = $data->getRequiredBool('key');
 
 ### String
 
-> **In default strategy string is trimmed and empty string is transformed to null**. Throws `ValidationFailedException`
-> if value is not string (only on non-null values).
+> **String
+is [trimmed and empty string is converted to null](https://php-get-typed-value.wrk-flow.com/transformers/#trimandemptystringtonull)**
+> .
+> This can be globally changed via [strategy](https://php-get-typed-value.wrk-flow.com/transformers#strategy).
+> Throws `ValidationFailedException` if value is not bool.
+
 
 Get nullable string value.
 
@@ -159,7 +224,7 @@ Get nullable string value.
 $value = $data->getString('key');
 ```
 
-Get required string value. Throws `MissingValueForKeyException` exception if missing.
+Get existing non-nullable string value. Throws `MissingValueForKeyException` exception if null.
 
 ```php
 $value = $data->getRequiredString('key');
@@ -176,7 +241,7 @@ Get nullable enum value from a string/int.
 $value = $data->getEnum('key', MyEnum::class);
 ```
 
-Get required enum value. Throws `MissingValueForKeyException` exception if missing.
+Get existing non-nullable enum value. Throws `MissingValueForKeyException` exception if missing.
 
 ```php
 $value = $data->getRequiredEnum('key', MyEnum::class);
@@ -184,8 +249,8 @@ $value = $data->getRequiredEnum('key', MyEnum::class);
 
 ### Date time
 
-> Throws `ValidationFailedException` if value is not string (only on non-null values).
-
+> Throws `ValidationFailedException` if value is not string. Format is not validated and DateTime object will try
+> to parse given value.
 
 Get nullable `\DateTime` object (return null if empty string).
 
@@ -193,7 +258,7 @@ Get nullable `\DateTime` object (return null if empty string).
 $value = $data->getDateTime('key');
 ```
 
-Get required `\DateTime` object. Throws `MissingValueForKeyException` exception if missing.
+Get existing non-nullable `\DateTime` object. Throws `MissingValueForKeyException` exception if missing.
 
 ```php
 $value = $data->getRequiredDateTime('key');
@@ -215,7 +280,7 @@ Get nullable array.
 $value = $data->getNullableArray('key');
 ```
 
-Get required array that is not empty. Throws `ArrayIsEmptyException` exception if missing.
+Get existing non-nullable array that is not empty. Throws `ArrayIsEmptyException` exception if missing.
 
 ```php
 $value = $data->getRequiredArray('key');
@@ -253,7 +318,7 @@ $value = $data->getRequiredArrayGetter('key');
 - NotAnArrayException
 - ValidationFailedException
 
-## Notes
+### Notes
 
 - **Full key format**:
     - Parent full key is prepended to the key with '.' separator (if the GetValue instance was constructed from parent
