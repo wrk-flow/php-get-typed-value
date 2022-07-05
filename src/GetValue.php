@@ -15,7 +15,6 @@ use Wrkflow\GetValue\Actions\ValidateAction;
 use Wrkflow\GetValue\Builders\ExceptionBuilder;
 use Wrkflow\GetValue\Contracts\ExceptionBuilderContract;
 use Wrkflow\GetValue\Contracts\RuleContract;
-use Wrkflow\GetValue\Contracts\TransformerArrayContract;
 use Wrkflow\GetValue\Contracts\TransformerContract;
 use Wrkflow\GetValue\Contracts\TransformerStrategy;
 use Wrkflow\GetValue\DataHolders\AbstractData;
@@ -276,7 +275,7 @@ class GetValue
     /**
      * Ensures that always an array will be returned (if missing in $data or if null).
      *
-     * @param array<TransformerArrayContract>|null $transformers
+     * @param array<TransformerContract>|null $transformers
      */
     public function getArray(string|array $key, ?array $transformers = null): array
     {
@@ -299,7 +298,7 @@ class GetValue
     /**
      * Ensures that always an array will be returned (if missing in $data or if null).
      *
-     * @param array<TransformerArrayContract>|null $transformers
+     * @param array<TransformerContract>|null $transformers
      */
     public function getNullableArray(string|array $key, ?array $transformers = null): ?array
     {
@@ -322,7 +321,7 @@ class GetValue
     /**
      * Checks if the array is in the data set with non-empty array
      *
-     * @param array<TransformerArrayContract>|null $transformers
+     * @param array<TransformerContract>|null $transformers
      *
      * @phpstan-return non-empty-array
      */
@@ -340,7 +339,7 @@ class GetValue
     /**
      * Get always `GetValue` instance even if provided data is missing or if null.
      *
-     * @param array<TransformerArrayContract>|null $transformers
+     * @param array<TransformerContract>|null $transformers
      */
     public function getArrayGetter(string|array $key, ?array $transformers = null): self
     {
@@ -352,7 +351,7 @@ class GetValue
     /**
      * Try to get nullable array from data and wrap it in `GetValue` instance.
      *
-     * @param array<TransformerArrayContract>|null $transformers
+     * @param array<TransformerContract>|null $transformers
      */
     public function getNullableArrayGetter(string|array $key, ?array $transformers = null): ?self
     {
@@ -368,7 +367,7 @@ class GetValue
     /**
      * Checks if the array is in the data set with non-empty array
      *
-     * @param array<TransformerArrayContract>|null $transformers
+     * @param array<TransformerContract>|null $transformers
      */
     public function getRequiredArrayGetter(string|array $key, ?array $transformers = null): self
     {

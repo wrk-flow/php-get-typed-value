@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace Wrkflow\GetValueTests\Transformers;
 
 use Closure;
-use Wrkflow\GetValue\Contracts\TransformerArrayContract;
+use Wrkflow\GetValue\Contracts\TransformerContract;
+use Wrkflow\GetValue\DataHolders\ArrayData;
 use Wrkflow\GetValue\Exceptions\NotAnArrayException;
 use Wrkflow\GetValue\GetValue;
 use Wrkflow\GetValue\Transformers\ArrayItemGetterTransformer;
@@ -14,14 +15,32 @@ class ArrayItemGetterTransformerTest extends AbstractTransformerTestCase
 {
     final public const KeyValue = 'key';
 
+    final public const ValueToReturnNull = 'return_null';
+
+    public function testExample(): void
+    {
+        $data = new GetValue(new ArrayData([
+            'names' => [[
+                'name' => 'Marco',
+                'surname' => 'Polo',
+            ], [
+                'name' => 'Martin',
+                'surname' => 'Way',
+
+            ]],
+        ]));
+
+        $transformer = new ArrayItemGetterTransformer(fn (GetValue $value, string $key): string => $value->getRequiredString(
+            'name'
+        ) . ' ' . $value->getRequiredString('surname'));
+
+        $values = $data->getArray('names', transformers: [$transformer]);
+        $this->assertEquals(['Marco Polo', 'Martin Way'], $values);
+    }
+
     public function dataToTest(): array
     {
         return $this->dataAfterValidationForTransformer();
-    }
-
-    public function dataToTestBeforeValidation(): array
-    {
-        return $this->createData(false);
     }
 
     /**
@@ -32,9 +51,9 @@ class ArrayItemGetterTransformerTest extends AbstractTransformerTestCase
         $this->assertValue($this->getBeforeValidationTransformer(), $entity);
     }
 
-    public function dataToAfterValidationForce(): array
+    public function dataToTestBeforeValidation(): array
     {
-        return $this->dataAfterValidationForTransformer();
+        return $this->createData(false, false);
     }
 
     /**
@@ -43,6 +62,11 @@ class ArrayItemGetterTransformerTest extends AbstractTransformerTestCase
     public function testAfterValidationForce(TransformerExpectationEntity $entity): void
     {
         $this->assertValue($this->getForceAfterValidation(), $entity);
+    }
+
+    public function dataToAfterValidationForce(): array
+    {
+        return $this->dataAfterValidationForTransformer();
     }
 
     public function testSupportsEmptyArray(): void
@@ -70,39 +94,101 @@ class ArrayItemGetterTransformerTest extends AbstractTransformerTestCase
         ));
     }
 
+    /**
+     * @dataProvider dataToTestBeforeValidationLeaveNull
+     */
+    public function testBeforeValidationLeaveNull(TransformerExpectationEntity $entity): void
+    {
+        $this->assertValue(
+            new ArrayItemGetterTransformer(
+                onItem: $this->getClosure(),
+                beforeValidation: true,
+                ignoreNullResult: false
+            ),
+            $entity
+        );
+    }
+
+    public function dataToTestBeforeValidationLeaveNull(): array
+    {
+        return $this->createData(false, true);
+    }
+
+    /**
+     * @dataProvider dataToAfterValidationForceLeaveNull
+     */
+    public function testAfterValidationForceLeaveNull(TransformerExpectationEntity $entity): void
+    {
+        $this->assertValue(
+            new ArrayItemGetterTransformer(
+                onItem: $this->getClosure(),
+                beforeValidation: false,
+                ignoreNullResult: false
+            ),
+            $entity
+        );
+    }
+
+    public function dataToAfterValidationForceLeaveNull(): array
+    {
+        return $this->createData(true, true);
+    }
+
+    /**
+     * @dataProvider dataLeaveNull
+     */
+    public function testTransformLeaveNull(TransformerExpectationEntity $entity): void
+    {
+        $this->assertValue(
+            new ArrayItemGetterTransformer(onItem: $this->getClosure(), ignoreNullResult: false),
+            $entity
+        );
+    }
+
+    public function dataLeaveNull(): array
+    {
+        return $this->createData(true, true);
+    }
+
     protected function dataAfterValidationForTransformer(): array
     {
-        return $this->createData(true);
+        return $this->createData(true, false);
     }
 
     protected function getClosure(): Closure
     {
-        return function (GetValue $value, string $key): array {
+        return function (GetValue $value, string $key): ?array {
             $this->assertEquals('test', $key, 'Key does not match up');
+
+            $value = $value->getRequiredString(self::KeyValue, transformers: []);
+
+            if ($value === self::ValueToReturnNull) {
+                return null;
+            }
 
             return [
                 // we are working with empty strings - do not convert to null
-                self::KeyValue => md5($value->getRequiredString(self::KeyValue, transformers: [])),
+                self::KeyValue => md5($value),
             ];
         };
     }
 
-    protected function getTransformer(): TransformerArrayContract
+    protected function getTransformer(): TransformerContract
     {
         return new ArrayItemGetterTransformer(onItem: $this->getClosure());
     }
 
-    protected function getBeforeValidationTransformer(): TransformerArrayContract
+    protected function getBeforeValidationTransformer(): TransformerContract
     {
         return new ArrayItemGetterTransformer(onItem: $this->getClosure(), beforeValidation: true);
     }
 
-    protected function getForceAfterValidation(): TransformerArrayContract
+    protected function getForceAfterValidation(): TransformerContract
     {
         return new ArrayItemGetterTransformer(onItem: $this->getClosure(), beforeValidation: false);
     }
 
-    protected function createData(bool $beforeValueIsSameAsValue): array
+    protected function createData(bool $beforeValueIsSameAsValue, bool $leaveNull): array
     {
         return [
             [
@@ -168,6 +254,53 @@ class ArrayItemGetterTransformerTest extends AbstractTransformerTestCase
                     expectedValueBeforeValidation: $beforeValueIsSameAsValue ? [[
                         self::KeyValue => 'asd mix',
                     ]] : null
+                ),
+            ],
+            [
+                new TransformerExpectationEntity(
+                    value: [
+                        'test' => [
+                            self::KeyValue => 'asd mix',
+                        ],
+                    ],
+                    expectedValue: [
+                        'test' => [
+                            self::KeyValue => 'bf40744fb5eeca1029aed8d8c5d30f82',
+                        ],
+                    ],
+                    expectedValueBeforeValidation: $beforeValueIsSameAsValue ? [
+                        'test' => [
+                            self::KeyValue => 'asd mix',
+                        ],
+                    ] : null
+                ),
+            ],
+            [
+                new TransformerExpectationEntity(
+                    value: [[
+                        self::KeyValue => self::ValueToReturnNull,
+                    ]],
+                    expectedValue: $leaveNull ? [null] : [],
+                    expectedValueBeforeValidation: $beforeValueIsSameAsValue ? [[
+                        self::KeyValue => self::ValueToReturnNull,
+                    ]] : null
+                ),
+            ],
+            [
+                new TransformerExpectationEntity(
+                    value: [
+                        'test' => [
+                            self::KeyValue => self::ValueToReturnNull,
+                        ],
+                    ],
+                    expectedValue: $leaveNull ? [
+                        'test' => null,
+                    ] : [],
+                    expectedValueBeforeValidation: $beforeValueIsSameAsValue ? [
+                        'test' => [
+                            self::KeyValue => self::ValueToReturnNull,
+                        ],
+                    ] : null
                 ),
             ],
             [new TransformerExpectationEntity(value: null, expectedValue: null)],

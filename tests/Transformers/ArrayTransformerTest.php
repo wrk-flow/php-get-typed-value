@@ -5,19 +5,26 @@ declare(strict_types=1);
 namespace Wrkflow\GetValueTests\Transformers;
 
 use Closure;
-use Wrkflow\GetValue\Contracts\TransformerArrayContract;
+use Wrkflow\GetValue\Contracts\TransformerContract;
+use Wrkflow\GetValue\DataHolders\ArrayData;
+use Wrkflow\GetValue\GetValue;
 use Wrkflow\GetValue\Transformers\ArrayTransformer;
 
 class ArrayTransformerTest extends AbstractTransformerTestCase
 {
-    public function dataToTest(): array
+    public function testExample(): void
     {
-        return $this->dataAfterValidationForTransformer();
-    }
+        $data = new GetValue(new ArrayData([
+            'key' => ['Marco', 'Polo'],
+        ]));
 
-    public function dataToTestBeforeValidation(): array
-    {
-        return $this->createData(false);
+        $transformer = new ArrayTransformer(
+            closure: fn (array $value, string $key): string => implode(' ', $value),
+            beforeValidation: true
+        );
+
+        $name = $data->getString('key', transformers: [$transformer]);
+        $this->assertEquals('Marco Polo', $name);
     }
 
     /**
@@ -28,17 +35,27 @@ class ArrayTransformerTest extends AbstractTransformerTestCase
         $this->assertValue($this->getBeforeValidationTransformer(), $entity);
     }
 
-    public function dataToAfterValidationForce(): array
-    {
-        return $this->dataAfterValidationForTransformer();
-    }
-
     /**
      * @dataProvider dataToAfterValidationForce
      */
     public function testAfterValidationForce(TransformerExpectationEntity $entity): void
     {
         $this->assertValue($this->getForceAfterValidation(), $entity);
+    }
+
+    public function dataToAfterValidationForce(): array
+    {
+        return $this->dataAfterValidationForTransformer();
+    }
+
+    public function dataToTest(): array
+    {
+        return $this->dataAfterValidationForTransformer();
+    }
+
+    public function dataToTestBeforeValidation(): array
+    {
+        return $this->createData(false);
     }
 
     protected function dataAfterValidationForTransformer(): array
@@ -55,17 +72,17 @@ class ArrayTransformerTest extends AbstractTransformerTestCase
         };
     }
 
-    protected function getTransformer(): TransformerArrayContract
+    protected function getTransformer(): TransformerContract
     {
         return new ArrayTransformer($this->getClosure());
     }
 
-    protected function getBeforeValidationTransformer(): TransformerArrayContract
+    protected function getBeforeValidationTransformer(): TransformerContract
     {
         return new ArrayTransformer(closure: $this->getClosure(), beforeValidation: true);
     }
 
-    protected function getForceAfterValidation(): TransformerArrayContract
+    protected function getForceAfterValidation(): TransformerContract
     {
         return new ArrayTransformer(closure: $this->getClosure(), beforeValidation: false);
     }

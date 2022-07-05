@@ -5,21 +5,23 @@ declare(strict_types=1);
 namespace Wrkflow\GetValue\Transformers;
 
 use Closure;
-use Wrkflow\GetValue\Contracts\TransformerArrayContract;
 use Wrkflow\GetValue\GetValue;
 
 /**
  * Re-build the array with a closure for each item
  */
-class ArrayItemTransformer implements TransformerArrayContract
+class ArrayItemTransformer extends AbstractArrayItemTransformer
 {
     /**
-     * @param Closure(mixed,string):(array|null) $onItem
-     * @param bool                             $beforeValidation
+     * @param Closure(mixed,string):mixed $onItem
+     * @param bool                        $beforeValidation
+     * @param bool                        $ignoreNullResult Allows to prevent adding null value to array when
+     *                                                      rebuilding an array.
      */
     public function __construct(
         private readonly Closure $onItem,
-        private readonly bool $beforeValidation = false
+        private readonly bool $beforeValidation = false,
+        private readonly bool $ignoreNullResult = true,
     ) {
     }
 
@@ -28,17 +30,13 @@ class ArrayItemTransformer implements TransformerArrayContract
         return $this->beforeValidation;
     }
 
-    public function transform(mixed $value, string $key, GetValue $getValue): ?array
+    protected function transformItem(mixed $item, string $key, string|int $index, GetValue $getValue): mixed
     {
-        if (is_array($value) === false) {
-            return null;
-        }
+        return call_user_func_array($this->onItem, [$item, $key]);
+    }
 
-        $items = [];
-        foreach ($value as $index => $item) {
-            $items[$index] = call_user_func_array($this->onItem, [$item, $key]);
-        }
-
-        return $items;
+    protected function ignoreNullResult(): bool
+    {
+        return $this->ignoreNullResult;
     }
 }

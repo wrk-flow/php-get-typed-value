@@ -32,7 +32,7 @@ interface TransformerStrategy
     public function float(): array;
 
     /**
-     * @return array<TransformerArrayContract>
+     * @return array<TransformerContract>
      */
     public function array(): array;
 }

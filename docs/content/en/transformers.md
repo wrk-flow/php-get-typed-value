@@ -138,6 +138,30 @@ $transformer = new ArrayTransformer(function (array $value, string $key): array 
 });
 
 $values = $data->getArray('key', transformers: [$transformer]);
+// Result: ['2231d0878e1f14976c498ad49de37ef6', 'edc23e3209134c89922592669e09cb65']
+```
+
+If you want to use this transformer with getString and other non-array method then you need to run the
+transformer before validation by setting `beforeValidation: true`.
+
+
+```php
+use Wrkflow\GetValue\GetValue;
+use Wrkflow\GetValue\DataHolders\ArrayData;
+use Wrkflow\GetValue\Transformers\ArrayTransformer;
+
+$data = new GetValue(new ArrayData([
+   'key' => ['Marco', 'Polo']
+]));
+
+$transformer = new ArrayTransformer(
+   closure: fn (array $value, string $key): string => implode(' ', $value),
+   beforeValidation: true
+);
+
+$name = $data->getString('key', transformers: [$transformer]);
+$this->assertEquals('Marco Polo', $name);
+// Result: Marco Polo
 ```
 
 ### ArrayItemTransformer
@@ -153,17 +177,49 @@ use Wrkflow\GetValue\Transformers\ArrayItemTransformer;
 use Wrkflow\GetValue\Exceptions\ValidationFailedException;
 
 $data = new GetValue(new ArrayData([
-    'key' => ['Marco', 'Polo']
+   'names' => [['Marco', 'Polo'], ['Way', 'Point'], []]
 ]));
 $transformer = new ArrayItemTransformer( function (mixed $value, string $key): string {
-    if (is_string($value) !== null) {
-        throw new ValidationFailedException($key, 'array value not a string');
-    }
+   if (is_array($value) !== true) {
+       throw new ValidationFailedException($key, 'expecting an array');
+   }
+   
+   if ($value === []) {
+        return null;
+   }
 
-    return md5($value);
+   return implode(' ', $value);
 });
 
-$values = $data->getArray('key', transformers: [$transformer]);
+$values = $data->getArray('names', transformers: [$transformer]);
+// Result: ['Marco Polo', 'Way Point']
+```
+
+If you return `null` in your closure then value is not added to result array. Use `ignoreNullResult: false` in constructor.
+
+```php
+use Wrkflow\GetValue\GetValue;
+use Wrkflow\GetValue\DataHolders\ArrayData;
+use Wrkflow\GetValue\Transformers\ArrayItemTransformer;
+use Wrkflow\GetValue\Exceptions\ValidationFailedException;
+
+$data = new GetValue(new ArrayData([
+   'names' => ['Marco Polo', 'Way Point', ''],
+]));
+$transformer = new ArrayItemTransformer(function (mixed $value, string $key): ?array {
+   if (is_string($value) === false) {
+       throw new ValidationFailedException($key, 'expecting string');
+   }
+
+   if ($value === '') {
+       return null;
+   }
+
+   return explode(' ', $value);
+}, ignoreNullResult: false);
+
+$values = $data->getArray('names', transformers: [$transformer]);
+// Result: [['Marco', 'Polo'], ['Way', 'Point'], null]
 ```
 
 ### ArrayItemGetterTransformer
@@ -178,55 +234,31 @@ use Wrkflow\GetValue\DataHolders\ArrayData;
 use Wrkflow\GetValue\Transformers\ArrayItemGetterTransformer;
 
 $data = new GetValue(new ArrayData([
-    'key' => [['test' => 'Marco'], ['test' => 'Polo']]
+   'names' => [['name' => 'Marco', 'surname' => 'Polo'], ['name' => 'Martin', 'surname' => 'Way']]
 ]));
-$transformer = new ArrayItemGetterTransformer( function (GetValue $value, string $key): string {
-    return [
-        'test' => $value->getRequiredString('test'),
-    ];
+
+$transformer = new ArrayItemGetterTransformer(function (GetValue $value, string $key): string {
+   return $value->getRequiredString('name') . ' '.$value->getRequiredString('surname');
 });
 
-$values = $data->getArray('key', transformers: [$transformer]);
+$values = $data->getArray('names', transformers: [$transformer]);
+// Result: ['Marco Polo', 'Martin Way']
 ```
 
-### ArrayItemGetterTransformer
-
-> Can be used only with get\*Array\* methods.
-
-Transforms an **array** in a closure that receives wrapped array in GetValue.
-
-```php
-use Wrkflow\GetValue\GetValue;
-use Wrkflow\GetValue\DataHolders\ArrayData;
-use Wrkflow\GetValue\Transformers\ArrayGetterTransformer;
-
-$data = new GetValue(new ArrayData([
-    'key' => ['test' => 'Value!']
-]));
-$transformer = new ArrayGetterTransformer(function (GetValue $value, string $key): string {
-    return [
-        'test' => $value->getRequiredString('test'),
-    ];
-});
-
-$values = $data->getArray('key', transformers: [$transformer]);
-```
+If you return `null` in your closure then value is not added to result array. Use `ignoreNullResult: false` in same way
+as in [ArrayItemTransformer](#arrayitemtransformer)`.
 
 ## Customization
 
-You can create your own transformer by extending:
+You can create your own transformer by extending `Wrkflow\GetValue\Contracts\TransformerContract` class:
 
-- For array `Wrkflow\GetValue\Contracts\TransformerArrayContract`
-- Rest of the value types use `Wrkflow\GetValue\Contracts\TransformerContract`
-- `$key` contains full path key from the root data. Array notation is converted to dot notation.
-
-Then implement `public function transform(mixed $value, string $key): mixed;`. Expect that you can receive an invalid
-value. Return original `$value` if transformation can't be done.
-
-Then implement `public function beforeValidation(mixed $value, string $key): bool;` which ensures that transformation
-is not done before validation.
-
-Then change the strategy:
+1. Then implement `public function transform(mixed $value, string $key): mixed;`. Expect that you can receive an invalid
+   value. Return original `$value` if transformation can't be done.
+2. Then implement `public function beforeValidation(mixed $value, string $key): bool;` which tells if we can transform
+   the value after or before validation.
+    - Use before validation for transforming value to a type that `get` method expects.
+3. You can use `$key` which contains full path key from the root data. Array notation is converted to dot notation.
+4. Then change the strategy:
 
 ```php
 use Wrkflow\GetValue\GetValue;

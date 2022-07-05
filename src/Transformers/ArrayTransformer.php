@@ -5,16 +5,16 @@ declare(strict_types=1);
 namespace Wrkflow\GetValue\Transformers;
 
 use Closure;
-use Wrkflow\GetValue\Contracts\TransformerArrayContract;
+use Wrkflow\GetValue\Contracts\TransformerContract;
 use Wrkflow\GetValue\GetValue;
 
 /**
  * Transforms the value using closure after validation has been done.
  */
-class ArrayTransformer implements TransformerArrayContract
+class ArrayTransformer implements TransformerContract
 {
     /**
-     * @param Closure(array,string):array $closure
+     * @param Closure(array,string):mixed $closure
      * @param bool    $beforeValidation
      */
     public function __construct(
@@ -28,7 +28,7 @@ class ArrayTransformer implements TransformerArrayContract
         return $this->beforeValidation;
     }
 
-    public function transform(mixed $value, string $key, GetValue $getValue): ?array
+    public function transform(mixed $value, string $key, GetValue $getValue): mixed
     {
         if (is_array($value) === false) {
             return null;

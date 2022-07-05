@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Wrkflow\GetValueTests\Transformers;
 
 use Closure;
-use Wrkflow\GetValue\Contracts\TransformerArrayContract;
+use Wrkflow\GetValue\Contracts\TransformerContract;
 use Wrkflow\GetValue\GetValue;
 use Wrkflow\GetValue\Transformers\ArrayGetterTransformer;
 
@@ -61,17 +61,17 @@ class ArrayGetterTransformerTest extends AbstractTransformerTestCase
         };
     }
 
-    protected function getTransformer(): TransformerArrayContract
+    protected function getTransformer(): TransformerContract
     {
         return new ArrayGetterTransformer($this->getClosure());
     }
 
-    protected function getBeforeValidationTransformer(): TransformerArrayContract
+    protected function getBeforeValidationTransformer(): TransformerContract
     {
         return new ArrayGetterTransformer(closure: $this->getClosure(), beforeValidation: true);
     }
 
-    protected function getForceAfterValidation(): TransformerArrayContract
+    protected function getForceAfterValidation(): TransformerContract
     {
         return new ArrayGetterTransformer(closure: $this->getClosure(), beforeValidation: false);
     }
