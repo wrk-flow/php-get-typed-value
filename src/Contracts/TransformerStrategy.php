@@ -35,4 +35,9 @@ interface TransformerStrategy
      * @return array<TransformerContract>
      */
     public function array(): array;
+
+    /**
+     * @return array<TransformerContract>
+     */
+    public function xml(): array;
 }

@@ -18,4 +18,6 @@ interface ExceptionBuilderContract
      * @param class-string<RuleContract> $ruleClassName
      */
     public function validationFailed(string $key, string $ruleClassName): Exception;
+
+    public function notXML(string $key): Exception;
 }

@@ -221,12 +221,32 @@ $transformer = new ArrayItemTransformer(function (mixed $value, string $key): ?a
 $values = $data->getArray('names', transformers: [$transformer]);
 // Result: [['Marco', 'Polo'], ['Way', 'Point'], null]
 ```
+### GetterTransformer (since v0.6.0)
+
+Transforms an **array/xml value** in a closure that receives wrapped GetValue instance.
+
+```php
+use Wrkflow\GetValue\GetValue;
+use Wrkflow\GetValue\DataHolders\ArrayData;
+use Wrkflow\GetValue\Transformers\GetterTransformer;
+
+$data = new GetValue(new ArrayData([
+   'person' => ['name' => 'Marco', 'surname' => 'Polo'],
+]));
+
+$transformer = new GetterTransformer(function (GetValue $value, string $key): string {
+   return $value->getRequiredString('name') . ' '.$value->getRequiredString('surname');
+}, beforeValidation: true);
+
+$value = $data->getString('person', transformers: [$transformer]);
+// Result: 'Marco Polo'
+```
 
 ### ArrayItemGetterTransformer
 
 > Can be used only with get\*Array\* methods. Throws NotAnArrayException if array value is not an array.
 
-Transforms an **array that contains array values** in a closure that receives wrapped array in GetValue.
+Transforms an **array/xml that contains array/xml values** in a closure that receives wrapped GetValue instance.
 
 ```php
 use Wrkflow\GetValue\GetValue;

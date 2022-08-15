@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace Wrkflow\GetValue\Transformers;
 
+use Wrkflow\GetValue\DataHolders\AbstractData;
 use Closure;
 use Wrkflow\GetValue\Contracts\TransformerContract;
-use Wrkflow\GetValue\DataHolders\ArrayData;
 use Wrkflow\GetValue\GetValue;
 
 /**
  * Transforms the value using closure after validation has been done.
  */
-class ArrayGetterTransformer implements TransformerContract
+class GetterTransformer implements TransformerContract
 {
     /**
      * @param Closure(GetValue,string):mixed $closure
@@ -31,11 +31,13 @@ class ArrayGetterTransformer implements TransformerContract
 
     public function transform(mixed $value, string $key, GetValue $getValue): mixed
     {
-        if (is_array($value) === false) {
+        $data = $getValue->makeData($value, $key);
+
+        if ($data instanceof AbstractData === false) {
             return null;
         }
 
-        $getItemValue = $getValue->makeInstance(new ArrayData($value, $getValue->data->getKey($key)));
+        $getItemValue = $getValue->makeInstance($data);
 
         return call_user_func_array($this->closure, [$getItemValue, $key]);
     }

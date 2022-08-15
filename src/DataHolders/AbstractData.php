@@ -4,13 +4,15 @@ declare(strict_types=1);
 
 namespace Wrkflow\GetValue\DataHolders;
 
+use Wrkflow\GetValue\Enums\ValueType;
+
 abstract class AbstractData
 {
     public function __construct(private readonly string $parentKey = '')
     {
     }
 
-    abstract public function getValue(string|array $key): mixed;
+    abstract public function getValue(string|array $key, ValueType $expectedValueType): mixed;
 
     abstract public function get(): mixed;
 

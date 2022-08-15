@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Wrkflow\GetValue\DataHolders;
 
+use Wrkflow\GetValue\Enums\ValueType;
+
 class ArrayData extends AbstractData
 {
     public function __construct(
@@ -13,7 +15,7 @@ class ArrayData extends AbstractData
         parent::__construct($parentKey);
     }
 
-    public function getValue(string|array $key): mixed
+    public function getValue(string|array $key, ValueType $expectedValueType): mixed
     {
         if (is_string($key) && str_contains($key, '.')) {
             $key = explode('.', $key);

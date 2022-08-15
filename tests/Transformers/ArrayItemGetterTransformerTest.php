@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace Wrkflow\GetValueTests\Transformers;
 
 use Closure;
+use SimpleXMLElement;
 use Wrkflow\GetValue\Contracts\TransformerContract;
 use Wrkflow\GetValue\DataHolders\ArrayData;
-use Wrkflow\GetValue\Exceptions\NotAnArrayException;
+use Wrkflow\GetValue\DataHolders\XMLData;
+use Wrkflow\GetValue\Exceptions\NotSupportedDataException;
 use Wrkflow\GetValue\GetValue;
 use Wrkflow\GetValue\Transformers\ArrayItemGetterTransformer;
 
@@ -17,7 +19,7 @@ class ArrayItemGetterTransformerTest extends AbstractTransformerTestCase
 
     final public const ValueToReturnNull = 'return_null';
 
-    public function testExample(): void
+    public function testExampleArray(): void
     {
         $data = new GetValue(new ArrayData([
             'names' => [[
@@ -36,6 +38,34 @@ class ArrayItemGetterTransformerTest extends AbstractTransformerTestCase
 
         $values = $data->getArray('names', transformers: [$transformer]);
         $this->assertEquals(['Marco Polo', 'Martin Way'], $values);
+    }
+
+    public function testExampleXML(): void
+    {
+        $data = new GetValue(new XMLData(new SimpleXMLElement(
+            <<<'CODE_SAMPLE'
+<root>
+    <names>
+        <name>Marco</name>
+        <surname number="3">Polo</surname>
+    </names>
+    <names>
+        <name>Martin</name>
+        <surname number="2">Way</surname>
+    </names>
+    
+</root>
+CODE_SAMPLE
+        )));
+
+        $transformer = new ArrayItemGetterTransformer(fn (GetValue $value, string $key): string => implode(' ', [
+            $value->getRequiredString('name'),
+            $value->getRequiredString('surname'),
+            $value->getXMLAttributesGetter(['surname'])->getRequiredInt('number'),
+        ]));
+
+        $values = $data->getArray('names', transformers: [$transformer]);
+        $this->assertEquals(['Marco Polo 3', 'Martin Way 2'], $values);
     }
 
     public function dataToTest(): array
@@ -307,7 +337,7 @@ class ArrayItemGetterTransformerTest extends AbstractTransformerTestCase
             [
                 new TransformerExpectationEntity(value: [
                     'test',
-                ], expectedValue: null, expectException: NotAnArrayException::class),
+                ], expectedValue: null, expectException: NotSupportedDataException::class),
             ],
         ];
     }

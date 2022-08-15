@@ -8,7 +8,8 @@ use Exception;
 use Wrkflow\GetValue\Contracts\ExceptionBuilderContract;
 use Wrkflow\GetValue\Exceptions\ArrayIsEmptyException;
 use Wrkflow\GetValue\Exceptions\MissingValueForKeyException;
-use Wrkflow\GetValue\Exceptions\NotAnArrayException;
+use Wrkflow\GetValue\Exceptions\NotSupportedDataException;
+use Wrkflow\GetValue\Exceptions\NotXMLException;
 use Wrkflow\GetValue\Exceptions\ValidationFailedException;
 
 class ExceptionBuilder implements ExceptionBuilderContract
@@ -25,7 +26,7 @@ class ExceptionBuilder implements ExceptionBuilderContract
 
     public function notAnArray(string $key): Exception
     {
-        return new NotAnArrayException($key);
+        return new NotSupportedDataException($key);
     }
 
     public function validationFailed(string $key, string $ruleClassName): Exception
@@ -34,5 +35,10 @@ class ExceptionBuilder implements ExceptionBuilderContract
         $shortClassName = end($classNameParts);
 
         return new ValidationFailedException($key, $shortClassName . ' failed');
+    }
+
+    public function notXML(string $key): Exception
+    {
+        return new NotXMLException($key);
     }
 }

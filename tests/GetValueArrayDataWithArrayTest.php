@@ -6,7 +6,7 @@ namespace Wrkflow\GetValueTests;
 
 use Wrkflow\GetValue\Exceptions\AbstractGetValueException;
 use Wrkflow\GetValue\Exceptions\ArrayIsEmptyException;
-use Wrkflow\GetValue\Exceptions\NotAnArrayException;
+use Wrkflow\GetValue\Exceptions\NotSupportedDataException;
 use Wrkflow\GetValue\GetValue;
 
 class GetValueArrayDataWithArrayTest extends AbstractArrayTestsTestCase
@@ -17,7 +17,7 @@ class GetValueArrayDataWithArrayTest extends AbstractArrayTestsTestCase
             self::KeyNull . ' throws exception' => [self::KeyNull, null, ArrayIsEmptyException::class],
             self::KeyEmpty . ' throws exception' => [self::KeyEmpty, null, ArrayIsEmptyException::class],
             self::KeyValid . ' returns value' => [self::KeyValid, ['test']],
-            self::KeyInvalid . ' returns value' => [self::KeyInvalid, null, NotAnArrayException::class],
+            self::KeyInvalid . ' returns value' => [self::KeyInvalid, null, NotSupportedDataException::class],
             self::KeyMissingValue . ' throws exception' => [self::KeyMissingValue, null, ArrayIsEmptyException::class],
         ];
     }
@@ -27,7 +27,7 @@ class GetValueArrayDataWithArrayTest extends AbstractArrayTestsTestCase
         return [
             self::KeyNull . ' is converted to array' => [self::KeyNull, []],
             self::KeyEmpty . ' returns value' => [self::KeyEmpty, []],
-            self::KeyInvalid . ' returns value' => [self::KeyInvalid, null, NotAnArrayException::class],
+            self::KeyInvalid . ' returns value' => [self::KeyInvalid, null, NotSupportedDataException::class],
             self::KeyValid . ' returns value' => [self::KeyValid, ['test']],
             self::KeyMissingValue . ' is converted to array' => [self::KeyMissingValue, []],
         ];
@@ -43,7 +43,7 @@ class GetValueArrayDataWithArrayTest extends AbstractArrayTestsTestCase
         return [
             self::KeyNull . ' returns value' => [self::KeyNull, null],
             self::KeyEmpty . ' returns value' => [self::KeyEmpty, []],
-            self::KeyInvalid . ' returns value' => [self::KeyInvalid, null, NotAnArrayException::class],
+            self::KeyInvalid . ' returns value' => [self::KeyInvalid, null, NotSupportedDataException::class],
             self::KeyValid . ' returns value' => [self::KeyValid, ['test']],
             self::KeyMissingValue . ' is converted to null' => [self::KeyMissingValue, null],
         ];

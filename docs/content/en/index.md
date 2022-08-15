@@ -309,6 +309,55 @@ missing.
 $value = $data->getRequiredArrayGetter('key');
 ```
 
+### Get SimpleXMLElement
+
+Return SimpleXMLElement for given key. Uses `xml` transformer strategy.
+
+```php
+$xml = $data->getNullableXML('child');
+```
+
+### GetValue with XMLData
+
+> Throws always `NotXMLException` exception if value is not a SimpleXMLElement. XML transformer strategy is applied.
+
+Get always `GetValue` instance even if provided data is missing or if null.
+
+```php
+$value = $data->getXMLGetter('key');
+```
+
+Try to get nullable array from data and wrap it in `GetValue` instance.
+
+```php
+$value = $data->getNullableXMLGetter('key');
+```
+
+Try to get non-empty array from data and wrap it in `GetValue` instance. Throws `ArrayIsEmptyException` exception if
+missing.
+
+```php
+$value = $data->getRequiredXMLGetter('key');
+```
+
+### GetValue XML attributes
+
+> Throws always `NotXMLException` exception if value is not a SimpleXMLElement. XML transformer strategy is applied.
+
+Wraps XML element attributes in GetValue instance (even if attributes are not set in element).
+
+Key contains `@attributes` like `title.@attributes.test`.
+
+```php
+ // Access attributes from root data
+$rootAttributes = $data->getXMLAttributesGetter();
+$rootAttributes->getString('attributeName');
+
+ // Access attributes from given element
+$attributes = $data->getXMLAttributesGetter('node');
+$attributes->getString('attributeName');
+```
+
 ## Exceptions
 
 > All exceptions receive full key that was used for getting data. You can receive it by using `$exception->getKey()`

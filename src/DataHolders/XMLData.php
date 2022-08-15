@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Wrkflow\GetValue\DataHolders;
 
 use SimpleXMLElement;
+use Wrkflow\GetValue\Enums\ValueType;
 
 class XMLData extends AbstractData
 {
@@ -15,18 +16,14 @@ class XMLData extends AbstractData
         parent::__construct($parentKey);
     }
 
-    public function getValue(string|array $key): ?string
+    public function getValue(string|array $key, ValueType $expectedValueType): SimpleXMLElement|array|string|null
     {
         if (is_string($key) && str_contains($key, '.')) {
             $key = explode('.', $key);
         } elseif (is_string($key)) {
             $value = $this->data->{$key};
 
-            if ($value->count() !== 0) {
-                return (string) $value;
-            }
-
-            return null;
+            return $this->normalizeValue($expectedValueType, $value);
         }
 
         $element = $this->data;
@@ -41,11 +38,36 @@ class XMLData extends AbstractData
             $element = $value;
         }
 
-        return (string) $element;
+        return $this->normalizeValue($expectedValueType, $element);
     }
 
     public function get(): SimpleXMLElement
     {
         return $this->data;
+    }
+
+    protected function normalizeValue(ValueType $valueType, SimpleXMLElement $value): string|array|null|SimpleXMLElement
+    {
+        if ($valueType === ValueType::XML) {
+            if ($value->count() === 0) {
+                return null;
+            }
+
+            return $value;
+        } elseif ($valueType === ValueType::XMLAttributes) {
+            return $value;
+        } elseif ($valueType === ValueType::Array) {
+            $return = [];
+
+            foreach ($value as $val) {
+                $return[] = $val;
+            }
+
+            return $return;
+        } elseif ($value->count() !== 0) {
+            return (string) $value;
+        }
+
+        return null;
     }
 }

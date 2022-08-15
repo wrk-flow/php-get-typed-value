@@ -10,6 +10,7 @@ use Wrkflow\GetValue\Actions\ValidateAction;
 use Wrkflow\GetValue\Builders\ExceptionBuilder;
 use Wrkflow\GetValue\Contracts\TransformerContract;
 use Wrkflow\GetValue\DataHolders\ArrayData;
+use Wrkflow\GetValue\Enums\ValueType;
 use Wrkflow\GetValue\GetValue;
 
 abstract class AbstractTransformerTestCase extends TestCase
@@ -70,7 +71,7 @@ abstract class AbstractTransformerTestCase extends TestCase
             $this->expectException($entity->expectException);
         }
 
-        $result = $this->action->execute($data, 'test', [$this->wasCalledRule], $transforms);
+        $result = $this->action->execute($data, ValueType::Array, 'test', [$this->wasCalledRule], $transforms);
 
         if ($entity->expectException !== null) {
             return;

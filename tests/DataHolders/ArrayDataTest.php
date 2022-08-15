@@ -6,6 +6,7 @@ namespace Wrkflow\GetValueTests\DataHolders;
 
 use PHPUnit\Framework\TestCase;
 use Wrkflow\GetValue\DataHolders\ArrayData;
+use Wrkflow\GetValue\Enums\ValueType;
 
 class ArrayDataTest extends TestCase
 {
@@ -44,36 +45,36 @@ class ArrayDataTest extends TestCase
 
     public function testGetValueUsingDotNotation(): void
     {
-        $this->assertSame(['Polo'], $this->data->getValue('array.array'));
-        $this->assertSame('Polo', $this->data->getValue('array.array.0'));
-        $this->assertSame('Peace', $this->data->getValue('array.child'));
-        $this->assertNull($this->data->getValue('array.array.0.0'));
-        $this->assertNull($this->data->getValue('array.10'));
-        $this->assertNull($this->data->getValue('array.com.uk'));
-        $this->assertSame('peace.co.uk', $this->data->getValue('domains.co.uk'));
+        $this->assertSame(['Polo'], $this->data->getValue('array.array', ValueType::String));
+        $this->assertSame('Polo', $this->data->getValue('array.array.0', ValueType::String));
+        $this->assertSame('Peace', $this->data->getValue('array.child', ValueType::String));
+        $this->assertNull($this->data->getValue('array.array.0.0', ValueType::String));
+        $this->assertNull($this->data->getValue('array.10', ValueType::String));
+        $this->assertNull($this->data->getValue('array.com.uk', ValueType::String));
+        $this->assertSame('peace.co.uk', $this->data->getValue('domains.co.uk', ValueType::String));
     }
 
     public function testDotNotationWithDotForcingAnArrayAtAllCases(): void
     {
-        $this->assertNull($this->data->getValue('dot.'));
-        $this->assertSame('key', $this->data->getValue(['dot.']));
+        $this->assertNull($this->data->getValue('dot.', ValueType::String));
+        $this->assertSame('key', $this->data->getValue(['dot.'], ValueType::String));
     }
 
     public function testGetValueUsingArray(): void
     {
-        $this->assertSame('peace.co.uk', $this->data->getValue(['domains', 'co', 'uk']));
-        $this->assertSame('peace.co.uk with array', $this->data->getValue(['domains', 'co.uk']));
-        $this->assertSame('works', $this->data->getValue(['domains', 'com.uk']));
+        $this->assertSame('peace.co.uk', $this->data->getValue(['domains', 'co', 'uk'], ValueType::String));
+        $this->assertSame('peace.co.uk with array', $this->data->getValue(['domains', 'co.uk'], ValueType::String));
+        $this->assertSame('works', $this->data->getValue(['domains', 'com.uk'], ValueType::String));
     }
 
     public function testNull(): void
     {
-        $this->assertNull($this->data->getValue('null'));
+        $this->assertNull($this->data->getValue('null', ValueType::String));
     }
 
     public function testWithoutDotNotation(): void
     {
-        $this->assertSame('Marco', $this->data->getValue('string'));
-        $this->assertSame($this->data->get()['array'], $this->data->getValue('array'));
+        $this->assertSame('Marco', $this->data->getValue('string', ValueType::String));
+        $this->assertSame($this->data->get()['array'], $this->data->getValue('array', ValueType::String));
     }
 }

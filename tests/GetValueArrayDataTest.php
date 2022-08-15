@@ -7,7 +7,7 @@ namespace Wrkflow\GetValueTests;
 use Wrkflow\GetValue\Actions\GetValidatedValueAction;
 use Wrkflow\GetValue\Builders\ExceptionBuilder;
 use Wrkflow\GetValue\Exceptions\ArrayIsEmptyException;
-use Wrkflow\GetValue\Exceptions\NotAnArrayException;
+use Wrkflow\GetValue\Exceptions\NotSupportedDataException;
 use Wrkflow\GetValue\GetValue;
 use Wrkflow\GetValue\Strategies\DefaultTransformerStrategy;
 
@@ -38,7 +38,7 @@ class GetValueArrayDataTest extends AbstractArrayTestCase
 
     public function testGetRequiredArrayGetterOnNonArray(): void
     {
-        $this->expectException(NotAnArrayException::class);
+        $this->expectException(NotSupportedDataException::class);
 
         $this->data->getRequiredArrayGetter(self::KeyEmail);
     }
@@ -59,7 +59,7 @@ class GetValueArrayDataTest extends AbstractArrayTestCase
 
     public function testGetArrayGetterOnNonArray(): void
     {
-        $this->expectException(NotAnArrayException::class);
+        $this->expectException(NotSupportedDataException::class);
 
         $this->data->getArrayGetter(self::KeyEmail);
     }
@@ -111,6 +111,24 @@ class GetValueArrayDataTest extends AbstractArrayTestCase
         $path = [self::KeyItems, '1', self::KeyPage];
         $this->expectExceptionMessage('Given value is not array for key <items.1.page>');
         $this->data->getRequiredArrayGetter($path);
+    }
+
+    public function testGetRequiredXMLGetterOnArrayData(): void
+    {
+        $this->expectExceptionMessage('Given value is not a XML <page>');
+        $this->data->getRequiredXMLGetter(self::KeyPage);
+    }
+
+    public function testGetXMLAttributesGetterOnArrayData(): void
+    {
+        $this->expectExceptionMessage('Given value is not a XML <page>');
+        $this->data->getXMLAttributesGetter(self::KeyPage);
+    }
+
+    public function testGetXMLAttributesGetterOnRootArrayData(): void
+    {
+        $this->expectExceptionMessage('Given value is not a XML <>');
+        $this->data->getXMLAttributesGetter();
     }
 
     protected function assertItem(

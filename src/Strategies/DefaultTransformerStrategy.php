@@ -39,4 +39,9 @@ class DefaultTransformerStrategy implements TransformerStrategy
     {
         return [];
     }
+
+    public function xml(): array
+    {
+        return [];
+    }
 }

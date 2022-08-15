@@ -5,8 +5,7 @@ declare(strict_types=1);
 namespace Wrkflow\GetValue\Transformers;
 
 use Closure;
-use Wrkflow\GetValue\DataHolders\ArrayData;
-use Wrkflow\GetValue\Exceptions\NotAnArrayException;
+use Wrkflow\GetValue\Exceptions\NotSupportedDataException;
 use Wrkflow\GetValue\GetValue;
 
 /**
@@ -34,11 +33,13 @@ class ArrayItemGetterTransformer extends AbstractArrayItemTransformer
 
     protected function transformItem(mixed $item, string $key, string|int $index, GetValue $getValue): mixed
     {
-        if (is_array($item) === false) {
-            throw new NotAnArrayException($key . ' at ' . $index);
+        $data = $getValue->makeData($item, $key);
+
+        if ($data === null) {
+            throw new NotSupportedDataException($key . ' at ' . $index);
         }
 
-        $getItemValue = $getValue->makeInstance(new ArrayData($item, $getValue->data->getKey($key)));
+        $getItemValue = $getValue->makeInstance($data);
 
         return call_user_func_array($this->onItem, [$getItemValue, $key]);
     }

@@ -7,6 +7,7 @@ namespace Wrkflow\GetValueTests\DataHolders;
 use PHPUnit\Framework\TestCase;
 use SimpleXMLElement;
 use Wrkflow\GetValue\DataHolders\XMLData;
+use Wrkflow\GetValue\Enums\ValueType;
 
 class XMLDataTest extends TestCase
 {
@@ -44,7 +45,7 @@ CODE_SAMPLE
     {
         $this->assertSame($this->simpleXMLElement, $this->data->get());
 
-        $result = $this->data->getValue('nothing');
+        $result = $this->data->getValue('nothing', ValueType::String);
         $this->assertNull($result);
     }
 
@@ -52,47 +53,47 @@ CODE_SAMPLE
     {
         $this->assertSame($this->simpleXMLElement, $this->data->get());
 
-        $result = $this->data->getValue('test');
+        $result = $this->data->getValue('test', ValueType::String);
         $this->assertSame('', $result);
     }
 
     public function testOnExistingValue(): void
     {
-        $result = $this->data->getValue('title');
+        $result = $this->data->getValue('title', ValueType::String);
         $this->assertSame('test', $result);
     }
 
     public function testChildWithoutText(): void
     {
-        $result = $this->data->getValue('child');
+        $result = $this->data->getValue('child', ValueType::String);
         $this->assertNotNull($result);
-        $this->assertSame('', trim($result));
+        $this->assertSame('', is_string($result) ? trim($result) : 'no_string');
     }
 
     public function testChildUsingDotNotationDoesNotExists(): void
     {
-        $result = $this->data->getValue('child.test');
+        $result = $this->data->getValue('child.test', ValueType::String);
         $this->assertNull($result);
     }
 
     public function testChildUsingDotNotation(): void
     {
-        $result = $this->data->getValue('child.title');
+        $result = $this->data->getValue('child.title', ValueType::String);
         $this->assertSame('test', $result);
     }
 
     public function testDotNotationWithDotForcingAnArrayAtAllCases(): void
     {
-        $result = $this->data->getValue('val.dot');
+        $result = $this->data->getValue('val.dot', ValueType::String);
         $this->assertSame('works2', $result);
 
-        $result = $this->data->getValue(['val', 'dot']);
+        $result = $this->data->getValue(['val', 'dot'], ValueType::String);
         $this->assertSame('works2', $result);
 
-        $result = $this->data->getValue(['val.dot']);
+        $result = $this->data->getValue(['val.dot'], ValueType::String);
         $this->assertSame('works', $result);
 
-        $result = $this->data->getValue('child.val.dot');
+        $result = $this->data->getValue('child.val.dot', ValueType::String);
         $this->assertNull($result);
     }
 }

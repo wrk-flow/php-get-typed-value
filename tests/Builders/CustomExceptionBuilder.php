@@ -28,4 +28,9 @@ class CustomExceptionBuilder implements ExceptionBuilderContract
     {
         return new Exception('validationFailed: ' . $key . ' ' . $ruleClassName);
     }
+
+    public function notXML(string $key): Exception
+    {
+        return new Exception('notXML: ' . $key);
+    }
 }

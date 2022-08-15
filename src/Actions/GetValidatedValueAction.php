@@ -6,6 +6,7 @@ namespace Wrkflow\GetValue\Actions;
 
 use Wrkflow\GetValue\Contracts\RuleContract;
 use Wrkflow\GetValue\Contracts\TransformerContract;
+use Wrkflow\GetValue\Enums\ValueType;
 use Wrkflow\GetValue\GetValue;
 
 class GetValidatedValueAction
@@ -19,10 +20,15 @@ class GetValidatedValueAction
      * @param array<RuleContract>        $rules
      * @param array<TransformerContract> $transforms
      */
-    public function execute(GetValue $getValue, string|array $key, array $rules, array $transforms): mixed
-    {
-        $value = $getValue->data->getValue($key);
+    public function execute(
+        GetValue $getValue,
+        ValueType $valueType,
+        string|array $key,
+        array $rules,
+        array $transforms,
+    ): mixed {
         $fullKey = $getValue->data->getKey($key);
+        $value = $getValue->data->getValue($key, $valueType);
 
         $afterValidationTransforms = [];
 

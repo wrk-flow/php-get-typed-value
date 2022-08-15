@@ -6,12 +6,28 @@ namespace Wrkflow\GetValueTests\Transformers;
 
 use Closure;
 use Wrkflow\GetValue\Contracts\TransformerContract;
+use Wrkflow\GetValue\DataHolders\ArrayData;
 use Wrkflow\GetValue\GetValue;
-use Wrkflow\GetValue\Transformers\ArrayGetterTransformer;
+use Wrkflow\GetValue\Transformers\GetterTransformer;
 
-class ArrayGetterTransformerTest extends AbstractTransformerTestCase
+class GetterTransformerTest extends AbstractTransformerTestCase
 {
     final public const Key = 'key';
+
+    public function testExample(): void
+    {
+        $data = new GetValue(new ArrayData([
+            'person' => [
+                'name' => 'Marco',
+                'surname' => 'Polo',
+            ],
+        ]));
+
+        $transformer = new GetterTransformer(fn(GetValue $value, string $key): string => $value->getRequiredString('name') . ' ' . $value->getRequiredString('surname'), true);
+
+        $value = $data->getString('person', transformers: [$transformer]);
+        $this->assertEquals('Marco Polo', $value);
+    }
 
     public function dataToTest(): array
     {
@@ -56,24 +72,24 @@ class ArrayGetterTransformerTest extends AbstractTransformerTestCase
 
             return [
                 // Remove transformers (we are using empty string)
-                self::Key => md5($value->getRequiredString(self::Key, transformers: [])),
+                self::Key => md5((string) $value->getRequiredString(self::Key, transformers: [])),
             ];
         };
     }
 
     protected function getTransformer(): TransformerContract
     {
-        return new ArrayGetterTransformer($this->getClosure());
+        return new GetterTransformer($this->getClosure());
     }
 
     protected function getBeforeValidationTransformer(): TransformerContract
     {
-        return new ArrayGetterTransformer(closure: $this->getClosure(), beforeValidation: true);
+        return new GetterTransformer(closure: $this->getClosure(), beforeValidation: true);
     }
 
     protected function getForceAfterValidation(): TransformerContract
     {
-        return new ArrayGetterTransformer(closure: $this->getClosure(), beforeValidation: false);
+        return new GetterTransformer(closure: $this->getClosure(), beforeValidation: false);
     }
 
     protected function createData(bool $beforeValueIsSameAsValue): array

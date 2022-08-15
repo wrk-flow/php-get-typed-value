@@ -8,6 +8,7 @@ use BackedEnum;
 use DateTime;
 use DateTimeImmutable;
 use DateTimeInterface;
+use SimpleXMLElement;
 use TypeError;
 use UnitEnum;
 use Wrkflow\GetValue\Actions\GetValidatedValueAction;
@@ -19,6 +20,9 @@ use Wrkflow\GetValue\Contracts\TransformerContract;
 use Wrkflow\GetValue\Contracts\TransformerStrategy;
 use Wrkflow\GetValue\DataHolders\AbstractData;
 use Wrkflow\GetValue\DataHolders\ArrayData;
+use Wrkflow\GetValue\DataHolders\XMLAttributesData;
+use Wrkflow\GetValue\DataHolders\XMLData;
+use Wrkflow\GetValue\Enums\ValueType;
 use Wrkflow\GetValue\Rules\BooleanRule;
 use Wrkflow\GetValue\Rules\EnumRule;
 use Wrkflow\GetValue\Rules\NumericRule;
@@ -47,6 +51,7 @@ class GetValue
     public function getInt(string|array $key, array $rules = [], ?array $transformers = null): ?int
     {
         $value = $this->getValidatedValue(
+            valueType: ValueType::Int,
             key: $key,
             rules: $rules,
             mainRule: new NumericRule(),
@@ -82,6 +87,7 @@ class GetValue
     public function getFloat(string|array $key, array $rules = [], ?array $transformers = null): ?float
     {
         $value = $this->getValidatedValue(
+            valueType: ValueType::Float,
             key: $key,
             rules: $rules,
             mainRule: new NumericRule(),
@@ -117,6 +123,7 @@ class GetValue
     public function getBool(string|array $key, array $rules = [], ?array $transformers = null): ?bool
     {
         $value = $this->getValidatedValue(
+            valueType: ValueType::Bool,
             key: $key,
             rules: $rules,
             mainRule: new BooleanRule(),
@@ -152,6 +159,7 @@ class GetValue
     public function getString(string|array $key, array $rules = [], ?array $transformers = null): ?string
     {
         $value = $this->getValidatedValue(
+            valueType: ValueType::String,
             key: $key,
             rules: $rules,
             mainRule: new StringRule(),
@@ -182,9 +190,11 @@ class GetValue
 
     /**
      * @template TEnum of BackedEnum
-     * @param class-string<TEnum> $enum
+     *
+     * @param class-string<TEnum>             $enum
      * @param array<RuleContract>             $rules
      * @param array<TransformerContract>|null $transformers
+     *
      * @return TEnum|null
      */
     public function getEnum(string|array $key, string $enum, array $rules = [], ?array $transformers = null): ?UnitEnum
@@ -205,9 +215,11 @@ class GetValue
 
     /**
      * @template TEnum of BackedEnum
-     * @param class-string<TEnum> $enum
+     *
+     * @param class-string<TEnum>             $enum
      * @param array<RuleContract>             $rules
      * @param array<TransformerContract>|null $transformers
+     *
      * @return TEnum
      */
     public function getRequiredEnum(
@@ -234,6 +246,7 @@ class GetValue
     public function getDateTime(string|array $key, array $rules = [], ?array $transformers = null): ?DateTimeInterface
     {
         $value = $this->getValidatedValue(
+            valueType: ValueType::DateTime,
             key: $key,
             rules: $rules,
             mainRule: new StringRule(),
@@ -280,8 +293,9 @@ class GetValue
     public function getArray(string|array $key, ?array $transformers = null): array
     {
         $value = $this->getValidatedValue(
+            valueType: ValueType::Array,
             key: $key,
-            transformers: $transformers ?? $this->transformerStrategy->array(),
+            transformers: $transformers ?? $this->transformerStrategy->array()
         );
 
         if ($value === null) {
@@ -303,6 +317,7 @@ class GetValue
     public function getNullableArray(string|array $key, ?array $transformers = null): ?array
     {
         $value = $this->getValidatedValue(
+            valueType: ValueType::Array,
             key: $key,
             transformers: $transformers ?? $this->transformerStrategy->array(),
         );
@@ -376,6 +391,118 @@ class GetValue
         return $this->makeInstance(new ArrayData($value, $this->data->getKey($key)));
     }
 
+    /**
+     * Ensures that always an array will be returned (if missing in $data or if null).
+     *
+     * @param array<TransformerContract>|null $transformers
+     */
+    public function getNullableXML(
+        string|array $key,
+        ?array $transformers = null,
+        ValueType $valueType = ValueType::XML,
+    ): ?SimpleXMLElement {
+        $value = $this->getValidatedValue(
+            valueType: $valueType,
+            key: $key,
+            transformers: $transformers ?? $this->transformerStrategy->xml()
+        );
+
+        if ($value === null) {
+            return null;
+        }
+
+        if ($value instanceof SimpleXMLElement === false) {
+            throw $this->exceptionBuilder->notXML($this->data->getKey($key));
+        }
+
+        return $value;
+    }
+
+    /**
+     * Checks if the array is in the data set with non-empty array
+     *
+     * @param array<TransformerContract>|null $transformers
+     */
+    public function getRequiredXML(
+        string|array $key,
+        ?array $transformers = null,
+        ValueType $valueType = ValueType::XML,
+    ): SimpleXMLElement {
+        $value = $this->getNullableXML(key: $key, transformers: $transformers, valueType: $valueType);
+
+        if ($value instanceof SimpleXMLElement === false) {
+            throw $this->exceptionBuilder->missingValue($this->data->getKey($key));
+        }
+
+        return $value;
+    }
+
+    /**
+     * Get always `GetValue` instance even if provided data is missing or if null.
+     *
+     * @param array<TransformerContract>|null $transformers
+     */
+    public function getXMLGetter(string|array $key, ?array $transformers = null): self
+    {
+        $xml = $this->getNullableXML($key, $transformers) ?? new SimpleXMLElement('<root/>');
+
+        $data = new XMLData($xml, $this->data->getKey($key));
+
+        return $this->makeInstance($data);
+    }
+
+    /**
+     * Try to get nullable array from data and wrap it in `GetValue` instance.
+     *
+     * @param array<TransformerContract>|null $transformers
+     */
+    public function getNullableXMLGetter(string|array $key, ?array $transformers = null): ?self
+    {
+        $value = $this->getNullableXML(key: $key, transformers: $transformers);
+
+        if ($value instanceof SimpleXMLElement === false) {
+            return null;
+        }
+
+        return $this->makeInstance(new XMLData($value, $this->data->getKey($key)));
+    }
+
+    /**
+     * Checks if the array is in the data set with non-empty array
+     *
+     * @param array<TransformerContract>|null $transformers
+     */
+    public function getRequiredXMLGetter(string|array $key, ?array $transformers = null): self
+    {
+        $value = $this->getRequiredXML(key: $key, transformers: $transformers);
+
+        return $this->makeInstance(new XMLData($value, $this->data->getKey($key)));
+    }
+
+    public function getXMLAttributesGetter(string|array|null $key = null, ?array $transformers = null): self
+    {
+        $value = $key === null ? $this->data->get() : $this->getRequiredXML(
+            key: $key,
+            transformers: $transformers,
+            valueType: ValueType::XMLAttributes
+        );
+
+        if ($value instanceof SimpleXMLElement === false) {
+            throw $this->exceptionBuilder->notXML($this->data->getKey());
+        }
+
+        $attributes = $value->attributes() ?? new SimpleXMLElement('<root/>');
+
+        $parentKey = '@attributes';
+        if (is_array($key)) {
+            $parentKey = $key + [$parentKey];
+        } elseif (is_string($key)) {
+            $parentKey = $key . '.' . $parentKey;
+        }
+
+        return $this->makeInstance(new XMLAttributesData($attributes, $this->data->getKey($parentKey)));
+    }
+
     public function makeInstance(AbstractData $data): self
     {
         return new self(
@@ -386,12 +513,25 @@ class GetValue
         );
     }
 
+    public function makeData(mixed $value, string $key): ?AbstractData
+    {
+        $data = null;
+        if (is_array($value)) {
+            $data = new ArrayData($value, $this->data->getKey($key));
+        } elseif ($value instanceof SimpleXMLElement) {
+            $data = new XMLData($value, $this->data->getKey($key));
+        }
+
+        return $data;
+    }
+
     /**
      * @param array<RuleContract>        $rules
      * @param RuleContract|null          $mainRule Adds given rule before all given rules.
      * @param array<TransformerContract> $transformers
      */
     protected function getValidatedValue(
+        ValueType $valueType,
         string|array $key,
         array $rules = [],
         ?RuleContract $mainRule = null,
@@ -401,6 +541,6 @@ class GetValue
             $rules = array_merge([$mainRule], $rules);
         }
 
-        return $this->getValidatedValueAction->execute($this, $key, $rules, $transformers);
+        return $this->getValidatedValueAction->execute($this, $valueType, $key, $rules, $transformers);
     }
 }

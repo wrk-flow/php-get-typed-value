@@ -5,20 +5,19 @@ declare(strict_types=1);
 namespace Wrkflow\GetValueTests\Strategies;
 
 use PHPUnit\Framework\TestCase;
-use Wrkflow\GetValue\Strategies\DefaultTransformerStrategy;
-use Wrkflow\GetValue\Transformers\TransformToBool;
-use Wrkflow\GetValue\Transformers\TrimAndEmptyStringToNull;
+use Wrkflow\GetValue\Strategies\NoTransformerStrategy;
 
 class NoTransformerStrategyTest extends TestCase
 {
     public function testNoStrategyIsEmpty(): void
     {
-        $strategy = new DefaultTransformerStrategy();
-        $this->assertEquals([new TransformToBool()], $strategy->bool());
+        $strategy = new NoTransformerStrategy();
+        $this->assertEquals([], $strategy->bool());
         $this->assertEquals([], $strategy->array());
         $this->assertEquals([], $strategy->dateTime());
         $this->assertEquals([], $strategy->float());
-        $this->assertEquals([new TrimAndEmptyStringToNull()], $strategy->string());
+        $this->assertEquals([], $strategy->string());
         $this->assertEquals([], $strategy->int());
+        $this->assertEquals([], $strategy->xml());
     }
 }
