@@ -15,7 +15,6 @@ class ClosureTransformer implements TransformerContract
 {
     /**
      * @param Closure(mixed,string):mixed $closure Transform the
-     * @param bool    $beforeValidation
      */
     public function __construct(
         private readonly Closure $closure,

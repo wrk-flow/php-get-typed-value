@@ -14,7 +14,6 @@ class ArrayItemTransformer extends AbstractArrayItemTransformer
 {
     /**
      * @param Closure(mixed,string):mixed $onItem
-     * @param bool                        $beforeValidation
      * @param bool                        $ignoreNullResult Allows to prevent adding null value to array when
      *                                                      rebuilding an array.
      */

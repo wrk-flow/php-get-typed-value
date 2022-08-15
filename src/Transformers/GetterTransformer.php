@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Wrkflow\GetValue\Transformers;
 
-use Wrkflow\GetValue\DataHolders\AbstractData;
 use Closure;
 use Wrkflow\GetValue\Contracts\TransformerContract;
+use Wrkflow\GetValue\DataHolders\AbstractData;
 use Wrkflow\GetValue\GetValue;
 
 /**
@@ -16,7 +16,6 @@ class GetterTransformer implements TransformerContract
 {
     /**
      * @param Closure(GetValue,string):mixed $closure
-     * @param bool                           $beforeValidation
      */
     public function __construct(
         private readonly Closure $closure,

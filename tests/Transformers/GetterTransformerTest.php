@@ -23,7 +23,11 @@ class GetterTransformerTest extends AbstractTransformerTestCase
             ],
         ]));
 
-        $transformer = new GetterTransformer(fn(GetValue $value, string $key): string => $value->getRequiredString('name') . ' ' . $value->getRequiredString('surname'), true);
+        $transformer = new GetterTransformer(fn (GetValue $value, string $key): string => $value->getRequiredString(
+            'name'
+        ) . ' ' . $value->getRequiredString(
+            'surname'
+        ), true);
 
         $value = $data->getString('person', transformers: [$transformer]);
         $this->assertEquals('Marco Polo', $value);

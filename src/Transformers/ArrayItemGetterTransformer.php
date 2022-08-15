@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Wrkflow\GetValue\Transformers;
 
+use Wrkflow\GetValue\DataHolders\AbstractData;
 use Closure;
 use Wrkflow\GetValue\Exceptions\NotSupportedDataException;
 use Wrkflow\GetValue\GetValue;
@@ -15,7 +16,6 @@ class ArrayItemGetterTransformer extends AbstractArrayItemTransformer
 {
     /**
      * @param Closure(GetValue,string):mixed $onItem
-     * @param bool                           $beforeValidation
      * @param bool                           $ignoreNullResult Allows to prevent adding null value to array when
      *                                                         rebuilding an array.
      */
@@ -35,7 +35,7 @@ class ArrayItemGetterTransformer extends AbstractArrayItemTransformer
     {
         $data = $getValue->makeData($item, $key);
 
-        if ($data === null) {
+        if ($data instanceof AbstractData === false) {
             throw new NotSupportedDataException($key . ' at ' . $index);
         }
 

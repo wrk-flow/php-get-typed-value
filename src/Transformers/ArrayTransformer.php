@@ -15,7 +15,6 @@ class ArrayTransformer implements TransformerContract
 {
     /**
      * @param Closure(array,string):mixed $closure
-     * @param bool    $beforeValidation
      */
     public function __construct(
         private readonly Closure $closure,
