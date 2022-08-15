@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Wrkflow\GetValue\Transformers;
 
-use Wrkflow\GetValue\DataHolders\AbstractData;
 use Closure;
+use Wrkflow\GetValue\DataHolders\AbstractData;
 use Wrkflow\GetValue\Exceptions\NotSupportedDataException;
 use Wrkflow\GetValue\GetValue;
 
