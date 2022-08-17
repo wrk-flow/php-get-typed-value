@@ -15,6 +15,7 @@ use Wrkflow\GetValue\Actions\GetValidatedValueAction;
 use Wrkflow\GetValue\Actions\ValidateAction;
 use Wrkflow\GetValue\Builders\ExceptionBuilder;
 use Wrkflow\GetValue\Contracts\ExceptionBuilderContract;
+use Wrkflow\GetValue\Contracts\GetValueTransformerContract;
 use Wrkflow\GetValue\Contracts\RuleContract;
 use Wrkflow\GetValue\Contracts\TransformerContract;
 use Wrkflow\GetValue\Contracts\TransformerStrategy;
@@ -28,6 +29,7 @@ use Wrkflow\GetValue\Rules\EnumRule;
 use Wrkflow\GetValue\Rules\NumericRule;
 use Wrkflow\GetValue\Rules\StringRule;
 use Wrkflow\GetValue\Strategies\DefaultTransformerStrategy;
+use Wrkflow\GetValue\Transformers\GetterTransformer;
 
 class GetValue
 {
@@ -501,6 +503,27 @@ class GetValue
         }
 
         return $this->makeInstance(new XMLAttributesData($attributes, $this->data->getKey($parentKey)));
+    }
+
+    /**
+     * @template T of object
+     * @param class-string<T>       $expectedClass
+     *
+     * @return T|null
+     */
+    public function getObject(
+        string $expectedClass,
+        string|array $key,
+        GetValueTransformerContract $getValueTransformer
+    ): ?object {
+        $transformers = [new GetterTransformer($getValueTransformer)];
+        $result = $this->getValidatedValue(ValueType::Object, $key, transformers: $transformers);
+
+        if ($result instanceof $expectedClass) {
+            return $result;
+        }
+
+        return null;
     }
 
     public function makeInstance(AbstractData $data): self

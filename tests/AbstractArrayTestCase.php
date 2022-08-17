@@ -129,6 +129,9 @@ abstract class AbstractArrayTestCase extends TestCase
                 self::KeyEnumInt => 's',
             ],
             self::KeyMissingValue => ['force-non-empty'],
+            'object' => [
+                'type' => 'x',
+            ],
         ]);
         $this->data = new GetValue($this->arrayData);
     }

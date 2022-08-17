@@ -10,6 +10,9 @@ use Wrkflow\GetValue\Exceptions\ArrayIsEmptyException;
 use Wrkflow\GetValue\Exceptions\NotSupportedDataException;
 use Wrkflow\GetValue\GetValue;
 use Wrkflow\GetValue\Strategies\DefaultTransformerStrategy;
+use Wrkflow\GetValueTests\Entities\TestEntity;
+use Wrkflow\GetValueTests\Transformers\NullTransformer;
+use Wrkflow\GetValueTests\Transformers\TestEntityTransformer;
 
 class GetValueArrayDataTest extends AbstractArrayTestCase
 {
@@ -129,6 +132,19 @@ class GetValueArrayDataTest extends AbstractArrayTestCase
     {
         $this->expectExceptionMessage('Given value is not a XML <>');
         $this->data->getXMLAttributesGetter();
+    }
+
+    public function testGetObject(): void
+    {
+        $result = $this->data->getObject(TestEntity::class, 'object', new TestEntityTransformer());
+        $this->assertNotNull($result);
+        $this->assertEquals('x', $result->type);
+    }
+
+    public function testGetObjectIncorrectResult(): void
+    {
+        $result = $this->data->getObject(TestEntity::class, 'object', new NullTransformer());
+        $this->assertNull($result);
     }
 
     protected function assertItem(

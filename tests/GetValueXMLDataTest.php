@@ -11,6 +11,9 @@ use Wrkflow\GetValue\DataHolders\XMLData;
 use Wrkflow\GetValue\Exceptions\MissingValueForKeyException;
 use Wrkflow\GetValue\GetValue;
 use Wrkflow\GetValue\Strategies\DefaultTransformerStrategy;
+use Wrkflow\GetValueTests\Entities\TestEntity;
+use Wrkflow\GetValueTests\Transformers\NullTransformer;
+use Wrkflow\GetValueTests\Transformers\TestEntityTransformer;
 
 class GetValueXMLDataTest extends AbstractXMLTestCase
 {
@@ -85,6 +88,19 @@ class GetValueXMLDataTest extends AbstractXMLTestCase
 
         $this->assertObject($object);
         $this->assertNotNull($this->data->getXMLGetter('not_exists'));
+    }
+
+    public function testGetObject(): void
+    {
+        $result = $this->data->getObject(TestEntity::class, 'object', new TestEntityTransformer());
+        $this->assertNotNull($result);
+        $this->assertEquals('x', $result->type);
+    }
+
+    public function testGetObjectIncorrectResult(): void
+    {
+        $result = $this->data->getObject(TestEntity::class, 'object', new NullTransformer());
+        $this->assertNull($result);
     }
 
     protected function assertObject(GetValue $object): void

@@ -311,6 +311,8 @@ $value = $data->getRequiredArrayGetter('key');
 
 ### Get SimpleXMLElement
 
+> Since v0.6.0
+
 Return SimpleXMLElement for given key. Uses `xml` transformer strategy.
 
 ```php
@@ -319,7 +321,8 @@ $xml = $data->getNullableXML('child');
 
 ### GetValue with XMLData
 
-> Throws always `NotXMLException` exception if value is not a SimpleXMLElement. XML transformer strategy is applied.
+> Since v0.6.0. Throws always `NotXMLException` exception if value is not a SimpleXMLElement. XML transformer strategy
+> is applied.
 
 Get always `GetValue` instance even if provided data is missing or if null.
 
@@ -342,7 +345,8 @@ $value = $data->getRequiredXMLGetter('key');
 
 ### GetValue XML attributes
 
-> Throws always `NotXMLException` exception if value is not a SimpleXMLElement. XML transformer strategy is applied.
+> Since v0.6.0. Throws always `NotXMLException` exception if value is not a SimpleXMLElement. XML transformer strategy
+> is applied.
 
 Wraps XML element attributes in GetValue instance (even if attributes are not set in element).
 
@@ -356,6 +360,51 @@ $rootAttributes->getString('attributeName');
  // Access attributes from given element
 $attributes = $data->getXMLAttributesGetter('node');
 $attributes->getString('attributeName');
+```
+
+### GetObject
+
+> Since v0.6.1
+
+- Allows getting object of specified type.
+- You can transform raw value to expected object by using transformers (with `GetterTransformer`)
+
+```php
+use Wrkflow\GetValue\Contracts\GetValueTransformerContract;
+use Wrkflow\GetValue\GetValue;
+use Wrkflow\GetValue\DataHolders\ArrayData;
+use Wrkflow\GetValue\Transformers\GetterTransformer;
+
+$data = new GetValue(new ArrayData([
+   'person' => ['name' => 'Marco', 'surname' => 'Polo'],
+]));
+
+class PersonEntity
+{
+    public function __construct(
+        public readonly string $firstName,
+        public readonly string $lastName,
+    ) {
+    }
+}
+
+class TestEntityTransformer implements GetValueTransformerContract
+{
+    public function transform(GetValue $value, string $key): PersonEntity
+    {
+        return new PersonEntity(
+            firstName: $value->getRequiredString('name'),
+            lastName: $value->getRequiredString('surname'),
+        );
+    }
+}
+
+$person = $this->data->getObject(
+    Person::class,
+    'person',
+    new PersonTransformer()
+);
+// PersonEntity{firstName=Marco,lastName=Polo}
 ```
 
 ## Exceptions
