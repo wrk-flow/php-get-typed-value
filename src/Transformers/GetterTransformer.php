@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Wrkflow\GetValue\Transformers;
 
 use Closure;
+use Wrkflow\GetValue\Contracts\GetValueTransformerContract;
 use Wrkflow\GetValue\Contracts\TransformerContract;
 use Wrkflow\GetValue\DataHolders\AbstractData;
 use Wrkflow\GetValue\GetValue;
@@ -18,7 +19,7 @@ class GetterTransformer implements TransformerContract
      * @param Closure(GetValue,string):mixed $closure
      */
     public function __construct(
-        private readonly Closure $closure,
+        private readonly Closure|GetValueTransformerContract $closure,
         private readonly bool $beforeValidation = false
     ) {
     }
@@ -37,6 +38,10 @@ class GetterTransformer implements TransformerContract
         }
 
         $getItemValue = $getValue->makeInstance($data);
+
+        if ($this->closure instanceof GetValueTransformerContract) {
+            return $this->closure->transform($getItemValue, $key);
+        }
 
         return call_user_func_array($this->closure, [$getItemValue, $key]);
     }

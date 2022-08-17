@@ -32,11 +32,15 @@ class ArrayItemGetterTransformerTest extends AbstractTransformerTestCase
             ]],
         ]));
 
-        $transformer = new ArrayItemGetterTransformer(fn (GetValue $value, string $key): string => $value->getRequiredString(
-            'name'
-        ) . ' ' . $value->getRequiredString('surname'));
+        $transformer = new ArrayItemGetterTransformer(fn (GetValue $value, string $key): string => implode(' ', [
+            $value->getRequiredString('name'),
+            $value->getRequiredString('surname'),
+        ]));
 
         $values = $data->getArray('names', transformers: [$transformer]);
+        $this->assertEquals(['Marco Polo', 'Martin Way'], $values);
+
+        $values = $data->getArray('names', transformers: [new ArrayItemGetterTransformer(new GetNameTransformer())]);
         $this->assertEquals(['Marco Polo', 'Martin Way'], $values);
     }
 

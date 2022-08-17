@@ -12,6 +12,6 @@ enum ValueType
     case String;
     case DateTime;
     case Array;
-    case XML;
+    case Object;
     case XMLAttributes;
 }

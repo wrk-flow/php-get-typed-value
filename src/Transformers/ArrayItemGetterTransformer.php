@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Wrkflow\GetValue\Transformers;
 
 use Closure;
+use Wrkflow\GetValue\Contracts\GetValueTransformerContract;
 use Wrkflow\GetValue\DataHolders\AbstractData;
 use Wrkflow\GetValue\Exceptions\NotSupportedDataException;
 use Wrkflow\GetValue\GetValue;
@@ -15,12 +16,12 @@ use Wrkflow\GetValue\GetValue;
 class ArrayItemGetterTransformer extends AbstractArrayItemTransformer
 {
     /**
-     * @param Closure(GetValue,string):mixed $onItem
-     * @param bool                           $ignoreNullResult Allows to prevent adding null value to array when
+     * @param Closure(GetValue,string):mixed|GetValueTransformerContract $onItem
+     * @param bool                                                       $ignoreNullResult Allows to prevent adding null value to array when
      *                                                         rebuilding an array.
      */
     public function __construct(
-        private readonly Closure $onItem,
+        private readonly Closure|GetValueTransformerContract $onItem,
         private readonly bool $beforeValidation = false,
         private readonly bool $ignoreNullResult = true,
     ) {
@@ -40,6 +41,10 @@ class ArrayItemGetterTransformer extends AbstractArrayItemTransformer
         }
 
         $getItemValue = $getValue->makeInstance($data);
+
+        if ($this->onItem instanceof GetValueTransformerContract) {
+            return $this->onItem->transform($getItemValue, $key);
+        }
 
         return call_user_func_array($this->onItem, [$getItemValue, $key]);
     }

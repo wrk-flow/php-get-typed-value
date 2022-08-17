@@ -221,7 +221,10 @@ $transformer = new ArrayItemTransformer(function (mixed $value, string $key): ?a
 $values = $data->getArray('names', transformers: [$transformer]);
 // Result: [['Marco', 'Polo'], ['Way', 'Point'], null]
 ```
-### GetterTransformer (since v0.6.0)
+
+### GetterTransformer
+
+> Since v0.6.0
 
 Transforms an **array/xml value** in a closure that receives wrapped GetValue instance.
 
@@ -242,6 +245,34 @@ $value = $data->getString('person', transformers: [$transformer]);
 // Result: 'Marco Polo'
 ```
 
+#### Passing object instead of closure
+
+> Since v0.6.1
+
+To make transformers more re-usable you can pass an object that implements `Wrkflow\GetValue\Contracts\GetValueTransformerContract` interface.
+
+```php
+use Wrkflow\GetValue\Contracts\GetValueTransformerContract;
+use Wrkflow\GetValue\GetValue;
+use Wrkflow\GetValue\DataHolders\ArrayData;
+use Wrkflow\GetValue\Transformers\GetterTransformer;
+
+class GetNameTransformer implements GetValueTransformerContract
+{
+    public function transform(GetValue $value, string $key): string
+    {
+        return implode(' ', [$value->getRequiredString('name'), $value->getRequiredString('surname')]);
+    }
+}
+
+$data = new GetValue(new ArrayData([
+   'person' => ['name' => 'Marco', 'surname' => 'Polo'],
+]));
+
+$value = $data->getString('person', transformers: [new GetterTransformer(new GetNameTransformer(), true)]);
+// Result: 'Marco Polo'
+```
+
 ### ArrayItemGetterTransformer
 
 > Can be used only with get\*Array\* methods. Throws NotAnArrayException if array value is not an array.
@@ -257,9 +288,10 @@ $data = new GetValue(new ArrayData([
    'names' => [['name' => 'Marco', 'surname' => 'Polo'], ['name' => 'Martin', 'surname' => 'Way']]
 ]));
 
-$transformer = new ArrayItemGetterTransformer(function (GetValue $value, string $key): string {
-   return $value->getRequiredString('name') . ' '.$value->getRequiredString('surname');
-});
+$transformer = new ArrayItemGetterTransformer(fn (GetValue $value, string $key): string => implode(' ', [
+   $value->getRequiredString('name'),
+   $value->getRequiredString('surname'),
+]));
 
 $values = $data->getArray('names', transformers: [$transformer]);
 // Result: ['Marco Polo', 'Martin Way']
@@ -267,6 +299,34 @@ $values = $data->getArray('names', transformers: [$transformer]);
 
 If you return `null` in your closure then value is not added to result array. Use `ignoreNullResult: false` in same way
 as in [ArrayItemTransformer](#arrayitemtransformer)`.
+
+#### Passing object instead of closure
+
+> Since v0.6.1
+
+To make transformers more re-usable you can pass an object that implements `Wrkflow\GetValue\Contracts\GetValueTransformerContract` interface.
+
+```php
+use Wrkflow\GetValue\Contracts\GetValueTransformerContract;
+use Wrkflow\GetValue\GetValue;
+use Wrkflow\GetValue\DataHolders\ArrayData;
+use Wrkflow\GetValue\Transformers\ArrayItemGetterTransformer;
+
+class GetNameTransformer implements GetValueTransformerContract
+{
+    public function transform(GetValue $value, string $key): string
+    {
+        return implode(' ', [$value->getRequiredString('name'), $value->getRequiredString('surname')]);
+    }
+}
+
+$data = new GetValue(new ArrayData([
+   'names' => [['name' => 'Marco', 'surname' => 'Polo'], ['name' => 'Martin', 'surname' => 'Way']]
+]));
+
+$values = $data->getArray('names', transformers: [new ArrayItemGetterTransformer(new GetNameTransformer())];
+// Result: ['Marco Polo', 'Martin Way']
+```
 
 ## Customization
 

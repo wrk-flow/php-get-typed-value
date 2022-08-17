@@ -48,7 +48,7 @@ class XMLData extends AbstractData
 
     protected function normalizeValue(ValueType $valueType, SimpleXMLElement $value): string|array|null|SimpleXMLElement
     {
-        if ($valueType === ValueType::XML) {
+        if ($valueType === ValueType::Object) {
             if ($value->count() === 0) {
                 return null;
             }

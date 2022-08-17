@@ -399,7 +399,7 @@ class GetValue
     public function getNullableXML(
         string|array $key,
         ?array $transformers = null,
-        ValueType $valueType = ValueType::XML,
+        ValueType $valueType = ValueType::Object,
     ): ?SimpleXMLElement {
         $value = $this->getValidatedValue(
             valueType: $valueType,
@@ -426,7 +426,7 @@ class GetValue
     public function getRequiredXML(
         string|array $key,
         ?array $transformers = null,
-        ValueType $valueType = ValueType::XML,
+        ValueType $valueType = ValueType::Object,
     ): SimpleXMLElement {
         $value = $this->getNullableXML(key: $key, transformers: $transformers, valueType: $valueType);
 
