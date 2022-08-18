@@ -526,6 +526,26 @@ class GetValue
         return null;
     }
 
+    /**
+     * @template T of object
+     * @param class-string<T>       $expectedClass
+     *
+     * @return T
+     */
+    public function getRequiredObject(
+        string $expectedClass,
+        string|array $key,
+        GetValueTransformerContract $getValueTransformer
+    ): object {
+        $result = $this->getObject($expectedClass, $key, $getValueTransformer);
+
+        if ($result === null) {
+            throw $this->exceptionBuilder->missingValue($this->data->getKey($key));
+        }
+
+        return $result;
+    }
+
     public function makeInstance(AbstractData $data): self
     {
         return new self(

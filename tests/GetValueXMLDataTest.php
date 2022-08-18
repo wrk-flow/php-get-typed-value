@@ -93,14 +93,23 @@ class GetValueXMLDataTest extends AbstractXMLTestCase
     public function testGetObject(): void
     {
         $result = $this->data->getObject(TestEntity::class, 'object', new TestEntityTransformer());
-        $this->assertNotNull($result);
-        $this->assertEquals('x', $result->type);
+        $this->assertObjectResult($result);
+
+        $result = $this->data->getRequiredObject(TestEntity::class, 'object', new TestEntityTransformer());
+
+        $this->assertObjectResult($result);
     }
 
     public function testGetObjectIncorrectResult(): void
     {
         $result = $this->data->getObject(TestEntity::class, 'object', new NullTransformer());
         $this->assertNull($result);
+    }
+
+    public function testGetRequiredObjectIncorrectResult(): void
+    {
+        $this->expectException(MissingValueForKeyException::class);
+        $this->data->getRequiredObject(TestEntity::class, 'object', new NullTransformer());
     }
 
     protected function assertObject(GetValue $object): void
@@ -112,5 +121,11 @@ class GetValueXMLDataTest extends AbstractXMLTestCase
 
         $this->assertEquals('test', $child->getRequiredString(self::KeyTitle));
         $this->assertEquals(null, $child->getString('title2'));
+    }
+
+    protected function assertObjectResult(mixed $result): void
+    {
+        $this->assertNotNull($result);
+        $this->assertEquals('x', $result->type);
     }
 }

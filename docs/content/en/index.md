@@ -368,6 +368,8 @@ $attributes->getString('attributeName');
 
 - Allows getting object of specified type.
 - You can transform raw value to expected object by using transformers (with `GetterTransformer`)
+- Use `getObject` if value is nullable
+- Use `getRequiredObject` to throw missing value exception if value is null (since v0.6.2)
 
 ```php
 use Wrkflow\GetValue\Contracts\GetValueTransformerContract;
