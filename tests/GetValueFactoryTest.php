@@ -60,7 +60,7 @@ class GetValueFactoryTest extends TestCase
     public function testRequestAll(): void
     {
         if (class_exists(Request::class) === false) {
-            $this->markTestSkipped('Laravel is not installed');
+            $this->markTestSkipped('Laravel not installed.');
         }
 
         $getValue = $this->factory->requestAll(new Request([
@@ -75,7 +75,7 @@ class GetValueFactoryTest extends TestCase
     public function testRequestValidated(): void
     {
         if (class_exists(Request::class) === false) {
-            $this->markTestSkipped('Laravel is not installed');
+            $this->markTestSkipped('Laravel not installed.');
         }
 
         $getValue = $this->factory->request($this->getFormRequest());
@@ -87,7 +87,7 @@ class GetValueFactoryTest extends TestCase
     public function testRequestAllWithFormRequest(): void
     {
         if (class_exists(Request::class) === false) {
-            $this->markTestSkipped('Laravel is not installed');
+            $this->markTestSkipped('Laravel not installed.');
         }
 
         $request = $this->getFormRequest();
