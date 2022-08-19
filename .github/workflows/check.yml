@@ -11,3 +11,45 @@ jobs:
     secrets: inherit
     with:
       gistID: 11b884c06da0bf9116ae763d23438ecb
+
+  without-laravel:
+    name: "Tests without laravel"
+    runs-on: "ubuntu-latest"
+
+    strategy:
+      fail-fast: false
+      matrix:
+        php-version:
+          - "8.1"
+        dependencies:
+          - "lowest"
+          - "highest"
+
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@v3
+
+      - name: "Install PHP"
+        uses: "shivammathur/setup-php@v2"
+        with:
+          php-version: "${{ matrix.php-version }}"
+
+      - name: "Install lowest dependencies"
+        if: ${{ matrix.dependencies == 'lowest' }}
+        run: "composer update --prefer-lowest --no-interaction --no-progress"
+
+      - name: "Install highest dependencies"
+        if: ${{ matrix.dependencies == 'highest' }}
+        run: "composer update --no-interaction --no-progress"
+
+      - name: "Remove Laravel"
+        if: ${{ matrix.dependencies == 'highest' }}
+        run: "composer remove --dev laravel/framework"
+
+      - name: "Tests"
+        id: tests
+        continue-on-error: false
+        run: |
+          vendor/bin/phpunit
+
+
