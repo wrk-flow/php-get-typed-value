@@ -28,7 +28,7 @@ class EnumRuleTest extends TestCase
 
     public function dataInt(): array
     {
-        return [[1, true], [1, true], [3, false], ['', false], [[], false]];
+        return [[1, true], ['1', true], [3, false], ['3', false], ['', false], [[], false]];
     }
 
     /**

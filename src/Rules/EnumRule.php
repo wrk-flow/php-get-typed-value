@@ -36,7 +36,11 @@ class EnumRule implements RuleContract
         try {
             return $this->enum::tryFrom($value) !== null;
         } catch (TypeError) {
-            return false;
+            try {
+                return $this->enum::tryFrom((int) $value) !== null;
+            } catch (TypeError) {
+                return false;
+            }
         }
     }
 }
