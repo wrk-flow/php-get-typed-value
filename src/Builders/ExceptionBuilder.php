@@ -29,12 +29,13 @@ class ExceptionBuilder implements ExceptionBuilderContract
         return new NotSupportedDataException($key);
     }
 
-    public function validationFailed(string $key, string $ruleClassName): Exception
+    public function validationFailed(string $key, string $ruleClassName, ?string $value): Exception
     {
         $classNameParts = explode('\\', $ruleClassName);
         $shortClassName = end($classNameParts);
 
-        return new ValidationFailedException($key, $shortClassName . ' failed');
+        $valueMessage = $value === null ? '' : (' with value ' . $value);
+        return new ValidationFailedException($key, $shortClassName . ' failed' . $valueMessage);
     }
 
     public function notXML(string $key): Exception

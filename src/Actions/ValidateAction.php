@@ -15,9 +15,10 @@ class ValidateAction
 
     public function execute(array $rules, mixed $value, string $key): void
     {
+        $valueForLog = (is_string($value) || is_numeric($value)) ? (string) $value : null;
         foreach ($rules as $rule) {
             if ($rule->passes($value) === false) {
-                throw $this->exceptionBuilder->validationFailed($key, $rule::class);
+                throw $this->exceptionBuilder->validationFailed($key, $rule::class, $valueForLog);
             }
         }
     }
