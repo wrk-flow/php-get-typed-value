@@ -16,6 +16,7 @@
         "ext-simplexml": "*",
         "laravel/framework": "^9.25",
         "nikic/php-parser": "v4.14.0",
+        "orchestra/testbench": "^7.7",
         "phpstan/phpstan": "1.8.2",
         "phpstan/phpstan-deprecation-rules": "1.0.0",
         "phpstan/phpstan-phpunit": "1.1.1",
