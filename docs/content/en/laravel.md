@@ -3,7 +3,8 @@ title: Laravel
 subtitle: ''
 position: 4
 ---
-# GetValueFormRequest
+
+## GetValueFormRequest
 
 Allows you access `GetValue` instance within your `FormRequest` by extending `GetValueFormRequest`.
 
@@ -28,8 +29,7 @@ class TestFormRequest extends GetValueFormRequest
 
 Get value instance uses only validated data.
 
-
-# GetValueFactory
+## GetValueFactory
 
 We have implemented helper functions that pulls array data from Laravel requests:
 
