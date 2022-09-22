@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Wrkflow\GetValueTests\Laravel;
+namespace Wrkflow\GetValueTests\Mocks;
 
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Support\MessageBag;

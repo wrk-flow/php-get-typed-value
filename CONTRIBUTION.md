@@ -43,3 +43,6 @@ composer run check
 ```bash
 composer run check
 ```
+## Tests
+
+- Tests are executed with Laravel and without Laravel (separate GitHub action, tests/Laravel folder is removed).

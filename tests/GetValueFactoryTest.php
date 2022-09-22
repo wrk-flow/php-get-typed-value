@@ -12,7 +12,7 @@ use Wrkflow\GetValue\GetValue;
 use Wrkflow\GetValue\GetValueFactory;
 use Wrkflow\GetValue\Strategies\NoTransformerStrategy;
 use Wrkflow\GetValueTests\Builders\CustomExceptionBuilder;
-use Wrkflow\GetValueTests\Laravel\ValidatorMock;
+use Wrkflow\GetValueTests\Mocks\ValidatorMock;
 
 class GetValueFactoryTest extends TestCase
 {
