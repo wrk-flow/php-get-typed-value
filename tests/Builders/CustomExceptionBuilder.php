@@ -26,7 +26,7 @@ class CustomExceptionBuilder implements ExceptionBuilderContract
 
     public function validationFailed(string $key, string $ruleClassName, ?string $value): Exception
     {
-        return new Exception('validationFailed: ' . $key . ' ' . $ruleClassName);
+        return new Exception('validationFailed: ' . $key . ' ' . $ruleClassName . ' value: <' . $value . '>');
     }
 
     public function notXML(string $key): Exception

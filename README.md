@@ -16,6 +16,7 @@ composer require wrkflow/php-get-typed-value
 - 🏆 **Makes PHPStan / IDE** happy due the type strict return types.
 - 🤹‍ **Validation:** Ensures that desired value is in correct type (without additional loop validation).
 - 🛠 **Transformers:** Ensures that values are in expected type.
+- ⛑ Converts empty string values to null (can be disabled, see transformers).
 
 ```php
 use Wrkflow\GetValue\GetValue;

@@ -15,11 +15,11 @@ class DefaultTransformerStrategyTest extends TestCase
     {
         $strategy = new DefaultTransformerStrategy();
         $this->assertEquals([new TransformToBool()], $strategy->bool());
-        $this->assertEquals([], $strategy->array());
-        $this->assertEquals([], $strategy->dateTime());
-        $this->assertEquals([], $strategy->float());
+        $this->assertEquals([new TrimAndEmptyStringToNull()], $strategy->array());
+        $this->assertEquals([new TrimAndEmptyStringToNull()], $strategy->dateTime());
+        $this->assertEquals([new TrimAndEmptyStringToNull()], $strategy->float());
         $this->assertEquals([new TrimAndEmptyStringToNull()], $strategy->string());
-        $this->assertEquals([], $strategy->int());
-        $this->assertEquals([], $strategy->xml());
+        $this->assertEquals([new TrimAndEmptyStringToNull()], $strategy->int());
+        $this->assertEquals([new TrimAndEmptyStringToNull()], $strategy->xml());
     }
 }

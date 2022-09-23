@@ -79,7 +79,34 @@ class GetValueArrayDataWithDateTimeTest extends AbstractArrayTestsTestCase
 
     public function noStrategyData(): array
     {
-        return $this->optionalData();
+        return [
+            self::KeyNull . ' is converted to array' => [self::KeyNull, null],
+            self::KeyEmpty . ' string return null' => [self::KeyEmpty, null, ValidationFailedException::class],
+            self::KeyInvalid . ' throws exception because it is not valid date time' => [
+                self::KeyInvalid,
+                null,
+                Exception::class,
+            ],
+            self::KeyValid . ' returns value' => [self::KeyValid, $this->getDateTime()],
+            self::KeyValid . ' throws with min max rules that does not support date time' => [
+                self::KeyValid,
+                null,
+                ValidationFailedException::class,
+                [new MinRule(5), new MaxRule(12)],
+            ],
+            self::KeyValid . ' throws exception if min/max rule failed' => [
+                self::KeyValid,
+                null,
+                ValidationFailedException::class,
+                [new MinRule(5), new MaxRule(8)], ],
+            self::KeyValid . ' but fails validation' => [
+                self::KeyValid,
+                null,
+                ValidationFailedException::class,
+                [new EmailRule()],
+            ],
+            self::KeyMissingValue . ' is converted to array' => [self::KeyMissingValue, null],
+        ];
     }
 
     public function testDateTimeWithArrayFails(): void

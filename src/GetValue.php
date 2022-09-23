@@ -18,7 +18,7 @@ use Wrkflow\GetValue\Contracts\ExceptionBuilderContract;
 use Wrkflow\GetValue\Contracts\GetValueTransformerContract;
 use Wrkflow\GetValue\Contracts\RuleContract;
 use Wrkflow\GetValue\Contracts\TransformerContract;
-use Wrkflow\GetValue\Contracts\TransformerStrategy;
+use Wrkflow\GetValue\Contracts\TransformerStrategyContract;
 use Wrkflow\GetValue\DataHolders\AbstractData;
 use Wrkflow\GetValue\DataHolders\ArrayData;
 use Wrkflow\GetValue\DataHolders\XMLAttributesData;
@@ -37,7 +37,7 @@ class GetValue
 
     public function __construct(
         public readonly AbstractData $data,
-        public readonly TransformerStrategy $transformerStrategy = new DefaultTransformerStrategy(),
+        public readonly TransformerStrategyContract $transformerStrategy = new DefaultTransformerStrategy(),
         public readonly ExceptionBuilderContract $exceptionBuilder = new ExceptionBuilder(),
         GetValidatedValueAction $getValidatedValueAction = null,
     ) {
@@ -255,16 +255,24 @@ class GetValue
             transformers: $transformers ?? $this->transformerStrategy->dateTime()
         );
 
-        if ($value === null || $value === '') {
-            return null;
-        }
-
         // Transformer built the date time
         if ($value instanceof DateTime) {
             return $value;
         }
 
-        return new DateTime($value);
+        if ($value === null) {
+            return null;
+        }
+
+        if ($value === '') {
+            throw $this->exceptionBuilder->validationFailed(
+                $this->data->getKey($key),
+                StringRule::class,
+                '(empty string)'
+            );
+        }
+
+        return new DateTime((string) $value);
     }
 
     /**

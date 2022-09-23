@@ -57,7 +57,7 @@ $test = app(TestAction::class)->execute();
 
 To change the implementation using dependency injection just bind contracts below in your framework container:
 
-- `Wrkflow\GetValue\Contracts\TransformerStrategy $transformerStrategy`
+- `Wrkflow\GetValue\Contracts\TransformerStrategyContract $transformerStrategy`
 - `Wrkflow\GetValue\Contracts\ExceptionBuilderContract $exceptionBuilder`
 
 *Example for Laravel:*
@@ -67,7 +67,7 @@ class MyServiceProvider extends ServiceProvider {
     public function register (): void {
         parent::register();
         
-        $this->app->bind(Wrkflow\GetValue\Contracts\TransformerStrategy::class, MyTransformerStrategy::class);
+        $this->app->bind(Wrkflow\GetValue\Contracts\TransformerStrategyContract::class, MyTransformerStrategy::class);
         $this->app->bind(Wrkflow\GetValue\Contracts\ExceptionBuilderContract::class, MyExceptionBuilder::class);
     }
 }

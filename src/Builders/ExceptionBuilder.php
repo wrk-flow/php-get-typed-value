@@ -34,7 +34,7 @@ class ExceptionBuilder implements ExceptionBuilderContract
         $classNameParts = explode('\\', $ruleClassName);
         $shortClassName = end($classNameParts);
 
-        $valueMessage = $value === null ? '' : (' with value ' . $value);
+        $valueMessage = $value === null ? '' : (' with value <' . $value . '>');
         return new ValidationFailedException($key, $shortClassName . ' failed' . $valueMessage);
     }
 

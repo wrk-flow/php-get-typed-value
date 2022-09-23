@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Wrkflow\GetValue\Strategies;
 
-use Wrkflow\GetValue\Contracts\TransformerStrategy;
+use Wrkflow\GetValue\Contracts\TransformerStrategyContract;
 use Wrkflow\GetValue\Transformers\TransformToBool;
 use Wrkflow\GetValue\Transformers\TrimAndEmptyStringToNull;
 
-class DefaultTransformerStrategy implements TransformerStrategy
+class DefaultTransformerStrategy implements TransformerStrategyContract
 {
     public function string(): array
     {
@@ -17,7 +17,7 @@ class DefaultTransformerStrategy implements TransformerStrategy
 
     public function int(): array
     {
-        return [];
+        return [new TrimAndEmptyStringToNull()];
     }
 
     public function bool(): array
@@ -27,21 +27,21 @@ class DefaultTransformerStrategy implements TransformerStrategy
 
     public function dateTime(): array
     {
-        return [];
+        return [new TrimAndEmptyStringToNull()];
     }
 
     public function float(): array
     {
-        return [];
+        return [new TrimAndEmptyStringToNull()];
     }
 
     public function array(): array
     {
-        return [];
+        return [new TrimAndEmptyStringToNull()];
     }
 
     public function xml(): array
     {
-        return [];
+        return [new TrimAndEmptyStringToNull()];
     }
 }

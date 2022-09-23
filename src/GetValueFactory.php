@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 use SimpleXMLElement;
 use Wrkflow\GetValue\Builders\ExceptionBuilder;
 use Wrkflow\GetValue\Contracts\ExceptionBuilderContract;
-use Wrkflow\GetValue\Contracts\TransformerStrategy;
+use Wrkflow\GetValue\Contracts\TransformerStrategyContract;
 use Wrkflow\GetValue\DataHolders\AbstractData;
 use Wrkflow\GetValue\DataHolders\ArrayData;
 use Wrkflow\GetValue\DataHolders\XMLData;
@@ -18,7 +18,7 @@ use Wrkflow\GetValue\Strategies\DefaultTransformerStrategy;
 class GetValueFactory
 {
     public function __construct(
-        public readonly TransformerStrategy $transformerStrategy = new DefaultTransformerStrategy(),
+        public readonly TransformerStrategyContract $transformerStrategy = new DefaultTransformerStrategy(),
         public readonly ExceptionBuilderContract $exceptionBuilder = new ExceptionBuilder(),
     ) {
     }

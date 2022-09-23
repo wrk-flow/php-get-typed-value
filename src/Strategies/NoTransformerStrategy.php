@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Wrkflow\GetValue\Strategies;
 
-use Wrkflow\GetValue\Contracts\TransformerStrategy;
+use Wrkflow\GetValue\Contracts\TransformerStrategyContract;
 
-class NoTransformerStrategy implements TransformerStrategy
+class NoTransformerStrategy implements TransformerStrategyContract
 {
     public function string(): array
     {

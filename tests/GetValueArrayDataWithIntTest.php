@@ -18,7 +18,7 @@ class GetValueArrayDataWithIntTest extends AbstractArrayTestsTestCase
     {
         return [
             self::KeyNull . ' throws exception' => [self::KeyNull, null, MissingValueForKeyException::class],
-            self::KeyEmpty . ' string throws exception' => [self::KeyEmpty, null, ValidationFailedException::class],
+            self::KeyEmpty . ' string throws exception' => [self::KeyEmpty, null, MissingValueForKeyException::class],
             self::KeyInvalid . ' throws exception because a string' => [
                 self::KeyInvalid,
                 null,
@@ -52,7 +52,7 @@ class GetValueArrayDataWithIntTest extends AbstractArrayTestsTestCase
     {
         return [
             self::KeyNull . ' is converted to array' => [self::KeyNull, null],
-            self::KeyEmpty . ' string throws exception' => [self::KeyEmpty, null, ValidationFailedException::class],
+            self::KeyEmpty . ' string returns null' => [self::KeyEmpty, null],
             self::KeyInvalid . ' throws exception because array is not string' => [
                 self::KeyInvalid,
                 null,
@@ -80,7 +80,32 @@ class GetValueArrayDataWithIntTest extends AbstractArrayTestsTestCase
 
     public function noStrategyData(): array
     {
-        return $this->optionalData();
+        return [
+            self::KeyNull . ' is converted to array' => [self::KeyNull, null],
+            self::KeyEmpty . ' string throws exception' => [self::KeyEmpty, null, ValidationFailedException::class],
+            self::KeyInvalid . ' throws exception because array is not string' => [
+                self::KeyInvalid,
+                null,
+                ValidationFailedException::class,
+            ],
+            self::KeyValid . ' returns value' => [self::KeyValid, 10],
+            self::KeyValid . ' returns value with min max rules' => [
+                self::KeyValid,
+                10,
+                null,
+                [new MinRule(5), new MaxRule(12)], ],
+            self::KeyValid . ' throws exception if min/max rule failed' => [
+                self::KeyValid,
+                10,
+                ValidationFailedException::class,
+                [new MinRule(5), new MaxRule(8)], ],
+            self::KeyValid . ' but fails validation' => [
+                self::KeyValid,
+                null,
+                ValidationFailedException::class,
+                [new EmailRule()], ],
+            self::KeyMissingValue . ' is converted to array' => [self::KeyMissingValue, null],
+        ];
     }
 
     public function testStringInt(): void

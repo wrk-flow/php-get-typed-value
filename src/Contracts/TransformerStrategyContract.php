@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Wrkflow\GetValue\Contracts;
 
-interface TransformerStrategy
+interface TransformerStrategyContract
 {
     /**
      * @return array<TransformerContract>
