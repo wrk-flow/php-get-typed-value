@@ -17,7 +17,8 @@ class TransformerExpectationEntity
         public readonly mixed $value,
         public readonly mixed $expectedValue,
         mixed $expectedValueBeforeValidation = null,
-        public readonly ?string $expectException = null
+        public readonly ?string $expectException = null,
+        public readonly bool $expectBeforeValidation = false,
     ) {
         $this->expectedValueBeforeValidation = $expectedValueBeforeValidation ?? $expectedValue;
     }

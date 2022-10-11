@@ -95,6 +95,25 @@ $value = $data->getString('key', transformers: [new TrimString()]);
 // $value === 'Marco Polo'
 ```
 
+### ReplaceCommaWithDot
+
+Replaces `,` with `.` in given string **before** validation starts. This is used in **default float strategy**.
+
+```php
+use Wrkflow\GetValue\GetValue;
+use Wrkflow\GetValue\DataHolders\ArrayData;
+use Wrkflow\GetValue\Transformers\ReplaceCommaWithDot;
+
+// Get trimmed string (no '' to null transformation)
+$data = new GetValue(new ArrayData([
+    'key' => '1200,50',
+]));
+$value = $data->getFloat('key');
+// $value === 1200.50
+$string = $data->getString('key', transformers: [new ReplaceCommaWithDot()]);
+// $string === '1200.50'
+```
+
 ### ClosureTransformer
 
 > Can't be used with get\*Array\* methods.

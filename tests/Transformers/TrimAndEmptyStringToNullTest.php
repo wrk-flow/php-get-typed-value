@@ -12,11 +12,17 @@ class TrimAndEmptyStringToNullTest extends AbstractTransformerTestCase
     public function dataToTest(): array
     {
         return [
-            [new TransformerExpectationEntity(value: '', expectedValue: null)],
-            [new TransformerExpectationEntity(value: ' ', expectedValue: null)],
-            [new TransformerExpectationEntity(value: ' asd ', expectedValue: 'asd')],
-            [new TransformerExpectationEntity(value: 'asd ', expectedValue: 'asd')],
-            [new TransformerExpectationEntity(value: 'asd mix', expectedValue: 'asd mix')],
+            [new TransformerExpectationEntity(value: '', expectedValue: null, expectBeforeValidation: true)],
+            [new TransformerExpectationEntity(value: ' ', expectedValue: null, expectBeforeValidation: true)],
+            [new TransformerExpectationEntity(value: ' asd ', expectedValue: 'asd', expectBeforeValidation: true)],
+            [new TransformerExpectationEntity(value: 'asd ', expectedValue: 'asd', expectBeforeValidation: true)],
+            [
+                new TransformerExpectationEntity(
+                    value: 'asd mix',
+                    expectedValue: 'asd mix',
+                    expectBeforeValidation: true
+                ),
+            ],
         ];
     }
 

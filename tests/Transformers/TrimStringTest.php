@@ -12,11 +12,17 @@ class TrimStringTest extends AbstractTransformerTestCase
     public function dataToTest(): array
     {
         return [
-            [new TransformerExpectationEntity(value: '', expectedValue: '')],
-            [new TransformerExpectationEntity(value: ' ', expectedValue: '')],
-            [new TransformerExpectationEntity(value: ' asd ', expectedValue: 'asd')],
-            [new TransformerExpectationEntity(value: 'asd ', expectedValue: 'asd')],
-            [new TransformerExpectationEntity(value: 'asd mix', expectedValue: 'asd mix')],
+            [new TransformerExpectationEntity(value: '', expectedValue: '', expectBeforeValidation: true)],
+            [new TransformerExpectationEntity(value: ' ', expectedValue: '', expectBeforeValidation: true)],
+            [new TransformerExpectationEntity(value: ' asd ', expectedValue: 'asd', expectBeforeValidation: true)],
+            [new TransformerExpectationEntity(value: 'asd ', expectedValue: 'asd', expectBeforeValidation: true)],
+            [
+                new TransformerExpectationEntity(
+                    value: 'asd mix',
+                    expectedValue: 'asd mix',
+                    expectBeforeValidation: true
+                ),
+            ],
         ];
     }
 

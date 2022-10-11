@@ -176,7 +176,8 @@ $value = $data->getRequiredInt('key');
 
 ### Float
 
-> Throws `ValidationFailedException` if value is not numeric.
+> Throws `ValidationFailedException` if value is not numeric. String value using comma instead of dot are converted to
+> valid float. (1200,50 => 1200.50)
 
 Get nullable float value.
 

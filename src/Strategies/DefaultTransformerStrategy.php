@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Wrkflow\GetValue\Strategies;
 
 use Wrkflow\GetValue\Contracts\TransformerStrategyContract;
+use Wrkflow\GetValue\Transformers\ReplaceCommaWithDot;
 use Wrkflow\GetValue\Transformers\TransformToBool;
 use Wrkflow\GetValue\Transformers\TrimAndEmptyStringToNull;
 
@@ -32,7 +33,7 @@ class DefaultTransformerStrategy implements TransformerStrategyContract
 
     public function float(): array
     {
-        return [new TrimAndEmptyStringToNull()];
+        return [new TrimAndEmptyStringToNull(), new ReplaceCommaWithDot()];
     }
 
     public function array(): array

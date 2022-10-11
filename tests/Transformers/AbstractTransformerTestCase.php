@@ -56,7 +56,9 @@ abstract class AbstractTransformerTestCase extends TestCase
      */
     public function testTransform(TransformerExpectationEntity $entity): void
     {
-        $this->assertValue($this->getTransformer(), $entity);
+        $transformer = $this->getTransformer();
+        $this->assertValue($transformer, $entity);
+        $this->assertEquals($entity->expectBeforeValidation, $transformer->beforeValidation($entity->value, 'test'));
     }
 
     public function assertValue(TransformerContract $transformer, TransformerExpectationEntity $entity): void
