@@ -1,57 +1,51 @@
+name: "Code check"
+
 on:
-  pull_request:
+  workflow_call:
   push:
     branches:
-      - "*"
-      - "!gh-pages"
+      - "main"
+
+  pull_request:
+    paths:
+      - "src/**"
+      - "tests/**"
+      - "composer.json"
+      - "ecs.php"
+      - "rector.php"
+      - "phpstan.neon"
+      - "phpunit.xml"
+
+concurrency:
+  group: php-get-typed-value-check-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  run:
-    uses: wrk-flow/reusable-workflows/.github/workflows/php-check.yml@main
+  code:
+    name: "Code check"
+    uses: wrk-flow/reusable-workflows/.github/workflows/php-check.yml@7562253bdc3769847417e3476b501e7126f5d2c0
     secrets: inherit
-    with:
-      gistID: 11b884c06da0bf9116ae763d23438ecb
 
-  without-laravel:
-    name: "Tests without laravel"
-    runs-on: "ubuntu-latest"
-
+  tests:
+    name: "Run tests"
     strategy:
-      fail-fast: false
       matrix:
-        php-version:
-          - "8.1"
-        dependencies:
-          - "lowest"
-          - "highest"
+        phpVersion: [ "8.1", "8.2" ]
+    uses: wrk-flow/reusable-workflows/.github/workflows/php-tests.yml@91be5bbf6aca80f54548ec1bddc7c9ced6efb78f
+    with:
+      gistID: ${{ vars.GIST_ID }}
+      gistOnPhpVersion: "8.2"
+      phpVersion: "${{ matrix.phpVersion }}"
+    secrets: inherit
 
-    steps:
-      - name: "Checkout"
-        uses: actions/checkout@v3
-
-      - name: "Install PHP"
-        uses: "shivammathur/setup-php@v2"
-        with:
-          php-version: "${{ matrix.php-version }}"
-
-      - name: "Install lowest dependencies"
-        if: ${{ matrix.dependencies == 'lowest' }}
-        run: "composer update --prefer-lowest --no-interaction --no-progress"
-
-      - name: "Install highest dependencies"
-        if: ${{ matrix.dependencies == 'highest' }}
-        run: "composer update --no-interaction --no-progress"
-
-      - name: "Remove Laravel"
-        run: "composer remove --dev laravel/framework orchestra/testbench"
-
-      - name: "Remove Laravel tests"
-        run: "rm -rf tests/Laravel"
-
-      - name: "Tests"
-        id: tests
-        continue-on-error: false
-        run: |
-          vendor/bin/phpunit
-
+  tests_no_frameworks:
+    name: "Run tests without Frameworks"
+    strategy:
+      matrix:
+        phpVersion: [ "8.1", "8.2" ]
+    uses: wrk-flow/reusable-workflows/.github/workflows/php-tests.yml@91be5bbf6aca80f54548ec1bddc7c9ced6efb78f
+    with:
+      phpVersion: "${{ matrix.phpVersion }}"
+      composerRemove: "--dev laravel/framework orchestra/testbench"
+      dirsRemove: "tests/Laravel"
 
