@@ -34,7 +34,7 @@ return static function (RectorConfig $config): void {
 
     $config->skip([
         NewlineAfterStatementRector::class,
-        StaticArrowFunctionRector::class => './tests/GetValueFactoryTest.php',
+        StaticArrowFunctionRector::class => './tests/Laravel/GetValueFactoryLaravelTest.php',
         SimplifyBoolIdenticalTrueRector::class,
     ]);
 };
