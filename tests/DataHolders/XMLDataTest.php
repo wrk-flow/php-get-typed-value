@@ -21,17 +21,21 @@ class XMLDataTest extends TestCase
 
         $this->simpleXMLElement = new SimpleXMLElement(
             <<<'CODE_SAMPLE'
-<root>
-    <title>test</title>
-    <test attribute="test"/>
-    <child>
-        <title>test</title>
-        <val.dot>works in child</val.dot>
-    </child>
-    <val.dot>works</val.dot>
-    <val><dot>works2</dot></val>
-</root>
-CODE_SAMPLE
+            <root>
+                <title>test</title>
+                <test attribute="test"/>
+                <child>
+                    <title>test</title>
+                    <val.dot>works in child</val.dot>
+                </child>
+                <val.dot>works</val.dot>
+                <val><dot>works2</dot></val>
+                <items>
+                <item><value>test</value></item>
+                <item><value>test2</value></item>
+                </items>
+            </root>
+            CODE_SAMPLE
         );
         $this->data = new XMLData($this->simpleXMLElement);
     }
@@ -95,5 +99,18 @@ CODE_SAMPLE
 
         $result = $this->data->getValue('child.val.dot', ValueType::String);
         $this->assertNull($result);
+    }
+
+    public function testArrayAccess(): void
+    {
+        $this->assertEquals(
+            expected: 'test',
+            actual: $this->data->getValue(['items', 'item', '0', 'value'], ValueType::String),
+        );
+
+        $this->assertEquals(
+            expected: 'test2',
+            actual: $this->data->getValue(['items', 'item', '1', 'value'], ValueType::String),
+        );
     }
 }

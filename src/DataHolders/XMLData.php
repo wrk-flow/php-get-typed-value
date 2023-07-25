@@ -21,17 +21,40 @@ class XMLData extends AbstractData
         if (is_string($key) && str_contains($key, '.')) {
             $key = explode('.', $key);
         } elseif (is_string($key)) {
-            $value = $this->data->{$key};
-
-            return $this->normalizeValue($expectedValueType, $value);
+            $key = [$key];
         }
 
         $element = $this->data;
+        $previousSegmentWasPrefix = false;
 
         foreach ($key as $segment) {
-            $value = $element->{$segment};
+            $prefixPath = explode(':', (string) $segment);
 
-            if ($value->count() === 0) {
+            if (count($prefixPath) === 2) {
+                $element = $element->children(namespaceOrPrefix: $prefixPath[0], isPrefix: true);
+                if ($element === null) {
+                    return null;
+                }
+                // When chaining multiple namespaces
+                // we cant call $element->children(), children
+                // will be called with next segment.
+                $previousSegmentWasPrefix = true;
+                $segment = $prefixPath[1];
+            } elseif ($previousSegmentWasPrefix) {
+                // We need to be able to access children in a namespace
+                // -> get all of them, so we can use $element->{'KEY'}
+                $element = $element->children();
+                if ($element === null) {
+                    return null;
+                }
+                $previousSegmentWasPrefix = false;
+            }
+
+            // To access an array item at given index we need to cast
+            // it to int to SimpleXMLElement to access it.
+            $value = is_numeric($segment) ? $element[(int) $segment] : $element->{$segment};
+
+            if ($value === null) {
                 return null;
             }
 
