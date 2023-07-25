@@ -11,8 +11,9 @@ use Wrkflow\GetValue\Contracts\RuleContract;
  */
 class MinRule implements RuleContract
 {
-    public function __construct(protected int|float $minValue)
-    {
+    public function __construct(
+        protected int|float $minValue
+    ) {
     }
 
     public function passes(mixed $value): bool

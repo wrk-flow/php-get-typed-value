@@ -18,15 +18,13 @@ class ArrayItemTransformerTest extends AbstractTransformerTestCase
         $data = new GetValue(new ArrayData([
             'names' => ['Marco Polo', 'Way Point', ''],
         ]));
-        $transformer = new ArrayItemTransformer(function (mixed $value, string $key): ?array {
+        $transformer = new ArrayItemTransformer(static function (mixed $value, string $key): ?array {
             if (is_string($value) === false) {
                 throw new ValidationFailedException($key, 'expecting string');
             }
-
             if ($value === '') {
                 return null;
             }
-
             return explode(' ', $value);
         });
 
@@ -39,15 +37,13 @@ class ArrayItemTransformerTest extends AbstractTransformerTestCase
         $data = new GetValue(new ArrayData([
             'names' => ['Marco Polo', 'Way Point', ''],
         ]));
-        $transformer = new ArrayItemTransformer(function (mixed $value, string $key): ?array {
+        $transformer = new ArrayItemTransformer(static function (mixed $value, string $key): ?array {
             if (is_string($value) === false) {
                 throw new ValidationFailedException($key, 'expecting string');
             }
-
             if ($value === '') {
                 return null;
             }
-
             return explode(' ', $value);
         }, ignoreNullResult: false);
 

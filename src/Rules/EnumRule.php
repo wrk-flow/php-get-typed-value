@@ -14,8 +14,9 @@ class EnumRule implements RuleContract
     /**
      * @param class-string<BackedEnum> $enum
      */
-    public function __construct(private readonly string $enum)
-    {
+    public function __construct(
+        private readonly string $enum
+    ) {
     }
 
     public function passes(mixed $value): bool
@@ -34,10 +35,10 @@ class EnumRule implements RuleContract
 
         // If we are using int enum, and we will receive "string" it will throw TypeError.
         try {
-            return $this->enum::tryFrom($value) !== null;
+            return $this->enum::tryFrom($value) instanceof BackedEnum;
         } catch (TypeError) {
             try {
-                return $this->enum::tryFrom((int) $value) !== null;
+                return $this->enum::tryFrom((int) $value) instanceof BackedEnum;
             } catch (TypeError) {
                 return false;
             }

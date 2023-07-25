@@ -11,8 +11,9 @@ use Wrkflow\GetValue\Contracts\RuleContract;
  */
 class RegexRule implements RuleContract
 {
-    public function __construct(protected readonly string $pattern)
-    {
+    public function __construct(
+        protected readonly string $pattern
+    ) {
     }
 
     public function passes(mixed $value): bool

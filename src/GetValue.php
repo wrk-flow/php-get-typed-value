@@ -100,7 +100,7 @@ class GetValue
             return null;
         }
 
-        return floatval($value);
+        return (float) $value;
     }
 
     /**
@@ -136,7 +136,7 @@ class GetValue
             return null;
         }
 
-        return boolval($value);
+        return (bool) $value;
     }
 
     /**
@@ -184,7 +184,7 @@ class GetValue
         $value = $this->getString(key: $key, rules: $rules, transformers: $transformers);
 
         if ($value === null) {
-            throw  $this->exceptionBuilder->missingValue($this->data->getKey($key));
+            throw $this->exceptionBuilder->missingValue($this->data->getKey($key));
         }
 
         return $value;
@@ -233,7 +233,7 @@ class GetValue
         $value = $this->getEnum(key: $key, enum: $enum, rules: $rules, transformers: $transformers);
 
         if ($value instanceof BackedEnum === false) {
-            throw  $this->exceptionBuilder->missingValue($this->data->getKey($key));
+            throw $this->exceptionBuilder->missingValue($this->data->getKey($key));
         }
 
         return $value;
@@ -588,7 +588,7 @@ class GetValue
         ?RuleContract $mainRule = null,
         array $transformers = [],
     ): mixed {
-        if ($mainRule !== null) {
+        if ($mainRule instanceof RuleContract) {
             $rules = array_merge([$mainRule], $rules);
         }
 

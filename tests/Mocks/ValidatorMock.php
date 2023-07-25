@@ -9,8 +9,9 @@ use Illuminate\Support\MessageBag;
 
 class ValidatorMock implements Validator
 {
-    public function __construct(private readonly array $validatedData)
-    {
+    public function __construct(
+        private readonly array $validatedData
+    ) {
     }
 
     public function validate()

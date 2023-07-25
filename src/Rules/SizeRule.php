@@ -11,8 +11,9 @@ use Wrkflow\GetValue\Contracts\RuleContract;
  */
 class SizeRule implements RuleContract
 {
-    public function __construct(protected int|float $value)
-    {
+    public function __construct(
+        protected int|float $value
+    ) {
     }
 
     public function passes(mixed $value): bool

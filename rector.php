@@ -2,12 +2,13 @@
 
 declare(strict_types=1);
 
-use Rector\CodingStyle\Rector\ClassConst\VarConstantCommentRector;
+use Rector\CodeQuality\Rector\Identical\SimplifyBoolIdenticalTrueRector;
+use Rector\CodingStyle\Rector\ArrowFunction\StaticArrowFunctionRector;
+use Rector\CodingStyle\Rector\Stmt\NewlineAfterStatementRector;
 use Rector\Config\RectorConfig;
 use Rector\Core\ValueObject\PhpVersion;
 use Rector\Set\ValueObject\LevelSetList;
 use Rector\Set\ValueObject\SetList;
-use Rector\Strict\Rector\AbstractFalsyScalarRuleFixerRector;
 use Rector\Strict\Rector\BooleanNot\BooleanInBooleanNotRuleFixerRector;
 use Rector\TypeDeclaration\Rector\ClassMethod\AddVoidReturnTypeWhereNoReturnRector;
 
@@ -22,15 +23,18 @@ return static function (RectorConfig $config): void {
     $config->importNames();
 
     $config->ruleWithConfiguration(
-        BooleanInBooleanNotRuleFixerRector::class,
-        [
-            AbstractFalsyScalarRuleFixerRector::TREAT_AS_NON_EMPTY => false,
+        rectorClass: BooleanInBooleanNotRuleFixerRector::class,
+        configuration: [
+            BooleanInBooleanNotRuleFixerRector::TREAT_AS_NON_EMPTY => false,
         ]
     );
     $config->ruleWithConfiguration(AddVoidReturnTypeWhereNoReturnRector::class, [
         AddVoidReturnTypeWhereNoReturnRector::USE_PHPDOC => false,
     ]);
 
-    // SKIP laravel
-    $config->skip([VarConstantCommentRector::class]);
+    $config->skip([
+        NewlineAfterStatementRector::class,
+        StaticArrowFunctionRector::class => './tests/GetValueFactoryTest.php',
+        SimplifyBoolIdenticalTrueRector::class,
+    ]);
 };

@@ -8,8 +8,9 @@ use Wrkflow\GetValue\Enums\ValueType;
 
 abstract class AbstractData
 {
-    public function __construct(private readonly string $parentKey = '')
-    {
+    public function __construct(
+        private readonly string $parentKey = ''
+    ) {
     }
 
     abstract public function getValue(string|array $key, ValueType $expectedValueType): mixed;

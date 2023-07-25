@@ -16,13 +16,13 @@ class RegexRuleTest extends TestCase
     {
         return [
             ['/^[A-Za-z]+$/', 'Test', true],
-            ['/^[0-9]+$/', '123', true],
+            ['/^\d+$/', '123', true],
             ['/^[0-9A-Za-z\-_]+$/', 'test123_', true],
             ['/^_$/', '_', true],
-            ['/^[0-9]+$/', 123, true],
-            ['/^[0-9]+$/', null, false],
+            ['/^\d+$/', 123, true],
+            ['/^\d+$/', null, false],
             ['/^[a-z]+$/', '!test', false],
-            ['/^[0-9]+$/', 1.1, false],
+            ['/^\d+$/', 1.1, false],
             ['/^[\-_]+$/', '?!123', false],
         ];
     }
