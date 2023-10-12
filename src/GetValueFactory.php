@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Wrkflow\GetValue;
 
+use Illuminate\Console\Command;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Request;
 use SimpleXMLElement;
@@ -23,11 +24,17 @@ class GetValueFactory
     ) {
     }
 
+    /**
+     * Wraps all request data.
+     */
     public function requestAll(Request $request, string $parentKey = ''): GetValue
     {
         return $this->array($request->all(), $parentKey);
     }
 
+    /**
+     * Wraps validated request data.
+     */
     public function request(FormRequest $request, string $parentKey = ''): GetValue
     {
         return $this->array($request->validated(), $parentKey);
@@ -41,6 +48,14 @@ class GetValueFactory
     public function array(array $array, string $parentKey = ''): GetValue
     {
         return $this->make(new ArrayData($array, $parentKey));
+    }
+
+    /**
+     * Wraps and merges command arguments and options.
+     */
+    public function command(Command $command): GetValue
+    {
+        return $this->array(array_merge($command->arguments(), $command->options()));
     }
 
     protected function make(AbstractData $data): GetValue

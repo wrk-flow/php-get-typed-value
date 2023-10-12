@@ -4,6 +4,27 @@ subtitle: ''
 position: 4
 ---
 
+## Command input
+
+For safe access of command arguments / options you can extend `GetValueFactoryCommand` that provides `$this->inputData`
+with wrapped arguments and options in `GetValue` instance.
+
+```php
+class MyCommand extends GetValueFactoryCommand {
+    protected $signature = 'test {argument} {--option} {--value=}';
+
+    public function handle(): void
+    {
+        // Ensures that you will get a string 
+        $this->inputData->getRequiredString('argument');
+        // Get bool (option always return bool)
+        $this->inputData->getRequiredBool('option');
+        // Returns nullable string
+        $this->inputData->getString('value');
+    }
+}
+```
+
 ## GetValueFormRequest
 
 Allows you access `GetValue` instance within your `FormRequest` by extending `GetValueFormRequest`.
@@ -36,6 +57,7 @@ We have implemented helper functions that pulls array data from Laravel requests
 - `$this->getValueFactory->request($request);` - Initializes `ArrayData` with FormRequest and uses only **validated**
   array data.
 - `$this->getValueFactory->requestAll($request);` - Initializes `ArrayData` with **all values** from the requests
+- `$this->getValueFactory->command($request);` - Initializes `ArrayData` with command arguments and options.
 
 ```php
 class TestAction {
