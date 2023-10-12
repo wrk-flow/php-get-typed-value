@@ -10,7 +10,6 @@ use Rector\Core\ValueObject\PhpVersion;
 use Rector\Set\ValueObject\LevelSetList;
 use Rector\Set\ValueObject\SetList;
 use Rector\Strict\Rector\BooleanNot\BooleanInBooleanNotRuleFixerRector;
-use Rector\TypeDeclaration\Rector\ClassMethod\AddVoidReturnTypeWhereNoReturnRector;
 
 return static function (RectorConfig $config): void {
     $config->paths([__DIR__ . '/src', __DIR__ . '/tests']);
@@ -28,9 +27,6 @@ return static function (RectorConfig $config): void {
             BooleanInBooleanNotRuleFixerRector::TREAT_AS_NON_EMPTY => false,
         ]
     );
-    $config->ruleWithConfiguration(AddVoidReturnTypeWhereNoReturnRector::class, [
-        AddVoidReturnTypeWhereNoReturnRector::USE_PHPDOC => false,
-    ]);
 
     $config->skip([
         NewlineAfterStatementRector::class,
