@@ -31,22 +31,22 @@ abstract class AbstractXMLTestCase extends TestCase
 
         $this->xmlData = new XMLData(new SimpleXMLElement(
             <<<'CODE_SAMPLE'
-<root>
-    <title>test</title>
-    <attribute test="value">test</attribute>
-    <rates>
-        <rate><name>Marco</name></rate>
-        <rate><name>Polo</name></rate>
-    </rates>
-    <object>
-        <type>x</type>
-        <number>1</number>
-        <child>
-            <title>test</title>
-        </child>
-    </object>
-</root>
-CODE_SAMPLE
+            <root>
+                <title>test</title>
+                <attribute test="value" numberZero="0" numberNonZero="1">test</attribute>
+                <rates>
+                    <rate><name>Marco</name></rate>
+                    <rate><name>Polo</name></rate>
+                </rates>
+                <object>
+                    <type>x</type>
+                    <number>1</number>
+                    <child>
+                        <title>test</title>
+                    </child>
+                </object>
+            </root>
+            CODE_SAMPLE
         ));
 
         $this->data = new GetValue($this->xmlData);

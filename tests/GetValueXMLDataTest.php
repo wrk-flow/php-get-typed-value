@@ -60,6 +60,8 @@ class GetValueXMLDataTest extends AbstractXMLTestCase
         $attributes = $this->data->getXMLAttributesGetter(self::KeyValueWithAttributes);
 
         $this->assertEquals('value', $attributes->getRequiredString('test'));
+        $this->assertEquals(0, $attributes->getRequiredInt('numberZero'));
+        $this->assertEquals(1, $attributes->getRequiredInt('numberNonZero'));
     }
 
     public function testAttributesOnEntryWithoutAttributes(): void
