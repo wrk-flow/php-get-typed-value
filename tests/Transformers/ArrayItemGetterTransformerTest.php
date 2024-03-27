@@ -13,11 +13,11 @@ use Wrkflow\GetValue\Exceptions\NotSupportedDataException;
 use Wrkflow\GetValue\GetValue;
 use Wrkflow\GetValue\Transformers\ArrayItemGetterTransformer;
 
-class ArrayItemGetterTransformerTest extends AbstractTransformerTestCase
+final class ArrayItemGetterTransformerTest extends AbstractTransformerTestCase
 {
-    final public const KeyValue = 'key';
+    public const KeyValue = 'key';
 
-    final public const ValueToReturnNull = 'return_null';
+    public const ValueToReturnNull = 'return_null';
 
     public function testExampleArray(): void
     {
@@ -62,14 +62,25 @@ class ArrayItemGetterTransformerTest extends AbstractTransformerTestCase
 CODE_SAMPLE
         )));
 
-        $transformer = new ArrayItemGetterTransformer(fn (GetValue $value, string $key): string => implode(' ', [
-            $value->getRequiredString('name'),
-            $value->getRequiredString('surname'),
-            $value->getXMLAttributesGetter(['surname'])->getRequiredInt('number'),
-        ]));
+        $expectedKeys = ['names.0', 'names.1'];
+
+        $transformer = new ArrayItemGetterTransformer(function (GetValue $value, string $key) use (
+            &$expectedKeys
+        ): string {
+            $expectedKey = array_shift($expectedKeys);
+
+            $this->assertEquals($expectedKey, $key, 'Key does not match up');
+
+            return implode(' ', [
+                $value->getRequiredString('name'),
+                $value->getRequiredString('surname'),
+                $value->getXMLAttributesGetter(['surname'])->getRequiredInt('number'),
+            ]);
+        });
 
         $values = $data->getArray('names', transformers: [$transformer]);
         $this->assertEquals(['Marco Polo 3', 'Martin Way 2'], $values);
+        $this->assertEmpty($expectedKeys, 'Expected key match should be empty - loop did not go through all keys');
     }
 
     public function dataToTest(): array
@@ -82,7 +93,7 @@ CODE_SAMPLE
      */
     public function testBeforeValidation(TransformerExpectationEntity $entity): void
     {
-        $this->assertValue($this->getBeforeValidationTransformer(), $entity);
+        $this->assertValue($this->getBeforeValidationTransformer($entity), $entity);
     }
 
     public function dataToTestBeforeValidation(): array
@@ -95,7 +106,7 @@ CODE_SAMPLE
      */
     public function testAfterValidationForce(TransformerExpectationEntity $entity): void
     {
-        $this->assertValue($this->getForceAfterValidation(), $entity);
+        $this->assertValue($this->getForceAfterValidation($entity), $entity);
     }
 
     public function dataToAfterValidationForce(): array
@@ -105,8 +116,14 @@ CODE_SAMPLE
 
     public function testSupportsEmptyArray(): void
     {
-        $transformer = new ArrayItemGetterTransformer(onItem: function (GetValue $value, string $key): array {
-            $this->assertEquals('test', $key, 'Key does not match up');
+        $expectedKeys = ['test.0', 'test.1'];
+
+        $transformer = new ArrayItemGetterTransformer(onItem: function (GetValue $value, string $key) use (
+            &$expectedKeys
+        ): array {
+            $expectedKey = array_shift($expectedKeys);
+
+            $this->assertEquals($expectedKey, $key, 'Key does not match up');
 
             return [
                 'original' => $value->data->get(),
@@ -124,8 +141,9 @@ CODE_SAMPLE
             ], [
                 'original' => $testValue,
             ]],
-            expectedValueBeforeValidation: $value
+            expectedValueBeforeValidation: $value,
         ));
+        $this->assertEmpty($expectedKeys, 'Expected key match should be empty - loop did not go through all keys');
     }
 
     /**
@@ -135,7 +153,7 @@ CODE_SAMPLE
     {
         $this->assertValue(
             new ArrayItemGetterTransformer(
-                onItem: $this->getClosure(),
+                onItem: $this->getClosure($entity),
                 beforeValidation: true,
                 ignoreNullResult: false
             ),
@@ -155,7 +173,7 @@ CODE_SAMPLE
     {
         $this->assertValue(
             new ArrayItemGetterTransformer(
-                onItem: $this->getClosure(),
+                onItem: $this->getClosure($entity),
                 beforeValidation: false,
                 ignoreNullResult: false
             ),
@@ -174,7 +192,7 @@ CODE_SAMPLE
     public function testTransformLeaveNull(TransformerExpectationEntity $entity): void
     {
         $this->assertValue(
-            new ArrayItemGetterTransformer(onItem: $this->getClosure(), ignoreNullResult: false),
+            new ArrayItemGetterTransformer(onItem: $this->getClosure($entity), ignoreNullResult: false),
             $entity
         );
     }
@@ -189,10 +207,11 @@ CODE_SAMPLE
         return $this->createData(true, false);
     }
 
-    protected function getClosure(): Closure
+    protected function getClosure(TransformerExpectationEntity $entity): Closure
     {
-        return function (GetValue $value, string $key): ?array {
-            $this->assertEquals('test', $key, 'Key does not match up');
+        return function (GetValue $value, string $key) use (&$entity): ?array {
+            $expectedKey = array_shift($entity->expectedKey);
+            $this->assertEquals($expectedKey, $key, 'Key does not match up');
 
             $value = $value->getRequiredString(self::KeyValue, transformers: []);
 
@@ -207,22 +226,22 @@ CODE_SAMPLE
         };
     }
 
-    protected function getTransformer(): TransformerContract
+    protected function getTransformer(TransformerExpectationEntity $entity): TransformerContract
     {
-        return new ArrayItemGetterTransformer(onItem: $this->getClosure());
+        return new ArrayItemGetterTransformer(onItem: $this->getClosure($entity));
     }
 
-    protected function getBeforeValidationTransformer(): TransformerContract
+    private function getBeforeValidationTransformer(TransformerExpectationEntity $entity): TransformerContract
     {
-        return new ArrayItemGetterTransformer(onItem: $this->getClosure(), beforeValidation: true);
+        return new ArrayItemGetterTransformer(onItem: $this->getClosure($entity), beforeValidation: true);
     }
 
-    protected function getForceAfterValidation(): TransformerContract
+    private function getForceAfterValidation(TransformerExpectationEntity $entity): TransformerContract
     {
-        return new ArrayItemGetterTransformer(onItem: $this->getClosure(), beforeValidation: false);
+        return new ArrayItemGetterTransformer(onItem: $this->getClosure($entity), beforeValidation: false);
     }
 
-    protected function createData(bool $beforeValueIsSameAsValue, bool $leaveNull): array
+    private function createData(bool $beforeValueIsSameAsValue, bool $leaveNull): array
     {
         return [
             [
@@ -235,7 +254,8 @@ CODE_SAMPLE
                     ]],
                     expectedValueBeforeValidation: $beforeValueIsSameAsValue ? [[
                         self::KeyValue => '',
-                    ]] : null
+                    ]] : null,
+                    expectedKey: 'test.0',
                 ),
             ],
             [
@@ -248,7 +268,8 @@ CODE_SAMPLE
                     ]],
                     expectedValueBeforeValidation: $beforeValueIsSameAsValue ? [[
                         self::KeyValue => ' ',
-                    ]] : null
+                    ]] : null,
+                    expectedKey: 'test.0',
                 ),
             ],
             [
@@ -261,7 +282,8 @@ CODE_SAMPLE
                     ]],
                     expectedValueBeforeValidation: $beforeValueIsSameAsValue ? [[
                         self::KeyValue => ' asd ',
-                    ]] : null
+                    ]] : null,
+                    expectedKey: 'test.0',
                 ),
             ],
             [
@@ -274,7 +296,8 @@ CODE_SAMPLE
                     ]],
                     expectedValueBeforeValidation: $beforeValueIsSameAsValue ? [[
                         self::KeyValue => 'asd ',
-                    ]] : null
+                    ]] : null,
+                    expectedKey: 'test.0',
                 ),
             ],
             [
@@ -287,7 +310,8 @@ CODE_SAMPLE
                     ]],
                     expectedValueBeforeValidation: $beforeValueIsSameAsValue ? [[
                         self::KeyValue => 'asd mix',
-                    ]] : null
+                    ]] : null,
+                    expectedKey: 'test.0',
                 ),
             ],
             [
@@ -306,7 +330,8 @@ CODE_SAMPLE
                         'test' => [
                             self::KeyValue => 'asd mix',
                         ],
-                    ] : null
+                    ] : null,
+                    expectedKey: 'test.test',
                 ),
             ],
             [
@@ -317,7 +342,8 @@ CODE_SAMPLE
                     expectedValue: $leaveNull ? [null] : [],
                     expectedValueBeforeValidation: $beforeValueIsSameAsValue ? [[
                         self::KeyValue => self::ValueToReturnNull,
-                    ]] : null
+                    ]] : null,
+                    expectedKey: 'test.0',
                 ),
             ],
             [
@@ -334,14 +360,17 @@ CODE_SAMPLE
                         'test' => [
                             self::KeyValue => self::ValueToReturnNull,
                         ],
-                    ] : null
+                    ] : null,
+                    expectedKey: 'test.test',
                 ),
             ],
             [new TransformerExpectationEntity(value: null, expectedValue: null)],
             [
-                new TransformerExpectationEntity(value: [
-                    'test',
-                ], expectedValue: null, expectException: NotSupportedDataException::class),
+                new TransformerExpectationEntity(
+                    value: ['test'],
+                    expectedValue: null,
+                    expectException: NotSupportedDataException::class,
+                ),
             ],
         ];
     }

@@ -26,7 +26,7 @@ class TrimAndEmptyStringToNullTest extends AbstractTransformerTestCase
         ];
     }
 
-    protected function getTransformer(): TransformerContract
+    protected function getTransformer(TransformerExpectationEntity $entity): TransformerContract
     {
         return new TrimAndEmptyStringToNull();
     }

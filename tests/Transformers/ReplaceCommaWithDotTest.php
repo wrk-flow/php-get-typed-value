@@ -42,7 +42,7 @@ class ReplaceCommaWithDotTest extends AbstractTransformerTestCase
         $this->assertEquals('1200.50', $string);
     }
 
-    protected function getTransformer(): TransformerContract
+    protected function getTransformer(TransformerExpectationEntity $entity): TransformerContract
     {
         return new ReplaceCommaWithDot();
     }

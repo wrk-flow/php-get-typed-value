@@ -34,7 +34,8 @@ class ArrayItemGetterTransformer extends AbstractArrayItemTransformer
 
     protected function transformItem(mixed $item, string $key, string|int $index, GetValue $getValue): mixed
     {
-        $data = $getValue->makeData($item, $key);
+        $fullKey = $key . '.' . $index;
+        $data = $getValue->makeData($item, $fullKey);
 
         if ($data instanceof AbstractData === false) {
             throw new NotSupportedDataException($key . ' at ' . $index);
@@ -43,10 +44,10 @@ class ArrayItemGetterTransformer extends AbstractArrayItemTransformer
         $getItemValue = $getValue->makeInstance($data);
 
         if ($this->onItem instanceof GetValueTransformerContract) {
-            return $this->onItem->transform($getItemValue, $key);
+            return $this->onItem->transform($getItemValue, $fullKey);
         }
 
-        return call_user_func_array($this->onItem, [$getItemValue, $key]);
+        return call_user_func_array($this->onItem, [$getItemValue, $fullKey]);
     }
 
     protected function ignoreNullResult(): bool

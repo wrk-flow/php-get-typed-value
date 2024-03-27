@@ -31,7 +31,7 @@ class ArrayItemTransformer extends AbstractArrayItemTransformer
 
     protected function transformItem(mixed $item, string $key, string|int $index, GetValue $getValue): mixed
     {
-        return call_user_func_array($this->onItem, [$item, $key]);
+        return call_user_func_array($this->onItem, [$item, $key . '.' . $index]);
     }
 
     protected function ignoreNullResult(): bool

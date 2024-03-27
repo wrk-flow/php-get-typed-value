@@ -57,7 +57,7 @@ class ClosureTransformerTest extends AbstractTransformerTestCase
         $this->assertValue($transformer, $entity);
     }
 
-    protected function getTransformer(): TransformerContract
+    protected function getTransformer(TransformerExpectationEntity $entity): TransformerContract
     {
         return new ClosureTransformer(closure: $this->getClosure());
     }
