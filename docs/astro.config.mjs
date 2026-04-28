@@ -22,6 +22,10 @@ export default defineConfig({
 					autogenerate: { directory: 'customization' },
 				},
 				{
+					label: 'Releases',
+					link: '/releases/',
+				},
+				{
 					label: 'llms.txt',
 					link: '/llms.txt',
 				},

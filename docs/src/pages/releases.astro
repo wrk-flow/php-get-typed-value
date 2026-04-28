@@ -1,0 +1,45 @@
+---
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+import { getCollection, render } from 'astro:content';
+
+const releases = await getCollection('releases');
+const sortedReleases = await Promise.all(
+  releases
+    .sort((a, b) => new Date(b.data.published_at).getTime() - new Date(a.data.published_at).getTime())
+    .map(async (release) => {
+      const { Content } = await render(release);
+      return { ...release, Content };
+    })
+);
+
+const headings = sortedReleases.map((release) => ({
+  slug: `release-${release.data.tag_name}`,
+  text: release.data.title,
+  depth: 2,
+}));
+---
+
+<StarlightPage frontmatter={{ title: 'Releases', template: 'doc' }} headings={headings}>
+  {sortedReleases.map((release) => (
+    <article id={`release-${release.data.tag_name}`}>
+      <h2><a href={release.data.html_url} target="_blank" rel="noopener noreferrer">{release.data.title}</a></h2>
+
+      <div class="release-body">
+        <release.Content />
+      </div>
+      <hr />
+    </article>
+  ))}
+</StarlightPage>
+
+<style>.release-body {
+    margin-top: 1rem;
+    margin-bottom: 2rem;
+  }
+  article {
+      margin-bottom: 3rem;
+  }
+  h2 {
+      margin-top: 0 !important;
+  }
+</style>
