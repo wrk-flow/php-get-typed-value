@@ -1,8 +1,8 @@
 ---
 title: Custom data holder
-subtitle: 'Provide data access to a custom data format 🚀'
-category: Customization
-position: 11
+description: Provide data access to a custom data format.
+sidebar:
+  order: 4
 ---
 
 1. Create an object in DataHolders namespace

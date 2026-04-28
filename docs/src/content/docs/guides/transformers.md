@@ -1,8 +1,11 @@
 ---
-title: Transformers
-subtitle: 'Transform data to expected state'
-position: 3
+title: Transform data to expected state.
+sidebar:
+  label: Transformers
+  order: 2
 ---
+
+
 
 ## Features
 

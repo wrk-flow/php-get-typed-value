@@ -1,20 +1,7 @@
 ---
 title: Introduction
-subtitle: 'Get typed (strict mode) values from an Array / XML with basic validation.'
-position: 1
+description: Get typed (strict mode) values from an Array / XML with basic validation.
 ---
-
-<img src="https://img.shields.io/badge/PHPStan-8-blue" class="inline-flex" style="margin: 0;" /> 
-<img src="https://img.shields.io/badge/PHP-8.1-B0B3D6"  class="inline-flex" style="margin: 0;" />
-<img src="https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/pionl/11b884c06da0bf9116ae763d23438ecb/raw/coverage.json"  class="inline-flex" style="margin: 0;" />
-
-## Main features
-
-- 🚀 Retrieve values from Array (JSON) / XML with correct return type with **safe dot notation** support.
-- 🏆 **Makes PHPStan / IDE** happy due the type strict return types.
-- 🤹‍ **Validation:** Ensures that desired value is in correct type (without additional loop validation).
-- 🛠 **Transformers:** Ensures that values are in expected type.
-- ⛑ Converts empty string values to null (can be disabled, see transformers).
 
 ```php
 use Wrkflow\GetValue\GetValue;

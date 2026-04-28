@@ -1,0 +1,44 @@
+---
+title: php-get-typed-value
+description: Get typed (strict mode) values from an Array / XML with basic validation.
+template: splash
+hero:
+  tagline: Get typed (strict mode) values from an Array / XML with basic validation.
+  image:
+    file: ../../assets/code.png
+  actions:
+    - text: Get Started
+      link: /introduction/
+      icon: right-arrow
+    - text: View on GitHub
+      link: https://github.com/wrk-flow/php-get-typed-value
+      icon: external
+      variant: minimal
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+
+<CardGrid stagger>
+    <Card title="Safe dot notation" icon="magnifier">
+        Retrieve values from Array (JSON) / XML with correct return type with **safe dot notation** support.
+    </Card>
+    <Card title="Type strict" icon="approve-check">
+        Makes PHPStan / IDE happy due the type strict return types.
+    </Card>
+    <Card title="Validation" icon="setting">
+        Ensures that desired value is in correct type (without additional loop validation).
+    </Card>
+    <Card title="Transformers" icon="random">
+        Ensures that values are in expected type. Converts empty string values to null (can be disabled, see transformers).
+    </Card>
+</CardGrid>
+
+<hr style="margin-top: 4rem;" />
+
+
+<div style="display: flex; flex-wrap: wrap; gap: 1rem; margin-bottom: 1rem;">
+    <img src="https://img.shields.io/badge/PHPStan-8-blue" class="inline-flex" style="margin: 0;" />
+    <img src="https://img.shields.io/badge/PHP-8.1-B0B3D6"  class="inline-flex" style="margin: 0;" />
+    <img src="https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/pionl/11b884c06da0bf9116ae763d23438ecb/raw/coverage.json"  class="inline-flex" style="margin: 0;" />
+</div>

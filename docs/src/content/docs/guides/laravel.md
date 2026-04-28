@@ -1,7 +1,8 @@
 ---
-title: Laravel
-subtitle: ''
-position: 4
+title: Laravel integration for php-get-typed-value.
+sidebar:
+  label: Laravel
+  order: 3
 ---
 
 ## Command input
