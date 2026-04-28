@@ -1,8 +1,8 @@
 ---
 title: Custom exceptions
-subtitle: 'Provide your own exceptions 🚀'
-category: Customization
-position: 11
+description: Provide your own exceptions.
+sidebar:
+  order: 5
 ---
 
 In some cases you want to provide your own exceptions (like append custom data to the exception).

@@ -1,7 +1,8 @@
 ---
-title: Validation
-subtitle: 'Validate the value is not null.'
-position: 2
+title: Set of validation rules
+sidebar:
+  label: Validation
+  order: 1
 ---
 
 ## Rules
@@ -203,5 +204,5 @@ Checks if the value is valid URL (using [FILTER_VALIDATE_URL](https://www.php.ne
 ## Notes
 
 - Rules code was extracted from [laurynasgadl/php-validator](https://github.com/laurynasgadl/php-validator) and PHPStan
-  8 ready. First I wanted to re-use existing package but did not find.
+  8 ready. First, I wanted to re-use the existing package but did not find it reusable.
 - I'm thinking of that I will move rules to its own package for more reusability.
