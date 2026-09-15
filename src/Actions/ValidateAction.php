@@ -5,16 +5,20 @@ declare(strict_types=1);
 namespace Wrkflow\GetValue\Actions;
 
 use Wrkflow\GetValue\Contracts\ExceptionBuilderContract;
+use Wrkflow\GetValue\Contracts\RuleContract;
 
 class ValidateAction
 {
-    private const MaxStringLength = 30;
+    private const int MaxStringLength = 30;
 
     public function __construct(
         private readonly ExceptionBuilderContract $exceptionBuilder,
     ) {
     }
 
+    /**
+     * @param array<RuleContract> $rules
+     */
     public function execute(array $rules, mixed $value, string $key): void
     {
         if ($value === '') {

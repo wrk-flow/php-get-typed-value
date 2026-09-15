@@ -12,17 +12,12 @@ use Wrkflow\GetValue\GetValue;
 abstract class AbstractXMLTestCase extends TestCase
 {
     final public const KeyTitle = 'title';
-
     final public const KeyItems = 'rates';
-
     final public const KeyRate = 'rate';
-
     final public const KeyObject = 'object';
-
     final public const KeyValueWithAttributes = 'attribute';
 
     protected GetValue $data;
-
     protected XMLData $xmlData;
 
     protected function setUp(): void
@@ -47,6 +42,7 @@ abstract class AbstractXMLTestCase extends TestCase
                 </object>
             </root>
             CODE_SAMPLE
+,
         ));
 
         $this->data = new GetValue($this->xmlData);

@@ -42,11 +42,12 @@ class GetValue
         ?GetValidatedValueAction $getValidatedValueAction = null,
     ) {
         $this->getValidatedValueAction = $getValidatedValueAction ?? new GetValidatedValueAction(
-            new ValidateAction($this->exceptionBuilder)
+            new ValidateAction($this->exceptionBuilder),
         );
     }
 
     /**
+     * @param string|array<int, string> $key
      * @param array<RuleContract>        $rules
      * @param array<TransformerContract> $transformers
      */
@@ -57,17 +58,22 @@ class GetValue
             key: $key,
             rules: $rules,
             mainRule: new NumericRule(),
-            transformers: $transformers ?? $this->transformerStrategy->int()
+            transformers: $transformers ?? $this->transformerStrategy->int(),
         );
 
         if ($value === null || $value === '') {
             return null;
         }
 
+        if (is_numeric($value) === false) {
+            throw $this->exceptionBuilder->validationFailed($this->data->getKey($key), NumericRule::class, null);
+        }
+
         return (int) $value;
     }
 
     /**
+     * @param string|array<int, string> $key
      * @param array<RuleContract>        $rules
      * @param array<TransformerContract> $transformers
      */
@@ -83,6 +89,7 @@ class GetValue
     }
 
     /**
+     * @param string|array<int, string> $key
      * @param array<RuleContract>        $rules
      * @param array<TransformerContract> $transformers
      */
@@ -93,17 +100,22 @@ class GetValue
             key: $key,
             rules: $rules,
             mainRule: new NumericRule(),
-            transformers: $transformers ?? $this->transformerStrategy->float()
+            transformers: $transformers ?? $this->transformerStrategy->float(),
         );
 
         if ($value === null || $value === '') {
             return null;
         }
 
+        if (is_numeric($value) === false) {
+            throw $this->exceptionBuilder->validationFailed($this->data->getKey($key), NumericRule::class, null);
+        }
+
         return (float) $value;
     }
 
     /**
+     * @param string|array<int, string> $key
      * @param array<RuleContract>        $rules
      * @param array<TransformerContract> $transformers
      */
@@ -119,6 +131,7 @@ class GetValue
     }
 
     /**
+     * @param string|array<int, string> $key
      * @param array<RuleContract>        $rules
      * @param array<TransformerContract> $transformers
      */
@@ -129,7 +142,7 @@ class GetValue
             key: $key,
             rules: $rules,
             mainRule: new BooleanRule(),
-            transformers: $transformers ?? $this->transformerStrategy->bool()
+            transformers: $transformers ?? $this->transformerStrategy->bool(),
         );
 
         if ($value === null || $value === '') {
@@ -140,6 +153,7 @@ class GetValue
     }
 
     /**
+     * @param string|array<int, string> $key
      * @param array<RuleContract>             $rules
      * @param array<TransformerContract>|null $transformers
      */
@@ -155,6 +169,7 @@ class GetValue
     }
 
     /**
+     * @param string|array<int, string> $key
      * @param array<RuleContract>             $rules
      * @param array<TransformerContract>|null $transformers
      */
@@ -165,17 +180,22 @@ class GetValue
             key: $key,
             rules: $rules,
             mainRule: new StringRule(),
-            transformers: $transformers ?? $this->transformerStrategy->string()
+            transformers: $transformers ?? $this->transformerStrategy->string(),
         );
 
         if ($value === null) {
             return null;
         }
 
+        if (is_string($value) === false && is_numeric($value) === false) {
+            throw $this->exceptionBuilder->validationFailed($this->data->getKey($key), StringRule::class, null);
+        }
+
         return (string) $value;
     }
 
     /**
+     * @param string|array<int, string> $key
      * @param array<RuleContract>             $rules
      * @param array<TransformerContract>|null $transformers
      */
@@ -191,6 +211,7 @@ class GetValue
     }
 
     /**
+     * @param string|array<int, string> $key
      * @template TEnum of BackedEnum
      *
      * @param class-string<TEnum>             $enum
@@ -207,7 +228,7 @@ class GetValue
             return null;
         }
 
-        //At this moment I've not found a way to detect int/string enum
+        // At this moment I've not found a way to detect int/string enum
         try {
             return $enum::from($value);
         } catch (TypeError) {
@@ -216,6 +237,7 @@ class GetValue
     }
 
     /**
+     * @param string|array<int, string> $key
      * @template TEnum of BackedEnum
      *
      * @param class-string<TEnum>             $enum
@@ -228,7 +250,7 @@ class GetValue
         string|array $key,
         string $enum,
         array $rules = [],
-        ?array $transformers = null
+        ?array $transformers = null,
     ): UnitEnum {
         $value = $this->getEnum(key: $key, enum: $enum, rules: $rules, transformers: $transformers);
 
@@ -240,6 +262,7 @@ class GetValue
     }
 
     /**
+     * @param string|array<int, string> $key
      * @param array<RuleContract>             $rules
      * @param array<TransformerContract>|null $transformers
      *
@@ -252,7 +275,7 @@ class GetValue
             key: $key,
             rules: $rules,
             mainRule: new StringRule(),
-            transformers: $transformers ?? $this->transformerStrategy->dateTime()
+            transformers: $transformers ?? $this->transformerStrategy->dateTime(),
         );
 
         // Transformer built the date time
@@ -268,14 +291,19 @@ class GetValue
             throw $this->exceptionBuilder->validationFailed(
                 $this->data->getKey($key),
                 StringRule::class,
-                '(empty string)'
+                '(empty string)',
             );
+        }
+
+        if (is_string($value) === false && is_numeric($value) === false) {
+            throw $this->exceptionBuilder->validationFailed($this->data->getKey($key), StringRule::class, null);
         }
 
         return new DateTime((string) $value);
     }
 
     /**
+     * @param string|array<int, string> $key
      * @param array<RuleContract>             $rules
      * @param array<TransformerContract>|null $transformers
      *
@@ -284,7 +312,7 @@ class GetValue
     public function getRequiredDateTime(
         string|array $key,
         array $rules = [],
-        ?array $transformers = null
+        ?array $transformers = null,
     ): DateTimeInterface {
         $value = $this->getDateTime(key: $key, rules: $rules, transformers: $transformers);
 
@@ -296,16 +324,19 @@ class GetValue
     }
 
     /**
+     * @param string|array<int, string> $key
      * Ensures that always an array will be returned (if missing in $data or if null).
      *
      * @param array<TransformerContract>|null $transformers
+     *
+     * @return array<array-key, mixed>
      */
     public function getArray(string|array $key, ?array $transformers = null): array
     {
         $value = $this->getValidatedValue(
             valueType: ValueType::Array,
             key: $key,
-            transformers: $transformers ?? $this->transformerStrategy->array()
+            transformers: $transformers ?? $this->transformerStrategy->array(),
         );
 
         if ($value === null) {
@@ -320,9 +351,12 @@ class GetValue
     }
 
     /**
+     * @param string|array<int, string> $key
      * Ensures that always an array will be returned (if missing in $data or if null).
      *
      * @param array<TransformerContract>|null $transformers
+     *
+     * @return array<array-key, mixed>|null
      */
     public function getNullableArray(string|array $key, ?array $transformers = null): ?array
     {
@@ -344,11 +378,12 @@ class GetValue
     }
 
     /**
+     * @param string|array<int, string> $key
      * Checks if the array is in the data set with non-empty array
      *
      * @param array<TransformerContract>|null $transformers
      *
-     * @phpstan-return non-empty-array
+     * @return non-empty-array<array-key, mixed>
      */
     public function getRequiredArray(string|array $key, ?array $transformers = null): array
     {
@@ -362,6 +397,7 @@ class GetValue
     }
 
     /**
+     * @param string|array<int, string> $key
      * Get always `GetValue` instance even if provided data is missing or if null.
      *
      * @param array<TransformerContract>|null $transformers
@@ -374,6 +410,7 @@ class GetValue
     }
 
     /**
+     * @param string|array<int, string> $key
      * Try to get nullable array from data and wrap it in `GetValue` instance.
      *
      * @param array<TransformerContract>|null $transformers
@@ -390,6 +427,7 @@ class GetValue
     }
 
     /**
+     * @param string|array<int, string> $key
      * Checks if the array is in the data set with non-empty array
      *
      * @param array<TransformerContract>|null $transformers
@@ -402,6 +440,7 @@ class GetValue
     }
 
     /**
+     * @param string|array<int, string> $key
      * Ensures that always an array will be returned (if missing in $data or if null).
      *
      * @param array<TransformerContract>|null $transformers
@@ -414,7 +453,7 @@ class GetValue
         $value = $this->getValidatedValue(
             valueType: $valueType,
             key: $key,
-            transformers: $transformers ?? $this->transformerStrategy->xml()
+            transformers: $transformers ?? $this->transformerStrategy->xml(),
         );
 
         if ($value === null) {
@@ -429,6 +468,7 @@ class GetValue
     }
 
     /**
+     * @param string|array<int, string> $key
      * Checks if the array is in the data set with non-empty array
      *
      * @param array<TransformerContract>|null $transformers
@@ -448,6 +488,7 @@ class GetValue
     }
 
     /**
+     * @param string|array<int, string> $key
      * Get always `GetValue` instance even if provided data is missing or if null.
      *
      * @param array<TransformerContract>|null $transformers
@@ -462,6 +503,7 @@ class GetValue
     }
 
     /**
+     * @param string|array<int, string> $key
      * Try to get nullable array from data and wrap it in `GetValue` instance.
      *
      * @param array<TransformerContract>|null $transformers
@@ -478,6 +520,7 @@ class GetValue
     }
 
     /**
+     * @param string|array<int, string> $key
      * Checks if the array is in the data set with non-empty array
      *
      * @param array<TransformerContract>|null $transformers
@@ -489,12 +532,16 @@ class GetValue
         return $this->makeInstance(new XMLData($value, $this->data->getKey($key)));
     }
 
+    /**
+     * @param string|array<int, string>|null $key
+     * @param array<TransformerContract>|null $transformers
+     */
     public function getXMLAttributesGetter(string|array|null $key = null, ?array $transformers = null): self
     {
         $value = $key === null ? $this->data->get() : $this->getRequiredXML(
             key: $key,
             transformers: $transformers,
-            valueType: ValueType::XMLAttributes
+            valueType: ValueType::XMLAttributes,
         );
 
         if ($value instanceof SimpleXMLElement === false) {
@@ -514,6 +561,7 @@ class GetValue
     }
 
     /**
+     * @param string|array<int, string> $key
      * @template T of object
      * @param class-string<T>       $expectedClass
      *
@@ -522,7 +570,7 @@ class GetValue
     public function getObject(
         string $expectedClass,
         string|array $key,
-        GetValueTransformerContract $getValueTransformer
+        GetValueTransformerContract $getValueTransformer,
     ): ?object {
         $transformers = [new GetterTransformer($getValueTransformer)];
         $result = $this->getValidatedValue(ValueType::Object, $key, transformers: $transformers);
@@ -535,6 +583,7 @@ class GetValue
     }
 
     /**
+     * @param string|array<int, string> $key
      * @template T of object
      * @param class-string<T>       $expectedClass
      *
@@ -543,7 +592,7 @@ class GetValue
     public function getRequiredObject(
         string $expectedClass,
         string|array $key,
-        GetValueTransformerContract $getValueTransformer
+        GetValueTransformerContract $getValueTransformer,
     ): object {
         $result = $this->getObject($expectedClass, $key, $getValueTransformer);
 
@@ -560,7 +609,7 @@ class GetValue
             data: $data,
             transformerStrategy: $this->transformerStrategy,
             exceptionBuilder: $this->exceptionBuilder,
-            getValidatedValueAction: $this->getValidatedValueAction
+            getValidatedValueAction: $this->getValidatedValueAction,
         );
     }
 
@@ -577,6 +626,7 @@ class GetValue
     }
 
     /**
+     * @param string|array<int, string> $key
      * @param array<RuleContract>        $rules
      * @param RuleContract|null          $mainRule Adds given rule before all given rules.
      * @param array<TransformerContract> $transformers

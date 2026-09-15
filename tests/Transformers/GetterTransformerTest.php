@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Wrkflow\GetValueTests\Transformers;
 
 use Closure;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Wrkflow\GetValue\Contracts\TransformerContract;
 use Wrkflow\GetValue\DataHolders\ArrayData;
 use Wrkflow\GetValue\GetValue;
@@ -12,7 +13,7 @@ use Wrkflow\GetValue\Transformers\GetterTransformer;
 
 class GetterTransformerTest extends AbstractTransformerTestCase
 {
-    final public const Key = 'key';
+    final public const string Key = 'key';
 
     public function testExample(): void
     {
@@ -35,40 +36,48 @@ class GetterTransformerTest extends AbstractTransformerTestCase
         $this->assertEquals('Marco Polo', $value);
     }
 
-    public function dataToTest(): array
+    /**
+     * @return array<array-key, array<int, TransformerExpectationEntity>>
+     */
+    public static function dataToTest(): array
     {
-        return $this->dataAfterValidationForTransformer();
-    }
-
-    public function dataToTestBeforeValidation(): array
-    {
-        return $this->createData(false);
+        return self::dataAfterValidationForTransformer();
     }
 
     /**
-     * @dataProvider dataToTestBeforeValidation
+     * @return array<array-key, array<int, TransformerExpectationEntity>>
      */
+    public static function dataToTestBeforeValidation(): array
+    {
+        return self::createData(false);
+    }
+
+    #[DataProvider('dataToTestBeforeValidation')]
     public function testBeforeValidation(TransformerExpectationEntity $entity): void
     {
         $this->assertValue($this->getBeforeValidationTransformer(), $entity);
     }
 
-    public function dataToAfterValidationForce(): array
+    /**
+     * @return array<array-key, array<int, TransformerExpectationEntity>>
+     */
+    public static function dataToAfterValidationForce(): array
     {
-        return $this->dataAfterValidationForTransformer();
+        return self::dataAfterValidationForTransformer();
     }
 
-    /**
-     * @dataProvider dataToAfterValidationForce
-     */
+    #[DataProvider('dataToAfterValidationForce')]
     public function testAfterValidationForce(TransformerExpectationEntity $entity): void
     {
         $this->assertValue($this->getForceAfterValidation(), $entity);
     }
 
-    protected function dataAfterValidationForTransformer(): array
+    /**
+     * @return array<array-key, array<int, TransformerExpectationEntity>>
+     */
+    protected static function dataAfterValidationForTransformer(): array
     {
-        return $this->createData(true);
+        return self::createData(true);
     }
 
     protected function getClosure(): Closure
@@ -98,7 +107,10 @@ class GetterTransformerTest extends AbstractTransformerTestCase
         return new GetterTransformer(closure: $this->getClosure(), beforeValidation: false);
     }
 
-    protected function createData(bool $beforeValueIsSameAsValue): array
+    /**
+     * @return array<array-key, array<int, TransformerExpectationEntity>>
+     */
+    protected static function createData(bool $beforeValueIsSameAsValue): array
     {
         return [
             [
@@ -111,7 +123,7 @@ class GetterTransformerTest extends AbstractTransformerTestCase
                     ],
                     expectedValueBeforeValidation: $beforeValueIsSameAsValue ? [
                         self::Key => '',
-                    ] : null
+                    ] : null,
                 ),
             ],
             [
@@ -124,7 +136,7 @@ class GetterTransformerTest extends AbstractTransformerTestCase
                     ],
                     expectedValueBeforeValidation: $beforeValueIsSameAsValue ? [
                         self::Key => ' ',
-                    ] : null
+                    ] : null,
                 ),
             ],
             [
@@ -137,7 +149,7 @@ class GetterTransformerTest extends AbstractTransformerTestCase
                     ],
                     expectedValueBeforeValidation: $beforeValueIsSameAsValue ? [
                         self::Key => ' asd ',
-                    ] : null
+                    ] : null,
                 ),
             ],
             [
@@ -150,7 +162,7 @@ class GetterTransformerTest extends AbstractTransformerTestCase
                     ],
                     expectedValueBeforeValidation: $beforeValueIsSameAsValue ? [
                         self::Key => 'asd ',
-                    ] : null
+                    ] : null,
                 ),
             ],
             [
@@ -163,7 +175,7 @@ class GetterTransformerTest extends AbstractTransformerTestCase
                     ],
                     expectedValueBeforeValidation: $beforeValueIsSameAsValue ? [
                         self::Key => 'asd mix',
-                    ] : null
+                    ] : null,
                 ),
             ],
             // Closure not called

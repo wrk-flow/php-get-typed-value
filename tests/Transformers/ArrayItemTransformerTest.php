@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Wrkflow\GetValueTests\Transformers;
 
 use Closure;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Wrkflow\GetValue\Contracts\TransformerContract;
 use Wrkflow\GetValue\DataHolders\ArrayData;
 use Wrkflow\GetValue\Exceptions\ValidationFailedException;
@@ -60,93 +61,101 @@ class ArrayItemTransformerTest extends AbstractTransformerTestCase
         $this->assertEmpty($expectedKeys, 'Expected key match should be empty - loop did not go through all keys');
     }
 
-    public function dataToTest(): array
+    /**
+     * @return array<array-key, array<int, TransformerExpectationEntity>>
+     */
+    public static function dataToTest(): array
     {
-        return $this->dataAfterValidationForTransformer();
+        return self::dataAfterValidationForTransformer();
     }
 
-    /**
-     * @dataProvider dataToTestBeforeValidation
-     */
+    #[DataProvider('dataToTestBeforeValidation')]
     public function testBeforeValidation(TransformerExpectationEntity $entity): void
     {
         $this->assertValue(
             new ArrayItemTransformer(onItem: $this->getClosure($entity), beforeValidation: true),
-            $entity
+            $entity,
         );
     }
 
-    public function dataToTestBeforeValidation(): array
+    /**
+     * @return array<array-key, array<int, TransformerExpectationEntity>>
+     */
+    public static function dataToTestBeforeValidation(): array
     {
-        return $this->createData(false, false);
+        return self::createData(false, false);
     }
 
-    /**
-     * @dataProvider dataToAfterValidationForce
-     */
+    #[DataProvider('dataToAfterValidationForce')]
     public function testAfterValidationForce(TransformerExpectationEntity $entity): void
     {
         $this->assertValue(
             new ArrayItemTransformer(onItem: $this->getClosure($entity), beforeValidation: false),
-            $entity
+            $entity,
         );
     }
 
-    public function dataToAfterValidationForce(): array
+    /**
+     * @return array<array-key, array<int, TransformerExpectationEntity>>
+     */
+    public static function dataToAfterValidationForce(): array
     {
-        return $this->dataAfterValidationForTransformer();
+        return self::dataAfterValidationForTransformer();
     }
 
-    /**
-     * @dataProvider dataToTestBeforeValidationLeaveNull
-     */
+    #[DataProvider('dataToTestBeforeValidationLeaveNull')]
     public function testBeforeValidationLeaveNull(TransformerExpectationEntity $entity): void
     {
         $this->assertValue(
             new ArrayItemTransformer(onItem: $this->getClosure(
-                $entity
+                $entity,
             ), beforeValidation: true, ignoreNullResult: false),
-            $entity
+            $entity,
         );
     }
 
-    public function dataToTestBeforeValidationLeaveNull(): array
+    /**
+     * @return array<array-key, array<int, TransformerExpectationEntity>>
+     */
+    public static function dataToTestBeforeValidationLeaveNull(): array
     {
-        return $this->createData(false, true);
+        return self::createData(false, true);
     }
 
-    /**
-     * @dataProvider dataToAfterValidationForceLeaveNull
-     */
+    #[DataProvider('dataToAfterValidationForceLeaveNull')]
     public function testAfterValidationForceLeaveNull(TransformerExpectationEntity $entity): void
     {
         $this->assertValue(
             new ArrayItemTransformer(onItem: $this->getClosure(
-                $entity
+                $entity,
             ), beforeValidation: false, ignoreNullResult: false),
-            $entity
+            $entity,
         );
     }
 
-    public function dataToAfterValidationForceLeaveNull(): array
+    /**
+     * @return array<array-key, array<int, TransformerExpectationEntity>>
+     */
+    public static function dataToAfterValidationForceLeaveNull(): array
     {
-        return $this->createData(true, true);
+        return self::createData(true, true);
     }
 
-    /**
-     * @dataProvider dataLeaveNull
-     */
+    #[DataProvider('dataLeaveNull')]
     public function testTransformLeaveNull(TransformerExpectationEntity $entity): void
     {
         $this->assertValue(
             new ArrayItemTransformer(onItem: $this->getClosure($entity), ignoreNullResult: false),
-            $entity
+            $entity,
         );
     }
 
-    public function dataLeaveNull(): array
+    /**
+     * @return array<array-key, array<int, TransformerExpectationEntity>>
+     */
+    public static function dataLeaveNull(): array
     {
-        return $this->createData(true, true);
+        return self::createData(true, true);
     }
 
     protected function getTransformer(TransformerExpectationEntity $entity): TransformerContract
@@ -154,7 +163,10 @@ class ArrayItemTransformerTest extends AbstractTransformerTestCase
         return new ArrayItemTransformer(onItem: $this->getClosure($entity));
     }
 
-    protected function createData(bool $beforeValueIsSameAsValue, bool $leaveNull): array
+    /**
+     * @return array<array-key, array<int, TransformerExpectationEntity>>
+     */
+    protected static function createData(bool $beforeValueIsSameAsValue, bool $leaveNull): array
     {
         return [
             [
@@ -240,9 +252,12 @@ class ArrayItemTransformerTest extends AbstractTransformerTestCase
         ];
     }
 
-    private function dataAfterValidationForTransformer(): array
+    /**
+     * @return array<array-key, array<int, TransformerExpectationEntity>>
+     */
+    private static function dataAfterValidationForTransformer(): array
     {
-        return $this->createData(true, false);
+        return self::createData(true, false);
     }
 
     private function getClosure(TransformerExpectationEntity $entity): Closure

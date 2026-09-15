@@ -13,7 +13,7 @@ class BetweenRule implements RuleContract
 {
     public function __construct(
         protected int|float $minValue,
-        protected int|float $maxValue
+        protected int|float $maxValue,
     ) {
     }
 

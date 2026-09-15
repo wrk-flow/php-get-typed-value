@@ -12,6 +12,9 @@ class ArrayDataTest extends TestCase
 {
     private ArrayData $data;
 
+    /**
+     * @var array<string, mixed>
+     */
     private array $array;
 
     protected function setUp(): void

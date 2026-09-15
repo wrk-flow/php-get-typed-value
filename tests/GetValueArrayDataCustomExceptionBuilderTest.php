@@ -24,7 +24,7 @@ class GetValueArrayDataCustomExceptionBuilderTest extends TestCase
                 'array' => ['test'],
                 'empty' => [],
             ]),
-            exceptionBuilder: new CustomExceptionBuilder()
+            exceptionBuilder: new CustomExceptionBuilder(),
         );
     }
 

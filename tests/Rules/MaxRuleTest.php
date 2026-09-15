@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Wrkflow\GetValueTests\Rules;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Wrkflow\GetValue\Rules\MaxRule;
 
@@ -12,7 +13,10 @@ use Wrkflow\GetValue\Rules\MaxRule;
  */
 class MaxRuleTest extends TestCase
 {
-    public function dataProvider(): array
+    /**
+     * @return array<array-key, array<int, mixed>>
+     */
+    public static function dataProvider(): array
     {
         return [
             ['1234567890', false],
@@ -31,8 +35,9 @@ class MaxRuleTest extends TestCase
     }
 
     /**
-     * @dataProvider dataProvider
+     * @param array<array-key, mixed>|bool|float|int|string|null $arg
      */
+    #[DataProvider('dataProvider')]
     public function testPassesOnExisting(string|int|array|float|null|bool $arg, bool $expected): void
     {
         $this->assertEquals($expected, (new MaxRule(5))->passes($arg));

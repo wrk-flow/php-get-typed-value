@@ -12,7 +12,7 @@ use Wrkflow\GetValue\Contracts\RuleContract;
 class MinRule implements RuleContract
 {
     public function __construct(
-        protected int|float $minValue
+        protected int|float $minValue,
     ) {
     }
 

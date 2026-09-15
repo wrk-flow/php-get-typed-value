@@ -20,7 +20,7 @@ class GetterTransformer implements TransformerContract
      */
     public function __construct(
         private readonly Closure|GetValueTransformerContract $closure,
-        private readonly bool $beforeValidation = false
+        private readonly bool $beforeValidation = false,
     ) {
     }
 

@@ -9,7 +9,6 @@ use Wrkflow\GetValue\Contracts\RuleContract;
 class RuleWasCalledRule implements RuleContract
 {
     public bool $wasCalled = false;
-
     public mixed $wasCalledWithValue = null;
 
     public function passes(mixed $value): bool

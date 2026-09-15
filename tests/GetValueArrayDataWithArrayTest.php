@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Wrkflow\GetValueTests;
 
+use PHPUnit\Framework\Attributes\DataProvider;
+use Wrkflow\GetValue\Contracts\RuleContract;
 use Wrkflow\GetValue\Exceptions\AbstractGetValueException;
 use Wrkflow\GetValue\Exceptions\ArrayIsEmptyException;
 use Wrkflow\GetValue\Exceptions\NotSupportedDataException;
@@ -11,7 +13,10 @@ use Wrkflow\GetValue\GetValue;
 
 class GetValueArrayDataWithArrayTest extends AbstractArrayTestsTestCase
 {
-    public function requiredData(): array
+    /**
+     * @return array<array-key, array<int, mixed>>
+     */
+    public static function requiredData(): array
     {
         return [
             self::KeyNull . ' throws exception' => [self::KeyNull, null, ArrayIsEmptyException::class],
@@ -22,7 +27,10 @@ class GetValueArrayDataWithArrayTest extends AbstractArrayTestsTestCase
         ];
     }
 
-    public function optionalData(): array
+    /**
+     * @return array<array-key, array<int, mixed>>
+     */
+    public static function optionalData(): array
     {
         return [
             self::KeyNull . ' is converted to array' => [self::KeyNull, []],
@@ -33,12 +41,18 @@ class GetValueArrayDataWithArrayTest extends AbstractArrayTestsTestCase
         ];
     }
 
-    public function noStrategyData(): array
+    /**
+     * @return array<array-key, array<int, mixed>>
+     */
+    public static function noStrategyData(): array
     {
-        return $this->optionalData();
+        return self::optionalData();
     }
 
-    public function nullableArrayData(): array
+    /**
+     * @return array<array-key, array<int, mixed>>
+     */
+    public static function nullableArrayData(): array
     {
         return [
             self::KeyNull . ' returns value' => [self::KeyNull, null],
@@ -50,13 +64,14 @@ class GetValueArrayDataWithArrayTest extends AbstractArrayTestsTestCase
     }
 
     /**
-     * @dataProvider nullableArrayData
+     * @param string|array<int, string> $key
      * @param class-string<AbstractGetValueException>|null $expectedException
      */
+    #[DataProvider('nullableArrayData')]
     public function testNullableArray(
         string|array $key,
         mixed $expectedValue = null,
-        ?string $expectedException = null
+        ?string $expectedException = null,
     ): void {
         $data = $this->getBaseData($expectedException, $key);
 
@@ -86,6 +101,9 @@ class GetValueArrayDataWithArrayTest extends AbstractArrayTestsTestCase
         return $data->getRequiredArray(self::KeyTags);
     }
 
+    /**
+     * @param array<RuleContract> $rules
+     */
     protected function getOptionalValue(GetValue $data, array $rules): mixed
     {
         return $data->getArray(self::KeyTags);

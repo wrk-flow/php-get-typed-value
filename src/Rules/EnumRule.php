@@ -7,15 +7,16 @@ namespace Wrkflow\GetValue\Rules;
 use BackedEnum;
 use LogicException;
 use TypeError;
+use UnitEnum;
 use Wrkflow\GetValue\Contracts\RuleContract;
 
 class EnumRule implements RuleContract
 {
     /**
-     * @param class-string<BackedEnum> $enum
+     * @param class-string<UnitEnum> $enum
      */
     public function __construct(
-        private readonly string $enum
+        private readonly string $enum,
     ) {
     }
 
@@ -29,7 +30,7 @@ class EnumRule implements RuleContract
             throw new LogicException(sprintf('Provided enum <%s> is not an enum or it does not exists.', $this->enum));
         }
 
-        if (method_exists($this->enum, 'tryFrom') === false) {
+        if (is_a($this->enum, BackedEnum::class, true) === false) {
             throw new LogicException(sprintf('Provided enum <%s> is not supported. Use string/int enum.', $this->enum));
         }
 

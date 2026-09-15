@@ -12,7 +12,6 @@ use Wrkflow\GetValue\Enums\ValueType;
 class XMLDataTest extends TestCase
 {
     private SimpleXMLElement $simpleXMLElement;
-
     private XMLData $data;
 
     protected function setUp(): void
@@ -36,6 +35,7 @@ class XMLDataTest extends TestCase
                 </items>
             </root>
             CODE_SAMPLE
+,
         );
         $this->data = new XMLData($this->simpleXMLElement);
     }
@@ -104,13 +104,13 @@ class XMLDataTest extends TestCase
     public function testArrayAccess(): void
     {
         $this->assertEquals(
-            expected: 'test',
-            actual: $this->data->getValue(['items', 'item', '0', 'value'], ValueType::String),
+            'test',
+            $this->data->getValue(['items', 'item', '0', 'value'], ValueType::String),
         );
 
         $this->assertEquals(
-            expected: 'test2',
-            actual: $this->data->getValue(['items', 'item', '1', 'value'], ValueType::String),
+            'test2',
+            $this->data->getValue(['items', 'item', '1', 'value'], ValueType::String),
         );
     }
 }

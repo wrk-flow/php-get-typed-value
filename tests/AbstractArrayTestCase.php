@@ -13,47 +13,27 @@ use Wrkflow\GetValueTests\Enums\EnumString;
 abstract class AbstractArrayTestCase extends TestCase
 {
     final public const KeyEmail = 'email';
-
     final public const KeyInvalid = 'invalid';
-
     final public const KeyAmount = 'amount';
-
     final public const KeyUpdatedAt = 'updated_at';
-
     final public const KeyItemsEmpty = 'items_empty';
-
     final public const KeyPageString = 'page_string';
-
     final public const KeyBoolInString = 'bool_in_string';
-
     final protected const KeyTags = 'tags';
-
     final protected const KeyItemName = 'name';
-
     final protected const KeyItems = 'items';
-
     final protected const KeyPage = 'page';
-
     final protected const KeyItemLabel = 'label';
-
     final protected const KeyValid = 'valid';
-
     final protected const KeyNull = 'null';
-
     final protected const KeyEmpty = 'empty';
-
     final protected const KeyMissingValue = 'missing_value';
-
     final protected const KeyIsActive = 'is_active';
-
     final protected const KeyIsActiveInFalse = 'is_active_false';
-
     final protected const KeyEnum = 'enum';
-
     final protected const KeyEnumInt = 'enum_int';
 
     protected GetValue $data;
-
     protected ArrayData $arrayData;
 
     protected function setUp(): void

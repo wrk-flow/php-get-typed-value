@@ -8,13 +8,19 @@ use Wrkflow\GetValue\Enums\ValueType;
 
 class ArrayData extends AbstractData
 {
+    /**
+     * @param array<array-key, mixed> $array
+     */
     public function __construct(
         private readonly array $array,
-        string $parentKey = ''
+        string $parentKey = '',
     ) {
         parent::__construct($parentKey);
     }
 
+    /**
+     * @param string|array<int, string> $key
+     */
     public function getValue(string|array $key, ValueType $expectedValueType): mixed
     {
         if (is_string($key) && str_contains($key, '.')) {
@@ -40,6 +46,9 @@ class ArrayData extends AbstractData
         return $items;
     }
 
+    /**
+     * @return array<array-key, mixed>
+     */
     public function get(): array
     {
         return $this->array;

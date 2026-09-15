@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Wrkflow\GetValueTests\Rules;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Wrkflow\GetValue\Rules\BetweenRule;
 
@@ -12,7 +13,10 @@ use Wrkflow\GetValue\Rules\BetweenRule;
  */
 class BetweenRuleTest extends TestCase
 {
-    public function dataProvider(): array
+    /**
+     * @return array<array-key, array<int, mixed>>
+     */
+    public static function dataProvider(): array
     {
         return [
             ['12345678901', false],
@@ -31,8 +35,9 @@ class BetweenRuleTest extends TestCase
     }
 
     /**
-     * @dataProvider dataProvider
+     * @param array<array-key, mixed>|bool|float|int|string|null $arg
      */
+    #[DataProvider('dataProvider')]
     public function testPassesOnExisting(bool|float|int|string|null|array $arg, bool $expected): void
     {
         $this->assertEquals($expected, (new BetweenRule(5, 10))->passes($arg));

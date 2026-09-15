@@ -15,10 +15,7 @@ class ExceptionBuilderTest extends TestCase
         $exception = (new ExceptionBuilder())
             ->missingValue('key');
 
-        $this->assertInstanceOf(AbstractGetValueException::class, $exception);
-
-        if ($exception instanceof AbstractGetValueException) {
-            $this->assertEquals('key', $exception->getKey());
-        }
+        /** @var AbstractGetValueException $exception */
+        $this->assertEquals('key', $exception->getKey());
     }
 }

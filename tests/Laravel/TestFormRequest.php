@@ -8,8 +8,11 @@ use Wrkflow\GetValue\Laravel\GetValueFormRequest;
 
 class TestFormRequest extends GetValueFormRequest
 {
-    final public const KeyTest = 'test';
+    final public const string KeyTest = 'test';
 
+    /**
+     * @return array<string, array<int, string>>
+     */
     public function rules(): array
     {
         return [

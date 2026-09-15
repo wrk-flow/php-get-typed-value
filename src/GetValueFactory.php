@@ -45,6 +45,9 @@ class GetValueFactory
         return $this->make(new XMLData($xml, $parentKey));
     }
 
+    /**
+     * @param array<array-key, mixed> $array
+     */
     public function array(array $array, string $parentKey = ''): GetValue
     {
         return $this->make(new ArrayData($array, $parentKey));
