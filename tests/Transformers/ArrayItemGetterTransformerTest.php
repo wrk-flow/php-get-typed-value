@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Wrkflow\GetValueTests\Transformers;
 
 use Closure;
+use PHPUnit\Framework\Attributes\DataProvider;
 use SimpleXMLElement;
 use Wrkflow\GetValue\Contracts\TransformerContract;
 use Wrkflow\GetValue\DataHolders\ArrayData;
@@ -15,9 +16,8 @@ use Wrkflow\GetValue\Transformers\ArrayItemGetterTransformer;
 
 final class ArrayItemGetterTransformerTest extends AbstractTransformerTestCase
 {
-    public const KeyValue = 'key';
-
-    public const ValueToReturnNull = 'return_null';
+    public const string KeyValue = 'key';
+    public const string ValueToReturnNull = 'return_null';
 
     public function testExampleArray(): void
     {
@@ -60,6 +60,7 @@ final class ArrayItemGetterTransformerTest extends AbstractTransformerTestCase
     
 </root>
 CODE_SAMPLE
+,
         )));
 
         $expectedKeys = ['names.0', 'names.1'];
@@ -83,35 +84,40 @@ CODE_SAMPLE
         $this->assertEmpty($expectedKeys, 'Expected key match should be empty - loop did not go through all keys');
     }
 
-    public function dataToTest(): array
+    /**
+     * @return array<array-key, array<int, TransformerExpectationEntity>>
+     */
+    public static function dataToTest(): array
     {
-        return $this->dataAfterValidationForTransformer();
+        return self::dataAfterValidationForTransformer();
     }
 
-    /**
-     * @dataProvider dataToTestBeforeValidation
-     */
+    #[DataProvider('dataToTestBeforeValidation')]
     public function testBeforeValidation(TransformerExpectationEntity $entity): void
     {
         $this->assertValue($this->getBeforeValidationTransformer($entity), $entity);
     }
 
-    public function dataToTestBeforeValidation(): array
+    /**
+     * @return array<array-key, array<int, TransformerExpectationEntity>>
+     */
+    public static function dataToTestBeforeValidation(): array
     {
-        return $this->createData(false, false);
+        return self::createData(false, false);
     }
 
-    /**
-     * @dataProvider dataToAfterValidationForce
-     */
+    #[DataProvider('dataToAfterValidationForce')]
     public function testAfterValidationForce(TransformerExpectationEntity $entity): void
     {
         $this->assertValue($this->getForceAfterValidation($entity), $entity);
     }
 
-    public function dataToAfterValidationForce(): array
+    /**
+     * @return array<array-key, array<int, TransformerExpectationEntity>>
+     */
+    public static function dataToAfterValidationForce(): array
     {
-        return $this->dataAfterValidationForTransformer();
+        return self::dataAfterValidationForTransformer();
     }
 
     public function testSupportsEmptyArray(): void
@@ -146,65 +152,71 @@ CODE_SAMPLE
         $this->assertEmpty($expectedKeys, 'Expected key match should be empty - loop did not go through all keys');
     }
 
-    /**
-     * @dataProvider dataToTestBeforeValidationLeaveNull
-     */
+    #[DataProvider('dataToTestBeforeValidationLeaveNull')]
     public function testBeforeValidationLeaveNull(TransformerExpectationEntity $entity): void
     {
         $this->assertValue(
             new ArrayItemGetterTransformer(
                 onItem: $this->getClosure($entity),
                 beforeValidation: true,
-                ignoreNullResult: false
+                ignoreNullResult: false,
             ),
-            $entity
+            $entity,
         );
     }
 
-    public function dataToTestBeforeValidationLeaveNull(): array
+    /**
+     * @return array<array-key, array<int, TransformerExpectationEntity>>
+     */
+    public static function dataToTestBeforeValidationLeaveNull(): array
     {
-        return $this->createData(false, true);
+        return self::createData(false, true);
     }
 
-    /**
-     * @dataProvider dataToAfterValidationForceLeaveNull
-     */
+    #[DataProvider('dataToAfterValidationForceLeaveNull')]
     public function testAfterValidationForceLeaveNull(TransformerExpectationEntity $entity): void
     {
         $this->assertValue(
             new ArrayItemGetterTransformer(
                 onItem: $this->getClosure($entity),
                 beforeValidation: false,
-                ignoreNullResult: false
+                ignoreNullResult: false,
             ),
-            $entity
+            $entity,
         );
     }
 
-    public function dataToAfterValidationForceLeaveNull(): array
+    /**
+     * @return array<array-key, array<int, TransformerExpectationEntity>>
+     */
+    public static function dataToAfterValidationForceLeaveNull(): array
     {
-        return $this->createData(true, true);
+        return self::createData(true, true);
     }
 
-    /**
-     * @dataProvider dataLeaveNull
-     */
+    #[DataProvider('dataLeaveNull')]
     public function testTransformLeaveNull(TransformerExpectationEntity $entity): void
     {
         $this->assertValue(
             new ArrayItemGetterTransformer(onItem: $this->getClosure($entity), ignoreNullResult: false),
-            $entity
+            $entity,
         );
     }
 
-    public function dataLeaveNull(): array
+    /**
+     * @return array<array-key, array<int, TransformerExpectationEntity>>
+     */
+    public static function dataLeaveNull(): array
     {
-        return $this->createData(true, true);
+        return self::createData(true, true);
     }
 
-    protected function dataAfterValidationForTransformer(): array
+    /**
+     * @return array<array-key, array<int, TransformerExpectationEntity>>
+     */
+    protected static function dataAfterValidationForTransformer(): array
     {
-        return $this->createData(true, false);
+        return self::createData(true, false);
     }
 
     protected function getClosure(TransformerExpectationEntity $entity): Closure
@@ -241,7 +253,10 @@ CODE_SAMPLE
         return new ArrayItemGetterTransformer(onItem: $this->getClosure($entity), beforeValidation: false);
     }
 
-    private function createData(bool $beforeValueIsSameAsValue, bool $leaveNull): array
+    /**
+     * @return array<array-key, array<int, TransformerExpectationEntity>>
+     */
+    private static function createData(bool $beforeValueIsSameAsValue, bool $leaveNull): array
     {
         return [
             [

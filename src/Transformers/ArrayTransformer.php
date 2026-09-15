@@ -14,11 +14,11 @@ use Wrkflow\GetValue\GetValue;
 class ArrayTransformer implements TransformerContract
 {
     /**
-     * @param Closure(array,string):mixed $closure
+     * @param Closure(array<array-key, mixed>, string): mixed $closure
      */
     public function __construct(
         private readonly Closure $closure,
-        private readonly bool $beforeValidation = false
+        private readonly bool $beforeValidation = false,
     ) {
     }
 

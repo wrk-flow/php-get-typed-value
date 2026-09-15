@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Wrkflow\GetValueTests;
 
+use Wrkflow\GetValue\Contracts\RuleContract;
 use Wrkflow\GetValue\Exceptions\MissingValueForKeyException;
 use Wrkflow\GetValue\Exceptions\ValidationFailedException;
 use Wrkflow\GetValue\GetValue;
@@ -14,7 +15,10 @@ use Wrkflow\GetValue\Rules\MinRule;
 
 class GetValueArrayDataWithFloatTest extends AbstractArrayTestsTestCase
 {
-    public function requiredData(): array
+    /**
+     * @return array<array-key, array<int, mixed>>
+     */
+    public static function requiredData(): array
     {
         return [
             self::KeyNull . ' throws exception' => [self::KeyNull, null, MissingValueForKeyException::class],
@@ -48,7 +52,10 @@ class GetValueArrayDataWithFloatTest extends AbstractArrayTestsTestCase
         ];
     }
 
-    public function optionalData(): array
+    /**
+     * @return array<array-key, array<int, mixed>>
+     */
+    public static function optionalData(): array
     {
         return [
             self::KeyNull . ' is converted to array' => [self::KeyNull, null],
@@ -78,7 +85,10 @@ class GetValueArrayDataWithFloatTest extends AbstractArrayTestsTestCase
         ];
     }
 
-    public function noStrategyData(): array
+    /**
+     * @return array<array-key, array<int, mixed>>
+     */
+    public static function noStrategyData(): array
     {
         return [
             self::KeyNull . ' is converted to array' => [self::KeyNull, null],
@@ -132,6 +142,9 @@ class GetValueArrayDataWithFloatTest extends AbstractArrayTestsTestCase
         return $data->getRequiredFloat(self::KeyAmount, $rules);
     }
 
+    /**
+     * @param array<RuleContract> $rules
+     */
     protected function getOptionalValue(GetValue $data, array $rules): mixed
     {
         return $data->getFloat(self::KeyAmount, $rules);

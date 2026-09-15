@@ -1,7 +1,7 @@
 # php-get-typed-value
 
 ![img](https://img.shields.io/badge/PHPStan-8-blue)
-![php](https://img.shields.io/badge/PHP-8.1-B0B3D6)
+![php](https://img.shields.io/badge/PHP-8.3%2B-B0B3D6)
 ![coverage](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/pionl/11b884c06da0bf9116ae763d23438ecb/raw/coverage.json)
 
 Get typed (strict mode) values from an Array / XML with basic validation.

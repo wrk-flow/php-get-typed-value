@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Wrkflow\GetValueTests;
 
 use ReflectionMethod;
-use Wrkflow\GetValue\Actions\GetValidatedValueAction;
 use Wrkflow\GetValue\Builders\ExceptionBuilder;
 use Wrkflow\GetValue\Exceptions\ArrayIsEmptyException;
 use Wrkflow\GetValue\Exceptions\NotSupportedDataException;
@@ -23,14 +22,13 @@ class GetValueArrayDataTest extends AbstractArrayTestCase
         $getValue = new GetValue($this->arrayData, getValidatedValueAction: null);
 
         $this->assertTrue($parameter->allowsNull());
-        $this->assertInstanceOf(GetValidatedValueAction::class, $getValue->getValidatedValueAction);
+        $this->assertNotSame($this->data->getValidatedValueAction, $getValue->getValidatedValueAction);
     }
 
     public function testOpinionatedConstructor(): void
     {
         $this->assertInstanceOf(DefaultTransformerStrategy::class, $this->data->transformerStrategy);
         $this->assertInstanceOf(ExceptionBuilder::class, $this->data->exceptionBuilder);
-        $this->assertInstanceOf(GetValidatedValueAction::class, $this->data->getValidatedValueAction);
     }
 
     public function testGetRequiredArrayGetter(): void
@@ -43,8 +41,6 @@ class GetValueArrayDataTest extends AbstractArrayTestCase
     public function testGetArrayGetter(): void
     {
         $items = $this->data->getArrayGetter(self::KeyItems);
-
-        $this->assertNotNull($items);
 
         $this->assertItems($items);
     }
@@ -80,14 +76,12 @@ class GetValueArrayDataTest extends AbstractArrayTestCase
     public function testGetArrayGetterOnNonExistingItem(): void
     {
         $result = $this->data->getArrayGetter('');
-        $this->assertInstanceOf(GetValue::class, $result);
         $this->assertEmpty($result->data->get());
     }
 
     public function testGetArrayGetterOnEmptyArray(): void
     {
         $result = $this->data->getArrayGetter(self::KeyItemsEmpty);
-        $this->assertInstanceOf(GetValue::class, $result);
         $this->assertEmpty($result->data->get());
 
         $this->assertSame($this->data->transformerStrategy, $result->transformerStrategy);
@@ -99,7 +93,9 @@ class GetValueArrayDataTest extends AbstractArrayTestCase
     {
         $result = $this->data->getNullableArrayGetter(self::KeyItems);
         $this->assertInstanceOf(GetValue::class, $result);
-        $this->assertCount(2, $result->data->get());
+        $data = $result->data->get();
+        $this->assertIsArray($data);
+        $this->assertCount(2, $data);
     }
 
     public function testGetNullableArrayGetterOnNonExistingItem(): void
@@ -147,7 +143,7 @@ class GetValueArrayDataTest extends AbstractArrayTestCase
     public function testGetObject(): void
     {
         $result = $this->data->getObject(TestEntity::class, 'object', new TestEntityTransformer());
-        $this->assertNotNull($result);
+        $this->assertInstanceOf(TestEntity::class, $result);
         $this->assertEquals('x', $result->type);
     }
 
@@ -157,11 +153,14 @@ class GetValueArrayDataTest extends AbstractArrayTestCase
         $this->assertNull($result);
     }
 
+    /**
+     * @param array<array-key, mixed> $expectedTags
+     */
     protected function assertItem(
         GetValue $item,
         string $expectedName,
         ?string $expectedLabel,
-        array $expectedTags
+        array $expectedTags,
     ): void {
         $name = $item->getRequiredString(self::KeyItemName);
         $this->assertEquals($expectedName, $name);
@@ -176,7 +175,9 @@ class GetValueArrayDataTest extends AbstractArrayTestCase
     protected function assertItems(GetValue $items): void
     {
         $this->assertEquals(1, $this->data->getRequiredInt(self::KeyPage));
-        $this->assertCount(2, $items->data->get());
+        $data = $items->data->get();
+        $this->assertIsArray($data);
+        $this->assertCount(2, $data);
 
         $item = $items->getRequiredArrayGetter('0');
 

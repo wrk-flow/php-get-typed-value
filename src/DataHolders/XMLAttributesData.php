@@ -12,16 +12,20 @@ class XMLAttributesData extends AbstractData
 {
     public function __construct(
         private readonly SimpleXMLElement $data,
-        string $parentKey = ''
+        string $parentKey = '',
     ) {
         parent::__construct($parentKey);
     }
 
+    /**
+     * @param string|array<int, string> $key
+     */
     public function getValue(string|array $key, ValueType $expectedValueType): ?string
     {
         if (is_array($key)) {
             throw new AttributesDotNotationException(implode('.', $key));
-        } elseif (str_contains($key, '.')) {
+        }
+        if (str_contains($key, '.')) {
             throw new AttributesDotNotationException($key);
         }
 

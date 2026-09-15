@@ -12,7 +12,7 @@ use Wrkflow\GetValue\Contracts\RuleContract;
 class RegexRule implements RuleContract
 {
     public function __construct(
-        protected readonly string $pattern
+        protected readonly string $pattern,
     ) {
     }
 

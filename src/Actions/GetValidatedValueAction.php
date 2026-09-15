@@ -12,11 +12,12 @@ use Wrkflow\GetValue\GetValue;
 class GetValidatedValueAction
 {
     public function __construct(
-        private readonly ValidateAction $validateAction
+        private readonly ValidateAction $validateAction,
     ) {
     }
 
     /**
+     * @param string|array<int, string> $key
      * @param array<RuleContract>        $rules
      * @param array<TransformerContract> $transforms
      */

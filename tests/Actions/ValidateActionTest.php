@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Wrkflow\GetValueTests\Actions;
 
 use Exception;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 use Wrkflow\GetValue\Actions\ValidateAction;
@@ -13,7 +14,10 @@ use Wrkflow\GetValueTests\Rules\TestRule;
 
 class ValidateActionTest extends TestCase
 {
-    public function data(): array
+    /**
+     * @return array<array-key, array<int, mixed>>
+     */
+    public static function data(): array
     {
         return [
             ['', '(empty string)'],
@@ -35,9 +39,7 @@ class ValidateActionTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider data
-     */
+    #[DataProvider('data')]
     public function testConvertsValuesToHumanDescription(mixed $value, string $expectedValueMessage): void
     {
         $action = new ValidateAction(new CustomExceptionBuilder());

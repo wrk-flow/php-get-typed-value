@@ -12,7 +12,7 @@ class ValidationFailedException extends AbstractGetValueException
     {
         parent::__construct($key, sprintf(
             'Validation failed for <%s> key. Reason: ',
-            $key
+            $key,
         ) . $message, $code, $previous);
     }
 }

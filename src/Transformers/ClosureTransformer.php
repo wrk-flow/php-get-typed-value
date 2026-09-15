@@ -18,7 +18,7 @@ class ClosureTransformer implements TransformerContract
      */
     public function __construct(
         private readonly Closure $closure,
-        private readonly bool $beforeValidation = false
+        private readonly bool $beforeValidation = false,
     ) {
     }
 

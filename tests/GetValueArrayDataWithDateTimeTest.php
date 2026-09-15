@@ -6,6 +6,7 @@ namespace Wrkflow\GetValueTests;
 
 use DateTime;
 use Exception;
+use Wrkflow\GetValue\Contracts\RuleContract;
 use Wrkflow\GetValue\Exceptions\MissingValueForKeyException;
 use Wrkflow\GetValue\Exceptions\ValidationFailedException;
 use Wrkflow\GetValue\GetValue;
@@ -18,7 +19,10 @@ use Wrkflow\GetValue\Transformers\TrimAndEmptyStringToNull;
 
 class GetValueArrayDataWithDateTimeTest extends AbstractArrayTestsTestCase
 {
-    public function requiredData(): array
+    /**
+     * @return array<array-key, array<int, mixed>>
+     */
+    public static function requiredData(): array
     {
         return [
             self::KeyNull . ' throws exception' => [self::KeyNull, null, MissingValueForKeyException::class],
@@ -28,7 +32,7 @@ class GetValueArrayDataWithDateTimeTest extends AbstractArrayTestsTestCase
                 null,
                 Exception::class,
             ],
-            self::KeyValid . ' returns value' => [self::KeyValid, $this->getDateTime()],
+            self::KeyValid . ' returns value' => [self::KeyValid, self::getDateTime()],
             self::KeyValid . ' throws with min max rules that does not support date time' => [
                 self::KeyValid,
                 null,
@@ -47,7 +51,10 @@ class GetValueArrayDataWithDateTimeTest extends AbstractArrayTestsTestCase
         ];
     }
 
-    public function optionalData(): array
+    /**
+     * @return array<array-key, array<int, mixed>>
+     */
+    public static function optionalData(): array
     {
         return [
             self::KeyNull . ' is converted to array' => [self::KeyNull, null],
@@ -57,7 +64,7 @@ class GetValueArrayDataWithDateTimeTest extends AbstractArrayTestsTestCase
                 null,
                 Exception::class,
             ],
-            self::KeyValid . ' returns value' => [self::KeyValid, $this->getDateTime()],
+            self::KeyValid . ' returns value' => [self::KeyValid, self::getDateTime()],
             self::KeyValid . ' throws with min max rules that does not support date time' => [
                 self::KeyValid,
                 null,
@@ -77,7 +84,10 @@ class GetValueArrayDataWithDateTimeTest extends AbstractArrayTestsTestCase
         ];
     }
 
-    public function noStrategyData(): array
+    /**
+     * @return array<array-key, array<int, mixed>>
+     */
+    public static function noStrategyData(): array
     {
         return [
             self::KeyNull . ' is converted to array' => [self::KeyNull, null],
@@ -87,7 +97,7 @@ class GetValueArrayDataWithDateTimeTest extends AbstractArrayTestsTestCase
                 null,
                 Exception::class,
             ],
-            self::KeyValid . ' returns value' => [self::KeyValid, $this->getDateTime()],
+            self::KeyValid . ' returns value' => [self::KeyValid, self::getDateTime()],
             self::KeyValid . ' throws with min max rules that does not support date time' => [
                 self::KeyValid,
                 null,
@@ -118,8 +128,8 @@ class GetValueArrayDataWithDateTimeTest extends AbstractArrayTestsTestCase
     public function testDotNotation(): void
     {
         $path = [self::KeyItems, '0', self::KeyUpdatedAt];
-        $this->assertEquals($this->getDateTime(), $this->data->getDateTime($path));
-        $this->assertEquals($this->getDateTime(), $this->data->getDateTime(implode('.', $path)));
+        $this->assertEquals(self::getDateTime(), $this->data->getDateTime($path));
+        $this->assertEquals(self::getDateTime(), $this->data->getDateTime(implode('.', $path)));
     }
 
     public function testDateTimeFromTransformer(): void
@@ -129,7 +139,7 @@ class GetValueArrayDataWithDateTimeTest extends AbstractArrayTestsTestCase
         $result = $this->data
             ->getDateTime(
                 $path,
-                transformers: [new TrimAndEmptyStringToNull(), new ClosureTransformer(fn () => $dateTime)]
+                transformers: [new TrimAndEmptyStringToNull(), new ClosureTransformer(fn () => $dateTime)],
             );
 
         $this->assertSame($dateTime, $result);
@@ -147,12 +157,15 @@ class GetValueArrayDataWithDateTimeTest extends AbstractArrayTestsTestCase
         return $data->getRequiredDateTime(self::KeyUpdatedAt, $rules);
     }
 
+    /**
+     * @param array<RuleContract> $rules
+     */
     protected function getOptionalValue(GetValue $data, array $rules): mixed
     {
         return $data->getDateTime(self::KeyUpdatedAt, $rules);
     }
 
-    protected function getDateTime(): DateTime
+    protected static function getDateTime(): DateTime
     {
         return new DateTime('2022-02-02 23:22:21');
     }

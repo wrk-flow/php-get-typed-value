@@ -30,11 +30,11 @@ jobs:
     name: "Run tests"
     strategy:
       matrix:
-        phpVersion: [ "8.1", "8.2" ]
+        phpVersion: [ "8.3", "8.4", "8.5" ]
     uses: wrk-flow/reusable-workflows/.github/workflows/php-tests.yml@91be5bbf6aca80f54548ec1bddc7c9ced6efb78f
     with:
       gistID: ${{ vars.GIST_ID }}
-      gistOnPhpVersion: "8.2"
+      gistOnPhpVersion: "8.5"
       phpVersion: "${{ matrix.phpVersion }}"
     secrets: inherit
 
@@ -42,10 +42,9 @@ jobs:
     name: "Run tests without Frameworks"
     strategy:
       matrix:
-        phpVersion: [ "8.1", "8.2" ]
+        phpVersion: [ "8.3", "8.4", "8.5" ]
     uses: wrk-flow/reusable-workflows/.github/workflows/php-tests.yml@91be5bbf6aca80f54548ec1bddc7c9ced6efb78f
     with:
       phpVersion: "${{ matrix.phpVersion }}"
       composerRemove: "--dev laravel/framework orchestra/testbench"
       dirsRemove: "tests/Laravel"
-

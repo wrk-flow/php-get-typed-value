@@ -6,6 +6,7 @@ namespace Wrkflow\GetValueTests;
 
 use DateTime;
 use Exception;
+use PHPUnit\Framework\Attributes\DataProvider;
 use SimpleXMLElement;
 use Wrkflow\GetValue\Contracts\TransformerStrategyContract;
 use Wrkflow\GetValue\DataHolders\ArrayData;
@@ -18,35 +19,33 @@ use Wrkflow\GetValue\Strategies\NoTransformerStrategy;
 
 class GetValueArrayDataStrategyTest extends AbstractArrayTestCase
 {
-    final public const KeyInt = 'int';
-
-    final public const KeyFloat = 'float';
-
-    final public const KeyString = 'string';
-
-    final public const KeyDateTime = 'dateTime';
-
-    final public const KeyArray = 'array';
-
-    final public const KeyXml = 'xml';
-
-    final public const ValueDateTime = '2022-09-23 00:01:01.00';
+    final public const string KeyInt = 'int';
+    final public const string KeyFloat = 'float';
+    final public const string KeyString = 'string';
+    final public const string KeyDateTime = 'dateTime';
+    final public const string KeyArray = 'array';
+    final public const string KeyXml = 'xml';
+    final public const string ValueDateTime = '2022-09-23 00:01:01.00';
 
     /**
-     * @dataProvider emptyStrategyValues
+     * @param array<string, mixed>|null $expectedResultValue
      */
+    #[DataProvider('emptyStrategyValues')]
     public function testEmptyStrategyValuesDoesNotConvertEmptyStringToNull(
         mixed $value,
-        ?array $expectedResultValue = null
+        ?array $expectedResultValue = null,
     ): void {
         $this->assertValues(
             strategy: new NoTransformerStrategy(),
             value: $value,
-            expectedResultValue: $expectedResultValue
+            expectedResultValue: $expectedResultValue,
         );
     }
 
-    public function emptyStrategyValues(): array
+    /**
+     * @return array<array-key, array<int, mixed>>
+     */
+    public static function emptyStrategyValues(): array
     {
         return [
             [null],
@@ -54,30 +53,37 @@ class GetValueArrayDataStrategyTest extends AbstractArrayTestCase
                 '', [
                     self::KeyString => '',
                 ], ],
-            ...$this->invalidStrategyValues(),
+            ...self::invalidStrategyValues(),
         ];
     }
 
     /**
-     * @dataProvider defaultStrategyValues
+     * @param array<string, mixed>|null $expectedResultValue
      */
+    #[DataProvider('defaultStrategyValues')]
     public function testDefaultStrategyValuesConvertsEmptyStringToNull(
         mixed $value,
-        ?array $expectedResultValue = null
+        ?array $expectedResultValue = null,
     ): void {
         $this->assertValues(
             strategy: new DefaultTransformerStrategy(),
             value: $value,
-            expectedResultValue: $expectedResultValue
+            expectedResultValue: $expectedResultValue,
         );
     }
 
-    public function defaultStrategyValues(): array
+    /**
+     * @return array<array-key, array<int, mixed>>
+     */
+    public static function defaultStrategyValues(): array
     {
-        return [[''], [null], ...$this->invalidStrategyValues()];
+        return [[''], [null], ...self::invalidStrategyValues()];
     }
 
-    public function invalidStrategyValues(): array
+    /**
+     * @return array<array-key, array<int, mixed>>
+     */
+    public static function invalidStrategyValues(): array
     {
         $xml = new SimpleXMLElement('<root />');
         return [
@@ -108,10 +114,13 @@ class GetValueArrayDataStrategyTest extends AbstractArrayTestCase
         ];
     }
 
+    /**
+     * @param array<string, mixed>|null $expectedResultValue
+     */
     public function assertValues(
         TransformerStrategyContract $strategy,
         mixed $value,
-        ?array $expectedResultValue = null
+        ?array $expectedResultValue = null,
     ): void {
         $getters = [
             self::KeyInt => fn (string $key, GetValue $getValue) => $getValue->getInt($key),
@@ -143,7 +152,7 @@ class GetValueArrayDataStrategyTest extends AbstractArrayTestCase
             } catch (NotSupportedDataException $notSupportedDataException) {
                 $this->assertEquals(
                     'Given value is not array for key <array>',
-                    $notSupportedDataException->getMessage()
+                    $notSupportedDataException->getMessage(),
                 );
                 continue;
             } catch (NotXMLException $notxmlException) {

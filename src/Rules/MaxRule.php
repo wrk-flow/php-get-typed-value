@@ -12,7 +12,7 @@ use Wrkflow\GetValue\Contracts\RuleContract;
 class MaxRule implements RuleContract
 {
     public function __construct(
-        protected int|float $maxValue
+        protected int|float $maxValue,
     ) {
     }
 

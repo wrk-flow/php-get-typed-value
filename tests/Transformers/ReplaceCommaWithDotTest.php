@@ -11,7 +11,10 @@ use Wrkflow\GetValue\Transformers\ReplaceCommaWithDot;
 
 class ReplaceCommaWithDotTest extends AbstractTransformerTestCase
 {
-    public function dataToTest(): array
+    /**
+     * @return array<array-key, array<int, TransformerExpectationEntity>>
+     */
+    public static function dataToTest(): array
     {
         // Expects before validation to be set true to ensure numeric rule will succeed
         return [
@@ -25,7 +28,7 @@ class ReplaceCommaWithDotTest extends AbstractTransformerTestCase
                 new TransformerExpectationEntity(
                     value: 'test, something',
                     expectedValue: 'test. something',
-                    expectBeforeValidation: true
+                    expectBeforeValidation: true,
                 ),
             ],
         ];

@@ -12,7 +12,6 @@ class GetValueFormRequestTest extends AbstractLaravelTestCase
     {
         $request = $this->app()
             ->make(TestFormRequest::class);
-        assert($request instanceof TestFormRequest);
         $this->assertNull($request->getTest());
     }
 
@@ -28,8 +27,6 @@ class GetValueFormRequestTest extends AbstractLaravelTestCase
 
         $request = $this->app()
             ->make(TestFormRequest::class);
-        assert($request instanceof TestFormRequest);
-
         $this->assertEquals('Works', $request->getTest());
     }
 }

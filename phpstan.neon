@@ -1,8 +1,3 @@
-includes:
-    - vendor/phpstan/phpstan-phpunit/extension.neon
-    - vendor/phpstan/phpstan-phpunit/rules.neon
-    - vendor/phpstan/phpstan-deprecation-rules/rules.neon
-
 parameters:
 
     parallel:
@@ -12,9 +7,4 @@ parameters:
         - src
         - tests
 
-    # The level 8 is the highest level
-    level: 8
-
-    # it is impossible to map toArray()
-    checkMissingIterableValueType: false
-
+    level: max

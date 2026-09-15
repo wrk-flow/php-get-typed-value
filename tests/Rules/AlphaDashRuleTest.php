@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Wrkflow\GetValueTests\Rules;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Wrkflow\GetValue\Rules\AlphaDashRule;
 
@@ -12,7 +13,10 @@ use Wrkflow\GetValue\Rules\AlphaDashRule;
  */
 class AlphaDashRuleTest extends TestCase
 {
-    public function dataProvider(): array
+    /**
+     * @return array<array-key, array<int, mixed>>
+     */
+    public static function dataProvider(): array
     {
         return [
             ['Test', true],
@@ -27,9 +31,7 @@ class AlphaDashRuleTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider dataProvider
-     */
+    #[DataProvider('dataProvider')]
     public function testPassesOnExisting(string|int|null|float $arg, bool $expected): void
     {
         $this->assertEquals($expected, (new AlphaDashRule())->passes($arg));

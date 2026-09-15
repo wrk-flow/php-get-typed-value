@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Wrkflow\GetValueTests\Rules;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Wrkflow\GetValue\Rules\NumericRule;
 
@@ -12,7 +13,10 @@ use Wrkflow\GetValue\Rules\NumericRule;
  */
 class NumericRuleTest extends TestCase
 {
-    public function dataProvider(): array
+    /**
+     * @return array<array-key, array<int, mixed>>
+     */
+    public static function dataProvider(): array
     {
         return [
             [0, true],
@@ -26,9 +30,7 @@ class NumericRuleTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider dataProvider
-     */
+    #[DataProvider('dataProvider')]
     public function testPassesOnExisting(string|int|null|float|bool $arg, bool $expected): void
     {
         $this->assertEquals($expected, (new NumericRule())->passes($arg));

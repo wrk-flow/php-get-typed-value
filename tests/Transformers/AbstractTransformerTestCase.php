@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Wrkflow\GetValueTests\Transformers;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Wrkflow\GetValue\Actions\GetValidatedValueAction;
 use Wrkflow\GetValue\Actions\ValidateAction;
@@ -16,7 +17,6 @@ use Wrkflow\GetValue\GetValue;
 abstract class AbstractTransformerTestCase extends TestCase
 {
     private GetValidatedValueAction $action;
-
     private RuleWasCalledRule $wasCalledRule;
 
     protected function setUp(): void
@@ -28,17 +28,18 @@ abstract class AbstractTransformerTestCase extends TestCase
     }
 
     /**
-     * @return array<array<TransformerExpectationEntity>>
+     * @return array<array-key, array<int, TransformerExpectationEntity>>
      */
-    abstract public function dataToTest(): array;
+    abstract public static function dataToTest(): array;
 
-    public function data(): array
+    /**
+     * @return array<array-key, array<int, TransformerExpectationEntity>>
+     */
+    public static function data(): array
     {
         $data = [];
 
-        foreach ($this->dataToTest() as $index => $expectation) {
-            $this->assertNotEmpty($expectation);
-
+        foreach (static::dataToTest() as $index => $expectation) {
             $entity = $expectation[0];
 
             if (is_string($entity->value)) {
@@ -51,9 +52,7 @@ abstract class AbstractTransformerTestCase extends TestCase
         return $data;
     }
 
-    /**
-     * @dataProvider data
-     */
+    #[DataProvider('data')]
     public function testTransform(TransformerExpectationEntity $entity): void
     {
         $transformer = $this->getTransformer($entity);
@@ -83,20 +82,20 @@ abstract class AbstractTransformerTestCase extends TestCase
 
         if ($entity->expectedValue === null) {
             $this->assertEquals(
-                expected: false,
-                actual: $this->wasCalledRule->wasCalled,
-                message: 'Rule validation should be not called if value is null'
+                false,
+                $this->wasCalledRule->wasCalled,
+                'Rule validation should be not called if value is null',
             );
         } else {
             $this->assertEquals(
-                expected: true,
-                actual: $this->wasCalledRule->wasCalled,
-                message: 'Rule validation should be called if value is not null'
+                true,
+                $this->wasCalledRule->wasCalled,
+                'Rule validation should be called if value is not null',
             );
             $this->assertEquals(
-                expected: $entity->expectedValueBeforeValidation,
-                actual: $this->wasCalledRule->wasCalledWithValue,
-                message: 'Rule should have received different value'
+                $entity->expectedValueBeforeValidation,
+                $this->wasCalledRule->wasCalledWithValue,
+                'Rule should have received different value',
             );
         }
     }

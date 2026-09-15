@@ -11,11 +11,16 @@ class XMLData extends AbstractData
 {
     public function __construct(
         private readonly SimpleXMLElement $data,
-        string $parentKey = ''
+        string $parentKey = '',
     ) {
         parent::__construct($parentKey);
     }
 
+    /**
+     * @param string|array<int, string> $key
+     *
+     * @return SimpleXMLElement|list<SimpleXMLElement>|string|null
+     */
     public function getValue(string|array $key, ValueType $expectedValueType): SimpleXMLElement|array|string|null
     {
         if (is_string($key) && str_contains($key, '.')) {
@@ -28,7 +33,7 @@ class XMLData extends AbstractData
         $previousSegmentWasPrefix = false;
 
         foreach ($key as $segment) {
-            $prefixPath = explode(':', (string) $segment);
+            $prefixPath = explode(':', $segment);
 
             if (count($prefixPath) === 2) {
                 $element = $element->children(namespaceOrPrefix: $prefixPath[0], isPrefix: true);
@@ -54,7 +59,7 @@ class XMLData extends AbstractData
             // it to int to SimpleXMLElement to access it.
             $value = is_numeric($segment) ? $element[(int) $segment] : $element->{$segment};
 
-            if ($value === null) {
+            if ($value instanceof SimpleXMLElement === false) {
                 return null;
             }
 
@@ -69,25 +74,28 @@ class XMLData extends AbstractData
         return $this->data;
     }
 
+    /**
+     * @return string|list<SimpleXMLElement>|null|SimpleXMLElement
+     */
     protected function normalizeValue(ValueType $valueType, SimpleXMLElement $value): string|array|null|SimpleXMLElement
     {
         if ($valueType === ValueType::Object) {
             if ($value->count() === 0) {
                 return null;
             }
-
             return $value;
-        } elseif ($valueType === ValueType::XMLAttributes) {
+        }
+        if ($valueType === ValueType::XMLAttributes) {
             return $value;
-        } elseif ($valueType === ValueType::Array) {
+        }
+        if ($valueType === ValueType::Array) {
             $return = [];
-
             foreach ($value as $val) {
                 $return[] = $val;
             }
-
             return $return;
-        } elseif ($value->count() !== 0) {
+        }
+        if ($value->count() !== 0) {
             return (string) $value;
         }
 

@@ -9,7 +9,10 @@ use Wrkflow\GetValue\Transformers\TrimAndEmptyStringToNull;
 
 class TrimAndEmptyStringToNullTest extends AbstractTransformerTestCase
 {
-    public function dataToTest(): array
+    /**
+     * @return array<array-key, array<int, TransformerExpectationEntity>>
+     */
+    public static function dataToTest(): array
     {
         return [
             [new TransformerExpectationEntity(value: '', expectedValue: null, expectBeforeValidation: true)],
@@ -20,7 +23,7 @@ class TrimAndEmptyStringToNullTest extends AbstractTransformerTestCase
                 new TransformerExpectationEntity(
                     value: 'asd mix',
                     expectedValue: 'asd mix',
-                    expectBeforeValidation: true
+                    expectBeforeValidation: true,
                 ),
             ],
         ];

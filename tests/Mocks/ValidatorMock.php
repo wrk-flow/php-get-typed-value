@@ -9,16 +9,25 @@ use Illuminate\Support\MessageBag;
 
 class ValidatorMock implements Validator
 {
+    /**
+     * @param array<string, mixed> $validatedData
+     */
     public function __construct(
-        private readonly array $validatedData
+        private readonly array $validatedData,
     ) {
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function validate()
     {
         return $this->validatedData;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function validated()
     {
         return $this->validatedData;
@@ -29,11 +38,18 @@ class ValidatorMock implements Validator
         return false;
     }
 
+    /**
+     * @return array<string, array<string, array<int, mixed>>>
+     */
     public function failed()
     {
         return [];
     }
 
+    /**
+     * @param string|array<int, string> $attribute
+     * @param string|array<int, mixed> $rules
+     */
     public function sometimes($attribute, $rules, callable $callback)
     {
         return $this;

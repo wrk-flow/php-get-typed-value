@@ -7,6 +7,7 @@ namespace Wrkflow\GetValueTests\Laravel;
 use Closure;
 use Illuminate\Console\Command;
 use PHPUnit\Framework\Assert;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Console\Output\NullOutput;
 use Wrkflow\GetValue\GetValueFactory;
@@ -25,7 +26,10 @@ class GetValueFactoryLaravelCommandTest extends AbstractLaravelTestCase
     /**
      * @return array<string|int, array{0: Closure(static):void}>
      */
-    public function dataCommand(): array
+    /**
+     * @return array<array-key, array<int, mixed>>
+     */
+    public static function dataCommand(): array
     {
         return [
             'argument only' => [
@@ -57,9 +61,8 @@ class GetValueFactoryLaravelCommandTest extends AbstractLaravelTestCase
 
     /**
      * @param Closure(static):void $assert
-     *
-     * @dataProvider dataCommand
      */
+    #[DataProvider('dataCommand')]
     public function testCommand(Closure $assert): void
     {
         $assert($this);
@@ -71,12 +74,7 @@ class GetValueFactoryLaravelCommandTest extends AbstractLaravelTestCase
         bool $expectedBoolOption,
         ?string $expectedValueOption,
     ): void {
-        $command = new class(
-            $this->factory,
-            $expectedArgument,
-            $expectedBoolOption,
-            $expectedValueOption,
-        ) extends Command {
+        $command = new class($this->factory, $expectedArgument, $expectedBoolOption, $expectedValueOption) extends Command {
             protected $signature = 'test {argument} {--option} {--value=}';
 
             public function __construct(

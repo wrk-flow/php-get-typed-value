@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Wrkflow\GetValueTests\Transformers;
 
 use Closure;
+use LogicException;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Wrkflow\GetValue\Contracts\TransformerContract;
 use Wrkflow\GetValue\DataHolders\ArrayData;
 use Wrkflow\GetValue\GetValue;
@@ -18,49 +20,68 @@ class ArrayTransformerTest extends AbstractTransformerTestCase
             'key' => ['Marco', 'Polo'],
         ]));
 
+        $closure = static function (array $value, string $key): string {
+            $strings = [];
+            foreach ($value as $item) {
+                if (is_string($item) === false) {
+                    throw new LogicException('The array item must be a string.');
+                }
+                $strings[] = $item;
+            }
+
+            return implode(' ', $strings);
+        };
         $transformer = new ArrayTransformer(
-            closure: fn (array $value, string $key): string => implode(' ', $value),
-            beforeValidation: true
+            closure: $closure,
+            beforeValidation: true,
         );
 
         $name = $data->getString('key', transformers: [$transformer]);
         $this->assertEquals('Marco Polo', $name);
     }
 
-    /**
-     * @dataProvider dataToTestBeforeValidation
-     */
+    #[DataProvider('dataToTestBeforeValidation')]
     public function testBeforeValidation(TransformerExpectationEntity $entity): void
     {
         $this->assertValue($this->getBeforeValidationTransformer(), $entity);
     }
 
-    /**
-     * @dataProvider dataToAfterValidationForce
-     */
+    #[DataProvider('dataToAfterValidationForce')]
     public function testAfterValidationForce(TransformerExpectationEntity $entity): void
     {
         $this->assertValue($this->getForceAfterValidation(), $entity);
     }
 
-    public function dataToAfterValidationForce(): array
+    /**
+     * @return array<array-key, array<int, TransformerExpectationEntity>>
+     */
+    public static function dataToAfterValidationForce(): array
     {
-        return $this->dataAfterValidationForTransformer();
+        return self::dataAfterValidationForTransformer();
     }
 
-    public function dataToTest(): array
+    /**
+     * @return array<array-key, array<int, TransformerExpectationEntity>>
+     */
+    public static function dataToTest(): array
     {
-        return $this->dataAfterValidationForTransformer();
+        return self::dataAfterValidationForTransformer();
     }
 
-    public function dataToTestBeforeValidation(): array
+    /**
+     * @return array<array-key, array<int, TransformerExpectationEntity>>
+     */
+    public static function dataToTestBeforeValidation(): array
     {
-        return $this->createData(false);
+        return self::createData(false);
     }
 
-    protected function dataAfterValidationForTransformer(): array
+    /**
+     * @return array<array-key, array<int, TransformerExpectationEntity>>
+     */
+    protected static function dataAfterValidationForTransformer(): array
     {
-        return $this->createData(true);
+        return self::createData(true);
     }
 
     protected function getClosure(): Closure
@@ -68,7 +89,12 @@ class ArrayTransformerTest extends AbstractTransformerTestCase
         return function (array $value, string $key): array {
             $this->assertEquals('test', $key, 'Key does not match up');
 
-            return array_map(fn (string $item) => md5($item), $value);
+            return array_map(
+                static fn (mixed $item): string => is_string($item)
+                    ? md5($item)
+                    : throw new LogicException('The array item must be a string.'),
+                $value,
+            );
         };
     }
 
@@ -87,42 +113,45 @@ class ArrayTransformerTest extends AbstractTransformerTestCase
         return new ArrayTransformer(closure: $this->getClosure(), beforeValidation: false);
     }
 
-    protected function createData(bool $beforeValueIsSameAsValue): array
+    /**
+     * @return array<array-key, array<int, TransformerExpectationEntity>>
+     */
+    protected static function createData(bool $beforeValueIsSameAsValue): array
     {
         return [
             [
                 new TransformerExpectationEntity(
                     value: [''],
                     expectedValue: ['d41d8cd98f00b204e9800998ecf8427e'],
-                    expectedValueBeforeValidation: $beforeValueIsSameAsValue ? [''] : null
+                    expectedValueBeforeValidation: $beforeValueIsSameAsValue ? [''] : null,
                 ),
             ],
             [
                 new TransformerExpectationEntity(
                     value: [' '],
                     expectedValue: ['7215ee9c7d9dc229d2921a40e899ec5f'],
-                    expectedValueBeforeValidation: $beforeValueIsSameAsValue ? [' '] : null
+                    expectedValueBeforeValidation: $beforeValueIsSameAsValue ? [' '] : null,
                 ),
             ],
             [
                 new TransformerExpectationEntity(
                     value: [' asd '],
                     expectedValue: ['81c24eeebdef51c832407fa3e4509ab8'],
-                    expectedValueBeforeValidation: $beforeValueIsSameAsValue ? [' asd '] : null
+                    expectedValueBeforeValidation: $beforeValueIsSameAsValue ? [' asd '] : null,
                 ),
             ],
             [
                 new TransformerExpectationEntity(
                     value: ['asd '],
                     expectedValue: ['4fe2077508f28d88bfa1473149415224'],
-                    expectedValueBeforeValidation: $beforeValueIsSameAsValue ? ['asd '] : null
+                    expectedValueBeforeValidation: $beforeValueIsSameAsValue ? ['asd '] : null,
                 ),
             ],
             [
                 new TransformerExpectationEntity(
                     value: ['asd mix'],
                     expectedValue: ['bf40744fb5eeca1029aed8d8c5d30f82'],
-                    expectedValueBeforeValidation: $beforeValueIsSameAsValue ? ['asd mix'] : null
+                    expectedValueBeforeValidation: $beforeValueIsSameAsValue ? ['asd mix'] : null,
                 ),
             ],
             // Closure not called

@@ -24,7 +24,7 @@ class XMLDataPrefixTest extends TestCase
                 CODE_SAMPLE
             ,
             key: ['soap:Body', 'PingResponse', 'PingResult', 'result', 'status'],
-            expectedValueType: ValueType::String
+            expectedValueType: ValueType::String,
         );
         $this->assertSame('OK', $status);
     }
@@ -64,46 +64,51 @@ class XMLDataPrefixTest extends TestCase
             ,
         );
         $this->assertSame(
-            expected: '1',
-            actual: $data->getValue(
+            '1',
+            $data->getValue(
                 key: ['SOAP-ENV:Body', 'urn:Z.Response', 'ET_RETURN', 'item', '0', 'ROW'],
-                expectedValueType: ValueType::String
-            )
+                expectedValueType: ValueType::String,
+            ),
         );
         $this->assertSame(
-            expected: '2',
-            actual: $data->getValue(
+            '2',
+            $data->getValue(
                 key: ['SOAP-ENV:Body', 'urn:Z.Response', 'ET_RETURN', 'item', '1', 'ROW'],
-                expectedValueType: ValueType::String
-            )
+                expectedValueType: ValueType::String,
+            ),
         );
         $this->assertSame(
-            expected: 'Test',
-            actual: $data->getValue(
+            'Test',
+            $data->getValue(
                 key: ['SOAP-ENV:Body', 'urn:ZB.Response', 'ET_RETURN'],
-                expectedValueType: ValueType::String
+                expectedValueType: ValueType::String,
             ),
-            message: 'Second child in urn namespace not accessible'
+            'Second child in urn namespace not accessible',
         );
         $this->assertSame(
-            expected: '23',
-            actual: $data->getValue(key: ['SOAP-ENV:Body2', 'test'], expectedValueType: ValueType::String),
-            message: 'Body2 contains direct child with value'
+            '23',
+            $data->getValue(key: ['SOAP-ENV:Body2', 'test'], expectedValueType: ValueType::String),
+            'Body2 contains direct child with value',
         );
         $this->assertSame(
-            expected: 'Response',
-            actual: $data->getValue(
+            'Response',
+            $data->getValue(
                 key: ['SOAP-ENV:Body3', 'urn:ZB.Response'],
-                expectedValueType: ValueType::String
+                expectedValueType: ValueType::String,
             ),
-            message: 'Body3 should contains urn namespace with value'
+            'Body3 should contains urn namespace with value',
         );
     }
 
+    /**
+     * @param string|array<int, string> $key
+     *
+     * @return SimpleXMLElement|list<SimpleXMLElement>|string|null
+     */
     protected function make(
         string $xml,
         string|array $key,
-        ValueType $expectedValueType
+        ValueType $expectedValueType,
     ): SimpleXMLElement|array|string|null {
         return $this->makeData($xml)
             ->getValue(key: $key, expectedValueType: $expectedValueType);

@@ -13,7 +13,6 @@ use Wrkflow\GetValue\Exceptions\AttributesDotNotationException;
 class XMLAttributesDataTest extends TestCase
 {
     public XMLAttributesData $data;
-
     private SimpleXMLElement $attributes;
 
     protected function setUp(): void
@@ -50,7 +49,6 @@ class XMLAttributesDataTest extends TestCase
 
     public function testGet(): void
     {
-        $this->assertNotNull($this->attributes);
         $this->assertSame($this->attributes, $this->data->get());
     }
 }

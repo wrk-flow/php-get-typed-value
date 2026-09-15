@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Wrkflow\GetValueTests\Rules;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Wrkflow\GetValue\Rules\RegexRule;
 
@@ -12,7 +13,10 @@ use Wrkflow\GetValue\Rules\RegexRule;
  */
 class RegexRuleTest extends TestCase
 {
-    public function dataProvider(): array
+    /**
+     * @return array<array-key, array<int, mixed>>
+     */
+    public static function dataProvider(): array
     {
         return [
             ['/^[A-Za-z]+$/', 'Test', true],
@@ -27,9 +31,7 @@ class RegexRuleTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider dataProvider
-     */
+    #[DataProvider('dataProvider')]
     public function testPassesOnExisting(string $pattern, string|null|int|float $arg, bool $expected): void
     {
         $this->assertEquals($expected, (new RegexRule($pattern))->passes($arg));

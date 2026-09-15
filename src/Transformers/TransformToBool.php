@@ -21,9 +21,10 @@ class TransformToBool implements TransformerContract
     public function transform(mixed $value, string $key, GetValue $getValue): mixed
     {
         // Ensure that value is boolean
-        if ($value === 'true' || $value === true || $value === '1' || $value === 1 || $value === 'yes') {
+        if (in_array($value, ['true', true, '1', 1, 'yes'], true)) {
             return true;
-        } elseif ($value === 'false' || $value === false || $value === '0' || $value === 0 || $value === 'no') {
+        }
+        if (in_array($value, ['false', false, '0', 0, 'no'], true)) {
             return false;
         }
 

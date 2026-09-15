@@ -9,7 +9,10 @@ use Wrkflow\GetValue\Transformers\TrimString;
 
 class TrimStringTest extends AbstractTransformerTestCase
 {
-    public function dataToTest(): array
+    /**
+     * @return array<array-key, array<int, TransformerExpectationEntity>>
+     */
+    public static function dataToTest(): array
     {
         return [
             [new TransformerExpectationEntity(value: '', expectedValue: '', expectBeforeValidation: true)],
@@ -20,7 +23,7 @@ class TrimStringTest extends AbstractTransformerTestCase
                 new TransformerExpectationEntity(
                     value: 'asd mix',
                     expectedValue: 'asd mix',
-                    expectBeforeValidation: true
+                    expectBeforeValidation: true,
                 ),
             ],
         ];

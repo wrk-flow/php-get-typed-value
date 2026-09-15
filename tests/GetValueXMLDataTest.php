@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Wrkflow\GetValueTests;
 
 use SimpleXMLElement;
-use Wrkflow\GetValue\Actions\GetValidatedValueAction;
 use Wrkflow\GetValue\Builders\ExceptionBuilder;
 use Wrkflow\GetValue\DataHolders\XMLData;
 use Wrkflow\GetValue\Exceptions\MissingValueForKeyException;
@@ -21,7 +20,6 @@ class GetValueXMLDataTest extends AbstractXMLTestCase
     {
         $this->assertInstanceOf(DefaultTransformerStrategy::class, $this->data->transformerStrategy);
         $this->assertInstanceOf(ExceptionBuilder::class, $this->data->exceptionBuilder);
-        $this->assertInstanceOf(GetValidatedValueAction::class, $this->data->getValidatedValueAction);
     }
 
     public function testXMLArrayAccess(): void
@@ -78,7 +76,7 @@ class GetValueXMLDataTest extends AbstractXMLTestCase
     {
         $object = $this->data->getNullableXMLGetter(self::KeyObject);
 
-        $this->assertNotNull($object);
+        $this->assertInstanceOf(GetValue::class, $object);
         $this->assertObject($object);
 
         $this->assertNull($this->data->getNullableXMLGetter('not_exists'));
@@ -89,7 +87,7 @@ class GetValueXMLDataTest extends AbstractXMLTestCase
         $object = $this->data->getXMLGetter(self::KeyObject);
 
         $this->assertObject($object);
-        $this->assertNotNull($this->data->getXMLGetter('not_exists'));
+        $this->assertSame('not_exists', $this->data->getXMLGetter('not_exists')->data->getKey());
     }
 
     public function testGetObject(): void
@@ -125,7 +123,7 @@ class GetValueXMLDataTest extends AbstractXMLTestCase
         $this->assertEquals(null, $child->getString('title2'));
     }
 
-    protected function assertObjectResult(mixed $result): void
+    protected function assertObjectResult(?TestEntity $result): void
     {
         $this->assertNotNull($result);
         $this->assertEquals('x', $result->type);

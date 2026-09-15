@@ -5,17 +5,25 @@ declare(strict_types=1);
 namespace Wrkflow\GetValueTests\Transformers;
 
 use Closure;
+use LogicException;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Wrkflow\GetValue\Contracts\TransformerContract;
 use Wrkflow\GetValue\Transformers\ClosureTransformer;
 
 class ClosureTransformerTest extends AbstractTransformerTestCase
 {
-    public function dataToTest(): array
+    /**
+     * @return array<array-key, array<int, TransformerExpectationEntity>>
+     */
+    public static function dataToTest(): array
     {
-        return $this->dataAfterValidationForTransformer();
+        return self::dataAfterValidationForTransformer();
     }
 
-    public function dataToBeforeValidationForce(): array
+    /**
+     * @return array<array-key, array<int, TransformerExpectationEntity>>
+     */
+    public static function dataToBeforeValidationForce(): array
     {
         return [
             [new TransformerExpectationEntity(value: '', expectedValue: 'd41d8cd98f00b204e9800998ecf8427e')],
@@ -25,16 +33,14 @@ class ClosureTransformerTest extends AbstractTransformerTestCase
             [
                 new TransformerExpectationEntity(
                     value: 'asd mix',
-                    expectedValue: 'bf40744fb5eeca1029aed8d8c5d30f82'
+                    expectedValue: 'bf40744fb5eeca1029aed8d8c5d30f82',
                 ),
             ],
             [new TransformerExpectationEntity(value: null, expectedValue: null)],
         ];
     }
 
-    /**
-     * @dataProvider dataToBeforeValidationForce
-     */
+    #[DataProvider('dataToBeforeValidationForce')]
     public function testBeforeValidation(TransformerExpectationEntity $entity): void
     {
         $transformer = new ClosureTransformer(closure: $this->getClosure(), beforeValidation: true);
@@ -42,14 +48,15 @@ class ClosureTransformerTest extends AbstractTransformerTestCase
         $this->assertValue($transformer, $entity);
     }
 
-    public function dataToTestAfterValidationForce(): array
+    /**
+     * @return array<array-key, array<int, TransformerExpectationEntity>>
+     */
+    public static function dataToTestAfterValidationForce(): array
     {
-        return $this->dataAfterValidationForTransformer();
+        return self::dataAfterValidationForTransformer();
     }
 
-    /**
-     * @dataProvider dataToTestAfterValidationForce
-     */
+    #[DataProvider('dataToTestAfterValidationForce')]
     public function testAfterValidationForce(TransformerExpectationEntity $entity): void
     {
         $transformer = new ClosureTransformer(closure: $this->getClosure(), beforeValidation: false);
@@ -62,42 +69,45 @@ class ClosureTransformerTest extends AbstractTransformerTestCase
         return new ClosureTransformer(closure: $this->getClosure());
     }
 
-    protected function dataAfterValidationForTransformer(): array
+    /**
+     * @return array<array-key, array<int, TransformerExpectationEntity>>
+     */
+    protected static function dataAfterValidationForTransformer(): array
     {
         return [
             [
                 new TransformerExpectationEntity(
                     value: '',
                     expectedValue: 'd41d8cd98f00b204e9800998ecf8427e',
-                    expectedValueBeforeValidation: ''
+                    expectedValueBeforeValidation: '',
                 ),
             ],
             [
                 new TransformerExpectationEntity(
                     value: ' ',
                     expectedValue: '7215ee9c7d9dc229d2921a40e899ec5f',
-                    expectedValueBeforeValidation: ' '
+                    expectedValueBeforeValidation: ' ',
                 ),
             ],
             [
                 new TransformerExpectationEntity(
                     value: ' asd ',
                     expectedValue: '81c24eeebdef51c832407fa3e4509ab8',
-                    expectedValueBeforeValidation: ' asd '
+                    expectedValueBeforeValidation: ' asd ',
                 ),
             ],
             [
                 new TransformerExpectationEntity(
                     value: 'asd ',
                     expectedValue: '4fe2077508f28d88bfa1473149415224',
-                    expectedValueBeforeValidation: 'asd '
+                    expectedValueBeforeValidation: 'asd ',
                 ),
             ],
             [
                 new TransformerExpectationEntity(
                     value: 'asd mix',
                     expectedValue: 'bf40744fb5eeca1029aed8d8c5d30f82',
-                    expectedValueBeforeValidation: 'asd mix'
+                    expectedValueBeforeValidation: 'asd mix',
                 ),
             ],
             [new TransformerExpectationEntity(value: null, expectedValue: null)],
@@ -109,6 +119,10 @@ class ClosureTransformerTest extends AbstractTransformerTestCase
         return function (mixed $value, string $key): ?string {
             if ($value === null) {
                 return null;
+            }
+
+            if (is_string($value) === false) {
+                throw new LogicException('The value must be a string.');
             }
 
             $this->assertEquals('test', $key, 'Key does not match up');
