@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Wrkflow\GetValueTests;
 
+use ReflectionMethod;
 use Wrkflow\GetValue\Actions\GetValidatedValueAction;
 use Wrkflow\GetValue\Builders\ExceptionBuilder;
 use Wrkflow\GetValue\Exceptions\ArrayIsEmptyException;
@@ -16,6 +17,15 @@ use Wrkflow\GetValueTests\Transformers\TestEntityTransformer;
 
 class GetValueArrayDataTest extends AbstractArrayTestCase
 {
+    public function testValidatedValueActionConstructorParameterIsNullable(): void
+    {
+        $parameter = (new ReflectionMethod(GetValue::class, '__construct'))->getParameters()[3];
+        $getValue = new GetValue($this->arrayData, getValidatedValueAction: null);
+
+        $this->assertTrue($parameter->allowsNull());
+        $this->assertInstanceOf(GetValidatedValueAction::class, $getValue->getValidatedValueAction);
+    }
+
     public function testOpinionatedConstructor(): void
     {
         $this->assertInstanceOf(DefaultTransformerStrategy::class, $this->data->transformerStrategy);
