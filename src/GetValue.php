@@ -39,7 +39,7 @@ class GetValue
         public readonly AbstractData $data,
         public readonly TransformerStrategyContract $transformerStrategy = new DefaultTransformerStrategy(),
         public readonly ExceptionBuilderContract $exceptionBuilder = new ExceptionBuilder(),
-        GetValidatedValueAction $getValidatedValueAction = null,
+        ?GetValidatedValueAction $getValidatedValueAction = null,
     ) {
         $this->getValidatedValueAction = $getValidatedValueAction ?? new GetValidatedValueAction(
             new ValidateAction($this->exceptionBuilder)
