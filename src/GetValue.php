@@ -27,6 +27,7 @@ use Wrkflow\GetValue\Enums\ValueType;
 use Wrkflow\GetValue\Rules\BooleanRule;
 use Wrkflow\GetValue\Rules\EnumRule;
 use Wrkflow\GetValue\Rules\NumericRule;
+use Wrkflow\GetValue\Rules\StringKeysRule;
 use Wrkflow\GetValue\Rules\StringRule;
 use Wrkflow\GetValue\Strategies\DefaultTransformerStrategy;
 use Wrkflow\GetValue\Transformers\GetterTransformer;
@@ -345,6 +346,28 @@ class GetValue
 
         if (is_array($value) === false) {
             throw $this->exceptionBuilder->notAnArray($this->data->getKey($key));
+        }
+
+        return $value;
+    }
+
+    /**
+     * @param string|array<int, string> $key
+     * @param array<TransformerContract>|null $transformers
+     *
+     * @return array<string, mixed>
+     */
+    public function getStringKeyArray(string|array $key, ?array $transformers = null): array
+    {
+        $value = $this->getArray($key, $transformers);
+        $rule = new StringKeysRule();
+
+        if ($rule->passes($value) === false) {
+            throw $this->exceptionBuilder->validationFailed(
+                $this->data->getKey($key),
+                StringKeysRule::class,
+                null,
+            );
         }
 
         return $value;

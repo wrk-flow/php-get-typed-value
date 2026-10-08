@@ -434,3 +434,16 @@ Example for [Laravel](/laravel)
       data).
     - Array notation is converted to dot notation string.
   
+
+### Arrays with string keys
+
+Use `getStringKeyArray()` when all top-level keys must be strings. The method returns
+`array<string, mixed>`. It checks the final transformed array and returns it without copying its values.
+Missing and null values return an empty array. Integer keys cause a validation exception.
+PHP converts numeric string keys, such as `'123'`, to integers. These keys are rejected too.
+Nested arrays can contain integer keys.
+
+```php
+$customData = $data->getStringKeyArray('custom_data');
+$rootData = $data->getStringKeyArray([]);
+```
