@@ -8,3 +8,12 @@ parameters:
         - tests
 
     level: max
+
+services:
+    larastrict.injectable:
+        arguments:
+            # GetValue creates its validation actions. Callers supply rules and transformer callbacks.
+            excludeNamespaces:
+                - \Actions\
+                - \Contracts\
+                - \Transformers\

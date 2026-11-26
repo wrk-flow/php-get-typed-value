@@ -15,7 +15,7 @@
     "require-dev": {
         "ext-simplexml": "*",
         "ext-xmlreader": "*",
-        "larastrict/conventions": "^2.0.1",
+        "larastrict/conventions": "^2.1",
         "laravel/framework": "^13.0",
         "orchestra/testbench": "^11.1",
         "phpstan/phpstan-deprecation-rules": "^2.0",
