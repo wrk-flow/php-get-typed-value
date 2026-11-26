@@ -35,6 +35,26 @@ $data->getString('address.street.name') // Returns: null because value does not 
 $data->getRequiredString('address.street.name') // Returns: throws MissingValueForKeyException exception
 ```
 
+## Attributes from XMLReader
+
+Use the factory when XMLReader is positioned on an element. The getter reads the current element's attributes directly and uses the factory's usual validation and transformers.
+
+```php
+use Wrkflow\GetValue\GetValueFactory;
+
+$attributes = (new GetValueFactory())->xmlReaderAttributes($reader, 'item');
+$code = $attributes->getRequiredString('cod');
+$maxPersons = $attributes->getRequiredInt('maxp');
+```
+
+This uses the XMLReader extension. Read the values before you advance or close the reader.
+
+## Laravel container
+
+Laravel discovers `Wrkflow\GetValue\Laravel\GetValueServiceProvider` when you install the package. The provider makes the validation actions and their default dependencies available through Laravel's container and preserves custom bindings for the exception builder and transformer strategy. If your application disables package discovery, register the provider in the application.
+
+Larastan loads the provider through `testbench.yaml` when it analyses this repository as the root package.
+
 ## Documentation
 
 Documentation is hosted on [GitHub Pages](https://php-get-typed-value.wrk-flow.com).

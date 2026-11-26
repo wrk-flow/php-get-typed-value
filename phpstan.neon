@@ -8,3 +8,17 @@ parameters:
         - tests
 
     level: max
+
+services:
+    larastrict.injectable:
+        arguments:
+            # Callers choose rule and transformer implementations and provide callbacks.
+            excludeClasses:
+                - Wrkflow\GetValue\Contracts\GetValueTransformerContract
+                - Wrkflow\GetValue\Contracts\RuleContract
+                - Wrkflow\GetValue\Contracts\TransformerContract
+                - Wrkflow\GetValue\Transformers\ArrayItemGetterTransformer
+                - Wrkflow\GetValue\Transformers\ArrayItemTransformer
+                - Wrkflow\GetValue\Transformers\ArrayTransformer
+                - Wrkflow\GetValue\Transformers\ClosureTransformer
+                - Wrkflow\GetValue\Transformers\GetterTransformer

@@ -15,6 +15,7 @@ on:
       - "rector.php"
       - "phpstan.neon"
       - "phpunit.xml"
+      - "testbench.yaml"
 
 concurrency:
   group: php-get-typed-value-check-${{ github.ref }}
