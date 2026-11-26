@@ -49,6 +49,12 @@ $maxPersons = $attributes->getRequiredInt('maxp');
 
 This uses the XMLReader extension. Read the values before you advance or close the reader.
 
+## Laravel container
+
+Register `Wrkflow\GetValue\Laravel\GetValueServiceProvider` in your application to resolve the validation actions and their default dependencies from Laravel's container. The provider preserves any custom bindings for the exception builder and transformer strategy.
+
+The development application loads this provider through `testbench.yaml` when Larastan runs.
+
 ## Documentation
 
 Documentation is hosted on [GitHub Pages](https://php-get-typed-value.wrk-flow.com).

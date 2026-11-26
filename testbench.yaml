@@ -1,0 +1,3 @@
+# Larastan uses this provider list when it boots the development application.
+providers:
+  - Wrkflow\GetValue\Laravel\GetValueServiceProvider
