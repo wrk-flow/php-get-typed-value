@@ -51,9 +51,9 @@ This uses the XMLReader extension. Read the values before you advance or close t
 
 ## Laravel container
 
-Register `Wrkflow\GetValue\Laravel\GetValueServiceProvider` in your application to resolve the validation actions and their default dependencies from Laravel's container. The provider preserves any custom bindings for the exception builder and transformer strategy.
+Laravel discovers `Wrkflow\GetValue\Laravel\GetValueServiceProvider` when you install the package. The provider makes the validation actions and their default dependencies available through Laravel's container and preserves custom bindings for the exception builder and transformer strategy. If your application disables package discovery, register the provider in the application.
 
-The development application loads this provider through `testbench.yaml` when Larastan runs.
+Larastan loads the provider through `testbench.yaml` when it analyses this repository as the root package.
 
 ## Documentation
 

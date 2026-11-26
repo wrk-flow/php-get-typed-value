@@ -47,6 +47,13 @@
             "Wrkflow\\GetValueTests\\": "tests/"
         }
     },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Wrkflow\\GetValue\\Laravel\\GetValueServiceProvider"
+            ]
+        }
+    },
     "config": {
         "preferred-install": "dist",
         "sort-packages": true,
