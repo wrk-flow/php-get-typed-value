@@ -14,7 +14,9 @@ use Wrkflow\GetValue\Contracts\TransformerStrategyContract;
 use Wrkflow\GetValue\DataHolders\AbstractData;
 use Wrkflow\GetValue\DataHolders\ArrayData;
 use Wrkflow\GetValue\DataHolders\XMLData;
+use Wrkflow\GetValue\DataHolders\XMLReaderAttributesData;
 use Wrkflow\GetValue\Strategies\DefaultTransformerStrategy;
+use XMLReader;
 
 class GetValueFactory
 {
@@ -43,6 +45,14 @@ class GetValueFactory
     public function xml(SimpleXMLElement $xml, string $parentKey = ''): GetValue
     {
         return $this->make(new XMLData($xml, $parentKey));
+    }
+
+    /**
+     * Read attributes from the current element. Use the getter before advancing the reader.
+     */
+    public function xmlReaderAttributes(XMLReader $reader, string $parentKey = ''): GetValue
+    {
+        return $this->make(new XMLReaderAttributesData($reader, $parentKey));
     }
 
     /**

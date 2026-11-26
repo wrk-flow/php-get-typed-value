@@ -14,6 +14,7 @@
     },
     "require-dev": {
         "ext-simplexml": "*",
+        "ext-xmlreader": "*",
         "larastrict/conventions": "^2.0.1",
         "laravel/framework": "^13.0",
         "orchestra/testbench": "^11.1",
@@ -33,6 +34,7 @@
         "test": "./vendor/bin/phpunit"
     },
     "suggest": {
+        "ext-xmlreader": "For typed access to attributes on an XMLReader element.",
         "wrkflow/larastrict": "Improve your Laravel code base with DDD and strict conventions."
     },
     "autoload": {
